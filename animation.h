@@ -4,16 +4,16 @@
 #include <vector>
 #include <memory>
 #include "image.h"
-#include "viewer.h"
 
+template <class PIXEL_TYPE>
 class animation {
 	friend class viewer;
 public:
-	animation() : frames(std::vector<std::shared_ptr<image>>()) {}
-	animation(std::vector<std::shared_ptr<image>> frames) : frames(frames) {}
+	animation() : frames(std::vector<std::shared_ptr<image<PIXEL_TYPE>>>()) {}
+	animation(std::vector<std::shared_ptr<image<PIXEL_TYPE>>> frames) : frames(frames) {}
 
-	typedef std::vector<std::shared_ptr<image>>::iterator iterator;
-	typedef std::vector<std::shared_ptr<image>>::const_iterator const_iterator;
+	typedef typename std::vector<std::shared_ptr<image<PIXEL_TYPE>>>::iterator iterator;
+	typedef typename std::vector<std::shared_ptr<image<PIXEL_TYPE>>>::const_iterator const_iterator;
 	iterator begin() {return frames.begin();}
 	iterator end() {return frames.end();}
 
@@ -25,7 +25,7 @@ public:
 	void present(viewer &v) const {v.present(*this);}
 
 private:
-	std::vector<std::shared_ptr<image>> frames; // must use pointers because image is abstract class
+	std::vector<std::shared_ptr<image<PIXEL_TYPE>>> frames; // must use pointers because image is abstract class
 	double fps = 2; // frames per second
 };
 
