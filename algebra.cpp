@@ -62,6 +62,13 @@ std::string Algebra::term_to_string(int coeff, std::string var) {
 	}
 }
 
+std::string Algebra::product_to_string(const std::string &a, const std:: string &b) {
+	if (a == "1") {return b;}
+	if (b == "1") {return a;}
+	if (a == b) {return a + "^2";}
+	return a + "*" + b;
+}
+
 std::string Algebra::line_to_string(int coeff, std::string var, int constant) {
 	std::string s = term_to_string(coeff,var);
 	if (constant > 0) {

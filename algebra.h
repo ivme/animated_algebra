@@ -12,5 +12,6 @@ public:
 	static std::tuple<int,int> fdiv_qr(int a, int b);
 	static int gcd(int a, int b);
 	static std::string term_to_string(int coeff, std::string var);
+	static std::string product_to_string(const std::string &a, const std:: string &b);
 	static std::string line_to_string(int coeff, std::string var, int constant);
 };
