@@ -12,10 +12,11 @@ public:
 
 	// constructors
 	matrix(unsigned int rows, unsigned int cols) : row_count(rows), col_count(cols), data(std::vector<T>(rows * cols)) {}
-	matrix(unsigned int rows, unsigned int cols, const T &initial_value) :
+	matrix(unsigned int rows, unsigned int cols, T initial_value) :
 		row_count(rows), col_count(cols), data(std::vector<T>(rows * cols,initial_value)) {}
 
 	T &entry(unsigned int row,unsigned int col);
+	T centry(unsigned int row, unsigned int col) const;
 	
 	iterator begin() {return data.begin();}
 	iterator end() {return data.end();}
@@ -41,6 +42,16 @@ std::ostream &operator <<(std::ostream &os,const matrix<T> &m) {
 	for (int i = 0; i < m.rows(); ++i) {
 		std::copy(m.row_cbegin(i),m.row_cend(i), out_it);
 		std::wcout << (i == m.rows() - 1 ? "" : "\n");
+	}
+	return os;
+}
+
+template <typename T>
+std::wostream &operator <<(std::wostream &os,const matrix<T> &m) {
+	std::ostream_iterator<T,wchar_t> out_it (os);
+	for (int i = 0; i < m.rows(); ++i) {
+		std::copy(m.row_cbegin(i),m.row_cend(i), out_it);
+		os << (i == m.rows() - 1 ? "" : "\n");
 	}
 	return os;
 }
