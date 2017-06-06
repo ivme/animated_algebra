@@ -2,7 +2,7 @@
 #include <vector>
 #include <cmath>
 
-std::tuple<bool,int,int,int,int> Algebra::quad_factor(int a, int b, int c) {
+std::tuple<bool,int,int,int,int> algebra::quad_factor(int a, int b, int c) {
 		// factors ax^2 + bx + c into (mx + n)(rx + s)
 		// returns (factorable,m,n,r,s)
 		auto f = std::tuple<bool,int,int,int,int>();
@@ -17,8 +17,8 @@ std::tuple<bool,int,int,int,int> Algebra::quad_factor(int a, int b, int c) {
 		// and whose sum is b
 		int p = (b + sqrt_d) / 2;
 		int q = (b - sqrt_d) / 2;
-		int gcd_a_p = Algebra::gcd(a,p);
-		int gcd_q_c = Algebra::gcd(q,c);
+		int gcd_a_p = algebra::gcd(a,p);
+		int gcd_q_c = algebra::gcd(q,c);
 		
 		if (a < 0) {gcd_a_p *= -1;}
 		if (q < 0) {gcd_q_c *= -1;}
@@ -36,7 +36,7 @@ int signum(int x) {
 	return 0;
 }
 
-std::string Algebra::factorization_to_string(std::tuple<bool,int,int,int,int> f) {
+std::string algebra::factorization_to_string(std::tuple<bool,int,int,int,int> f) {
 	if (std::get<0>(f) == false) {
 		return "unfactorable";
 	} else {
@@ -51,7 +51,7 @@ std::string Algebra::factorization_to_string(std::tuple<bool,int,int,int,int> f)
 	}
 }
 
-std::string Algebra::term_to_string(int coeff, std::string var) {
+std::string algebra::term_to_string(int coeff, std::string var) {
 	switch (coeff) {
 		case 1:
 		return var;
@@ -62,14 +62,14 @@ std::string Algebra::term_to_string(int coeff, std::string var) {
 	}
 }
 
-std::string Algebra::product_to_string(const std::string &a, const std:: string &b) {
+std::string algebra::product_to_string(const std::string &a, const std:: string &b) {
 	if (a == "1") {return b;}
 	if (b == "1") {return a;}
 	if (a == b) {return a + "^2";}
 	return a + "*" + b;
 }
 
-std::string Algebra::line_to_string(int coeff, std::string var, int constant) {
+std::string algebra::line_to_string(int coeff, std::string var, int constant) {
 	std::string s = term_to_string(coeff,var);
 	if (constant > 0) {
 		return s + " + " + std::to_string(constant);
@@ -81,28 +81,28 @@ std::string Algebra::line_to_string(int coeff, std::string var, int constant) {
 	}
 }
 
-float Algebra::discriminant(float a, float b, float c) {
+float algebra::discriminant(float a, float b, float c) {
 	return b * b - 4 * a * c;
 }
 
-bool Algebra::is_square_number(int n) {
+bool algebra::is_square_number(int n) {
 	if (n < 0) {return false;}
 	int floored_root = std::floor(std::sqrt(n));
 	return floored_root * floored_root == n;
 }
 
-int Algebra::gcd(int a, int b) {
+int algebra::gcd(int a, int b) {
 	return std::get<0>(gcd_ext(a,b));
 }
 
-std::tuple<int,int,int> Algebra::gcd_ext(int a, int b) {
+std::tuple<int,int,int> algebra::gcd_ext(int a, int b) {
 	std::vector<int> q = {0};
 	std::vector<int> r = {a,b};
 	std::vector<int> s = {1,0};
 	std::vector<int> t = {0,1};
 	int i = 1;
 	while (r[i] != 0) {
-		auto qr = Algebra::fdiv_qr(r[i-1],r[i]);
+		auto qr = algebra::fdiv_qr(r[i-1],r[i]);
 		q.push_back(std::get<0>(qr));
 		r.push_back(std::get<1>(qr));
 		s.push_back(s[i-1] - q[i] * s[i]);
@@ -120,7 +120,7 @@ std::tuple<int,int,int> Algebra::gcd_ext(int a, int b) {
 
 // floored division
 // returns (quotient, remainder)
-std::tuple<int,int> Algebra::fdiv_qr(int a, int b) {
+std::tuple<int,int> algebra::fdiv_qr(int a, int b) {
 	int q = a / b;
 	if ((q < 0) && (q * b != a)) {
 		q -= 1;

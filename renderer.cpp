@@ -171,7 +171,7 @@ void draw_labels(const p_rect &pr, std::shared_ptr<ascii_image> img) {
 	int bottom = 0;  // bottom y-coordinate of current cell
 	for (auto x_len : pr.x_lengths) {
 		for (auto y_len : pr.y_lengths) {
-			std::string label = Algebra::product_to_string(x_len.name, y_len.name);
+			std::string label = algebra::product_to_string(x_len.name, y_len.name);
 			int label_y = bottom +(y_len.val * ascii_renderer::v_pixels_per_unit / 2);
 			int label_x = left + (x_len.val * ascii_renderer::h_pixels_per_unit / 2) - (int) (label.size() / 2);
 

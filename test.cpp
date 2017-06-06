@@ -34,45 +34,45 @@ animation<wchar_t> sample_animation() {
 }
 
 void test_algebra() {
-	assert(Algebra::is_square_number(49));
-	assert(!Algebra::is_square_number(-1));
-	assert(!Algebra::is_square_number(5));
+	assert(algebra::is_square_number(49));
+	assert(!algebra::is_square_number(-1));
+	assert(!algebra::is_square_number(5));
 
-	assert(Algebra::discriminant(2,-4,-1) == 24);
-	assert(Algebra::discriminant(1,6,9) == 0);
-	assert(Algebra::discriminant(-3,1,-5) == -59);
+	assert(algebra::discriminant(2,-4,-1) == 24);
+	assert(algebra::discriminant(1,6,9) == 0);
+	assert(algebra::discriminant(-3,1,-5) == -59);
 
-	assert(std::get<0>(Algebra::fdiv_qr(5,3)) == 1);
-	assert(std::get<1>(Algebra::fdiv_qr(5,3)) == 2);
-	assert(std::get<0>(Algebra::fdiv_qr(-5,3)) == -2);
-	assert(std::get<1>(Algebra::fdiv_qr(-5,3)) == 1);
-	assert(std::get<0>(Algebra::fdiv_qr(5,-3)) == -2);
-	assert(std::get<1>(Algebra::fdiv_qr(5,-3)) == -1);
+	assert(std::get<0>(algebra::fdiv_qr(5,3)) == 1);
+	assert(std::get<1>(algebra::fdiv_qr(5,3)) == 2);
+	assert(std::get<0>(algebra::fdiv_qr(-5,3)) == -2);
+	assert(std::get<1>(algebra::fdiv_qr(-5,3)) == 1);
+	assert(std::get<0>(algebra::fdiv_qr(5,-3)) == -2);
+	assert(std::get<1>(algebra::fdiv_qr(5,-3)) == -1);
 
-	assert(std::get<0>(Algebra::gcd_ext(5,3)) == 1); // gcd(5,3) == 1
-	assert(std::get<1>(Algebra::gcd_ext(5,3)) == -1); // 1 == (-1)(5) + (2)(3)
-	assert(std::get<2>(Algebra::gcd_ext(5,3)) == 2);
+	assert(std::get<0>(algebra::gcd_ext(5,3)) == 1); // gcd(5,3) == 1
+	assert(std::get<1>(algebra::gcd_ext(5,3)) == -1); // 1 == (-1)(5) + (2)(3)
+	assert(std::get<2>(algebra::gcd_ext(5,3)) == 2);
 
-	assert(Algebra::gcd(32,12) == 4);
+	assert(algebra::gcd(32,12) == 4);
 
-	auto f1 = Algebra::quad_factor(18,75,50);
+	auto f1 = algebra::quad_factor(18,75,50);
 	assert(std::get<0>(f1) == true);
 	assert(std::get<1>(f1) == 6);
 	assert(std::get<2>(f1) == 5);
 	assert(std::get<3>(f1) == 3);
 	assert(std::get<4>(f1) == 10);
 
-	auto f2 = Algebra::quad_factor(1,-1,-6);
+	auto f2 = algebra::quad_factor(1,-1,-6);
 	assert(std::get<0>(f2) == true);
 	assert(std::get<1>(f2) == 1);
 	assert(std::get<2>(f2) == -3);
 	assert(std::get<3>(f2) == 1);
 	assert(std::get<4>(f2) == 2);
 
-	assert(Algebra::product_to_string("a","b") == "a*b");
-	assert(Algebra::product_to_string("1","b") == "b");
-	assert(Algebra::product_to_string("a","1") == "a");
-	assert(Algebra::product_to_string("a","a") == "a^2");
+	assert(algebra::product_to_string("a","b") == "a*b");
+	assert(algebra::product_to_string("1","b") == "b");
+	assert(algebra::product_to_string("a","1") == "a");
+	assert(algebra::product_to_string("a","a") == "a^2");
 	/* user input required
 	int a,b,c;
 	std::cout << "a = " << std::endl;
@@ -81,7 +81,7 @@ void test_algebra() {
 	std::cin >> b;
 	std::cout << "c = " << std::endl;
 	std::cin >> c;
-	std::cout << Algebra::factorization_to_string(Algebra::quad_factor(a,b,c)) << std::endl;
+	std::cout << algebra::factorization_to_string(algebra::quad_factor(a,b,c)) << std::endl;
 	*/
 }
 

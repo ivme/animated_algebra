@@ -2,7 +2,7 @@
 #include <memory>
 #include <string>
 
-class Algebra {
+class algebra {
 public:
 	static std::tuple<bool,int,int,int,int> quad_factor(int a, int b, int c);
 	static std::string factorization_to_string(std::tuple<bool,int,int,int,int> factorization);
