@@ -1,3 +1,6 @@
+#ifndef ALGEBRA_H
+#define ALGEBRA_H
+
 #include <tuple>
 #include <memory>
 #include <string>
@@ -15,3 +18,5 @@ public:
 	static std::string product_to_string(const std::string &a, const std:: string &b);
 	static std::string line_to_string(int coeff, std::string var, int constant);
 };
+
+#endif
