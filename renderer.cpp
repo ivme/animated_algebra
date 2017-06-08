@@ -1,4 +1,5 @@
 #include <numeric>
+#include <cmath>
 #include <string>
 #include "p_rect.h"
 #include "algebra.h"
@@ -59,24 +60,35 @@ std::shared_ptr<IMAGE_TYPE> renderer<IMAGE_TYPE>::render(const view& v) {
 	std::shared_ptr<IMAGE_TYPE> p_img;
 	std::shared_ptr<located<IMAGE_TYPE,3>> p_located_img;
 	layered_image<IMAGE_TYPE> layered_img{};
-
+	
 	for (auto node_ptr : nodes) {
 		p_img = node_ptr->render(*this);
 		auto scene_location = node_ptr->get_scene_location();
 		p_located_img = std::make_shared<located<IMAGE_TYPE,3>>(*p_img,scene_location);
 		layered_img.insert(p_located_img);
 	}
-
-	return layered_img.flatten_and_crop(v.rectangle);
+	return layered_img.flatten_and_crop(scene_rect_to_pixel_rect(v.rectangle));
 }
 
+template <class IMAGE_TYPE>
+located<rect,2> renderer<IMAGE_TYPE>::scene_rect_to_pixel_rect(located<rect,2> scene_rect) {
+	int x = std::floor(scene_x_coordinate_to_pixels(scene_rect.location.x));
+	int y = std::floor(scene_y_coordinate_to_pixels(scene_rect.location.y));
+	int width = std::ceil(scene_x_coordinate_to_pixels(scene_rect.width));
+	int height = std::ceil(scene_y_coordinate_to_pixels(scene_rect.height));
+	return located<rect,2>(rect(width,height),point<2>(x,y));
+}
+
+int ascii_renderer::h_pixels_per_unit() {return p_rect::unit_size / ascii_renderer::scene_x_coordinates_per_pixel;}
+int ascii_renderer::v_pixels_per_unit() {return p_rect::unit_size / ascii_renderer::scene_y_coordinates_per_pixel;}
+
 rect ascii_renderer::pixel_dimensions(const p_rect &pr) {
-	int width_in_units = pr.width();
-	int height_in_units = pr.height();
+	int width_in_units = pr.width_in_units();
+	int height_in_units = pr.height_in_units();
 	if (width_in_units == 0 || height_in_units == 0) {
 		return rect(0,0);
 	}
-	return rect(h_pixels_per_unit * width_in_units + 1, v_pixels_per_unit * height_in_units + 1);
+	return rect(ascii_renderer::h_pixels_per_unit() * width_in_units + 1, ascii_renderer::v_pixels_per_unit() * height_in_units + 1);
 }
 
 // the x pixel coordinates of all vertical partitions, including left and right boundaries
@@ -88,7 +100,7 @@ std::vector<int> x_partitions(const p_rect &pr) {
 	int x = 0;
 	output.push_back(x);
 	for (length l : pr.x_lengths) {
-		x += l.val * ascii_renderer::h_pixels_per_unit;
+		x += l.val * ascii_renderer::h_pixels_per_unit();
 		output.push_back(x);
 	}
 	return output;
@@ -103,7 +115,7 @@ std::vector<int> y_partitions(const p_rect &pr) {
 	int y = 0;
 	output.push_back(y);
 	for (length l : pr.y_lengths) {
-		y += l.val * ascii_renderer::v_pixels_per_unit;
+		y += l.val * ascii_renderer::v_pixels_per_unit();
 		output.push_back(y);
 	}
 	return output;
@@ -172,15 +184,15 @@ void draw_labels(const p_rect &pr, std::shared_ptr<ascii_image> img) {
 	for (auto x_len : pr.x_lengths) {
 		for (auto y_len : pr.y_lengths) {
 			std::string label = algebra::product_to_string(x_len.name, y_len.name);
-			int label_y = bottom +(y_len.val * ascii_renderer::v_pixels_per_unit / 2);
-			int label_x = left + (x_len.val * ascii_renderer::h_pixels_per_unit / 2) - (int) (label.size() / 2);
+			int label_y = bottom +(y_len.val * ascii_renderer::v_pixels_per_unit() / 2);
+			int label_x = left + (x_len.val * ascii_renderer::h_pixels_per_unit() / 2) - (int) (label.size() / 2);
 
 			pixel_range<wchar_t> range{img,label_x,label_y,static_cast<int>(label_x + label.size()),label_y + 1};
 			std::copy(label.begin(),label.end(),range.begin());
 
-			bottom += y_len.val * ascii_renderer::v_pixels_per_unit;
+			bottom += y_len.val * ascii_renderer::v_pixels_per_unit();
 		}
-		left += x_len.val * ascii_renderer::h_pixels_per_unit;
+		left += x_len.val * ascii_renderer::h_pixels_per_unit();
 		bottom = 0;
 	}
 }

@@ -14,6 +14,9 @@ class renderer {
 public:
 	std::shared_ptr<IMAGE_TYPE> render(const view&);
 
+	virtual double scene_x_coordinate_to_pixels(int scene_coord) = 0;
+	virtual double scene_y_coordinate_to_pixels(int scene_coord) = 0;
+	located<rect,2> scene_rect_to_pixel_rect(located<rect,2> scene_rect);
 	virtual std::shared_ptr<IMAGE_TYPE> render(const node&) = 0;
 	virtual std::shared_ptr<IMAGE_TYPE> render(const p_rect&) = 0;
 };
@@ -25,8 +28,15 @@ public:
 	virtual std::shared_ptr<ascii_image> render(const p_rect &) override;
 	static rect pixel_dimensions(const p_rect &pr);
 
-	static constexpr int h_pixels_per_unit = 4; // number of horizontal pixels per v_pixels_per_unit
-	static constexpr int v_pixels_per_unit = 2; // number of vertical pixels per unit
+	static constexpr int scene_x_coordinates_per_pixel = 1;
+	static constexpr int scene_y_coordinates_per_pixel = 2;
+
+	// these could be non-integer values.  truncate for now.
+	virtual double scene_x_coordinate_to_pixels(int scene_coord) override {return (double) scene_coord / (double) scene_x_coordinates_per_pixel;}
+	virtual double scene_y_coordinate_to_pixels(int scene_coord) override {return (double) scene_coord / (double) scene_y_coordinates_per_pixel;}
+	
+	static int h_pixels_per_unit();
+	static int v_pixels_per_unit();
 };
 
 namespace bdc {
