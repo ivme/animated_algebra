@@ -6,6 +6,7 @@
 #include "viewer.h"
 #include "scene.h"
 #include "p_rect.h"
+#include "aa_controller.h"
 #include <cassert>
 #include <iostream>
 #include <thread>
@@ -165,10 +166,10 @@ void test_p_rect() {
 	assert(img->pixel_at(0,0) == bdc::ur);
 	assert(img->pixel_at(1,0) == bdc::h);
 	assert(img->pixel_at(0,1) == bdc::v);
-	assert(img->pixel_at(r.h_pixels_per_unit,0) == bdc::ul);
-	assert(img->pixel_at(0,r.v_pixels_per_unit) == bdc::dr);
-	assert(img->pixel_at(r.h_pixels_per_unit,r.v_pixels_per_unit) == bdc::dl);
-	assert(img->pixel_at(r.h_pixels_per_unit / 2, r.v_pixels_per_unit /2) == '1');
+	assert(img->pixel_at(r.h_pixels_per_unit(),0) == bdc::ul);
+	assert(img->pixel_at(0,r.v_pixels_per_unit()) == bdc::dr);
+	assert(img->pixel_at(r.h_pixels_per_unit(),r.v_pixels_per_unit()) == bdc::dl);
+	assert(img->pixel_at(r.h_pixels_per_unit() / 2, r.v_pixels_per_unit() /2) == '1');
 
 	length one{"1",1};
 	length x{"x",2};
@@ -200,44 +201,88 @@ void test_graphics() {
 }
 
 void test_scene() {
+	ascii_viewer vwr{};
+	ascii_renderer r{};
+
 	auto rect1_ptr = unit_p_rect_ptr();
 	auto rect2_ptr = unit_p_rect_ptr();
-	auto s = std::make_shared<scene>();
-	s->set_root(rect1_ptr);
+	auto s1 = std::make_shared<scene>();
+	s1->set_root(rect1_ptr);
 	rect1_ptr->add_child(rect2_ptr);
-	rect2_ptr->set_location(point<3>(ascii_renderer::h_pixels_per_unit + 1,0,1));
+	rect2_ptr->set_location(point<3>(ascii_renderer::h_pixels_per_unit() + 1,0,1));
 	
-	view v{};
-	v.scn = std::weak_ptr<scene>(s);
-	v.rectangle = located<rect,2>(rect(2 * ascii_renderer::h_pixels_per_unit + 2, ascii_renderer::v_pixels_per_unit + 1),point<2>(0,0));
-	ascii_renderer r{};
-	auto snapshot1 = v.render(r);
-	assert(snapshot1->pixel_width() == 2 * ascii_renderer::h_pixels_per_unit + 2);
-	assert(snapshot1->pixel_height() == ascii_renderer::v_pixels_per_unit + 1);
+	view v1{};
+	v1.scn = std::weak_ptr<scene>(s1);
+	v1.rectangle = s1->bounding_rect();
+	
+	auto snapshot1 = v1.render(r);
 	assert(snapshot1->pixel_at(0,0) == bdc::ur);
-	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit,0) == bdc::ul);
-	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit + 1,0) == bdc::ur);
-	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit + 1,1) == bdc::v);
-	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit + 2,1) == ascii_image::default_pixel);
-	assert(snapshot1->pixel_at(0,ascii_renderer::v_pixels_per_unit) == bdc::dr);
+	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit(),0) == bdc::ul);
+	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit() + 1,0) == bdc::ur);
+	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit() + 1,1) == bdc::v);
+	assert(snapshot1->pixel_at(ascii_renderer::h_pixels_per_unit() + 2,1) == ascii_image::default_pixel);
+	assert(snapshot1->pixel_at(0,ascii_renderer::v_pixels_per_unit()) == bdc::dr);
 
 	rect2_ptr->shift(point<3>(1,1,0));
-	auto snapshot2 = v.render(r);
+	auto snapshot2 = v1.render(r);
 	rect1_ptr->shift(0,-2,0);
-	auto snapshot3 = v.render(r);
+	auto snapshot3 = v1.render(r);
 	rect1_ptr->shift(0,2,0);
 	rect2_ptr->shift(-3,0,0);
-	auto snapshot4 = v.render(r);
+	auto snapshot4 = v1.render(r);
 	rect2_ptr->shift(0,0,-2);
-	auto snapshot5 = v.render(r);
-
-	// ascii_viewer vwr{};
+	auto snapshot5 = v1.render(r);
+	
 	// snapshot1->show(vwr);
 	// snapshot2->show(vwr);
 	// snapshot3->show(vwr);
 	// snapshot4->show(vwr);
 	// snapshot5->show(vwr);
-	
+
+	length one{"1",1};
+	length x{"x",2};
+	auto rect3_ptr = std::make_shared<p_rect>(std::vector<length>({x,x,x,one,one}),std::vector<length>({x,x,one}));
+	auto s2 = std::make_shared<scene>();
+	s2->set_root(rect3_ptr);
+	std::shared_ptr<node> split_node = rect3_ptr->split(dimension::x,{1,4});
+	assert(s2->get_root()->get_children().size() == 3);
+	assert(s2->nodes().size() == 4);
+	assert(s2->get_root() != rect3_ptr);
+	assert(s2->get_root() == split_node);
+	std::shared_ptr<p_rect> split_child_0 = std::dynamic_pointer_cast<p_rect>(split_node->get_children()[0]);
+	std::shared_ptr<p_rect> split_child_1 = std::dynamic_pointer_cast<p_rect>(split_node->get_children()[1]);
+	std::shared_ptr<p_rect> split_child_2 = std::dynamic_pointer_cast<p_rect>(split_node->get_children()[2]);
+	// child 1
+	assert(split_child_0->x_lengths == std::vector<length>({x}));
+	assert(split_child_0->y_lengths == rect3_ptr->y_lengths);
+	assert(split_child_0->get_location() == point<3>(0,0,0));
+	// child 2
+	assert(split_child_1->x_lengths == std::vector<length>({x,x,one}));
+	assert(split_child_1->y_lengths == rect3_ptr->y_lengths);
+	assert(split_child_1->get_location() == point<3>(2 * p_rect::unit_size,0,0));
+	// child 3
+	assert(split_child_2->x_lengths == std::vector<length>({one}));
+	assert(split_child_2->y_lengths == rect3_ptr->y_lengths);
+	assert(split_child_2->get_location() == point<3>(7 * p_rect::unit_size,0,0));
+
+	// move children
+	split_child_2->shift(8,4);
+	split_child_1->shift(4,0);
+
+	auto s2_bound = s2->bounding_rect();
+	assert(s2_bound.location.x == 0);
+	assert(s2_bound.location.y == 0);
+
+	// view v2{};
+	// v2.rectangle = s2->bounding_rect();
+	// v2.scn = std::weak_ptr<scene>(s2);
+	// auto img = v2.render(r);
+	// img->show(vwr);;
+}
+
+void test_aa_controller() {
+	aa_controller ctrl;
+	// ctrl.prompt_for_quadratic_coeffs(false);
 }
 
 int main() {
@@ -246,8 +291,9 @@ int main() {
 	test_matrix();
 	test_image();
 	test_animation();
-	//test_viewer();
+	// test_viewer();
 	test_p_rect();
 	test_scene();
+	test_aa_controller();
 	
 }

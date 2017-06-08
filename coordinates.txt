@@ -1,0 +1,47 @@
+A square should have the same width and height in scene coordinates.
+Scaling should be done at the renderer level.
+Suppose we have a square ABCD, where in scene coordinates:
+A = (0,0)
+B = (0,2)
+C = (2,2)
+D = (2,0)
+
+If a single rendered pixel is twice as tall as it is wide, as in the case of characters, then to maintain the appearance of a square in the rendered image, then the renderer should render two pixels horizontally for every one pixel vertically.  So in pixel coordinates the corners of the square could be
+A' = (0,0)
+B' = (0,1)
+C' = (2,1)
+D' = (2,0)
+(one scene x-coordinate per pixel; two scene y-coordinates per pixel)
+
+OR
+
+A'' = (0,0)
+B'' = (0,2)
+C'' = (4,2)
+D'' = (4,0)
+(two pixels per scene x-coordinate; one pixel per scene y-coordinate)
+
+The question is whether there should be at least one pixel for every scene coordinate, or at least one scene coordinate for every pixel.
+Which should be a finer resolution -- scene coordinates or pixel coordinates?
+If scene coordinates are the finest:
+	PROS: We can 'zoom out' of a scene, i.e. if a scene measures 1000 x 1000 in scene coordinates, we could render the whole thing as a full-resolution image with 1000x1000 pixels, or we could render it smaller, using only 100x100 pixels, say.
+	CONS: We cannot 'zoom in' on a region within a scene.  i.e. if the scene contains a unit circle at the scene's origin, it can never be rendered with more than 4 pixels.  Assuming simple square, grascale pixels, you would never be able to see the circle at all.
+
+I think we want scene coordinates to be the finest.  That is, there is at least one scene coordinate for every pixel.
+
+How does this relate to unit_size of P_rect?
+
+Goal for p_rect:
+	to move by pixel when rendered in ascii.
+	a unit p-rect should be rendered with 2 y-pixels and 4 x-pixels in ascii.
+
+If we choose
+scene_x_coordinates_per_pixel = 1
+scene_y_coordinates_per_pixel = 2
+
+Then the unit_size for a p_rect should be 4 (in BOTH DIMENSIONS).
+
+PROS:  The p_rect can move by pixel in an ascii-rendered image.  The p_rect is not distorted in the scene, so that if it were to be rendered by a different renderer, it would appear still appear square.
+CONS:  The p_rect's scene location cannot be accurately represented by an ascii renderer.  Consider a p_rect located at (0,1) in scene coordinates.  The scene-coordinate point (0,1) would be (0,.5) in ascii pixel-coordinates, but we only have integer pixel-coordinates to work with.  A p_rect located at (0,1) in scene coordinates must be rendered at (0,0) or (0,1) in ascii pixel-coordinates (that is, (0,0) or (0,2) in scene-coordinates).
+To handle this integer-location problem, we could enforce that p_rects be located at even scene-y-coordinates, but then we sacrifice flexibility.  What if we want to render the p_rect using a different renderer?  We might want to be able to render finer location movements.
+Instead, we take a renderer-specific approach: simply round the pixel-y-coordinate down and draw the p_rect at the nearest renderable location.  Thus a p_rect located at (0,1) in scene coordinates is rendered at (0,0) in ascii pixel coordinates; a p_rect located at (0,3) in scene coordinates is rendered at (0,1) in ascii pixel-coordinates, etc.

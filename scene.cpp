@@ -2,29 +2,48 @@
 #include "renderer.h"
 
 // node
+void node::make_scene_locations_dirty_() {
+	std::shared_ptr<scene> s = get_scene().lock();
+	if (s) {s->scene_locations_are_dirty = true;}
+}
 
 void node::set_location(point<3> l) {
-	// update scene_location
-	get_scene().lock()->scene_locations_are_dirty = true;
+	make_scene_locations_dirty_();
 	location = l;
 }
 
 void node::shift(point<3> delta) {
-	get_scene().lock()->scene_locations_are_dirty = true;
+	make_scene_locations_dirty_();
 	location += delta;
 }
 
 void node::shift(int dx, int dy, int dz) {
-	get_scene().lock()->scene_locations_are_dirty = true;
+	make_scene_locations_dirty_();
 	location.x += dx;
 	location.y += dy;
 	location.z += dz;
 }
 
+void node::set_scene(std::weak_ptr<scene> s) {
+	scn = s;
+	for (auto child : children) {
+		child->set_scene(s);
+	}
+}
+
 void node::set_parent(std::weak_ptr<node> p) {
-	get_scene().lock()->scene_locations_are_dirty = true;
-	scn = p.lock()->get_scene();
+	if (auto old_parent = parent.lock()) {
+		old_parent->remove_child(shared_from_this());
+	}
+	auto new_parent = p.lock();
+	if (new_parent) {
+		new_parent->children.push_back(shared_from_this());
+		if (scn.lock() != new_parent->scn.lock()) {
+			set_scene(new_parent->scn);
+		}
+	}
 	parent = p;
+	make_scene_locations_dirty_();
 }
 
 std::weak_ptr<node> node::get_parent() {
@@ -32,26 +51,48 @@ std::weak_ptr<node> node::get_parent() {
 }
 
 void node::add_child(std::shared_ptr<node> child) {
-	get_scene().lock()->scene_locations_are_dirty = true;
-	child->scn = get_scene();
-	children.insert(child);
+	child->set_parent(std::weak_ptr<node>(shared_from_this()));
 }
 
 void node::remove_child(std::shared_ptr<node> child) {
-	children.erase(child);
+	children.erase(std::remove(children.begin(),children.end(),child),children.end());
 }
 
 std::weak_ptr<scene> node::get_scene() {
-	return scn;
+	if (scn.lock()) {return scn;}
+	auto p = parent.lock();
+	if (p) {return p->get_scene();}
+	return std::weak_ptr<scene>();
 }
 
 point<3> node::get_scene_location() {
 	auto scn_ = get_scene().lock();
-	if (scn_->scene_locations_are_dirty) {
-		scn_->refresh_scene_locations();	
+	if (scn_) {
+		if (scn_->scene_locations_are_dirty) {
+			scn_->refresh_scene_locations();	
+		}
+		return scene_location;
+	} else {
+		return point<3>();
 	}
-	return scene_location;
+	
 }
+
+located<rect,2> node::own_bounding_rect() const {
+	return located<rect,2>();
+}
+
+located<rect,2> node::bounding_rect() const {
+	located<rect,2> out = own_bounding_rect();
+	for (auto child : children) {
+		out = union_bounding_rect(out,child->bounding_rect());
+	}
+	return out;
+}
+
+bool node::is_renderable() const {return false;}
+std::shared_ptr<ascii_image> node::render(renderer<ascii_image> &r) const {return r.render(*this);}
+std::shared_ptr<ascii_image> node::render(ascii_renderer &r) const {return r.render(*this);}
 
 // recursive utility function
 void node::compute_scene_locations_(point<3> parent_location) {
@@ -91,8 +132,13 @@ void scene::refresh_scene_locations() {
 }
 
 void scene::set_root(std::shared_ptr<node> r) {
-	r->scn = std::weak_ptr<scene>(shared_from_this());
+	r->set_scene(std::weak_ptr<scene>(shared_from_this()));
 	root = r;
+	scene_locations_are_dirty = true;
+}
+
+located<rect,2> scene::bounding_rect() const {
+	return root->bounding_rect();
 }
 
 // view
