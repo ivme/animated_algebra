@@ -10,13 +10,13 @@ class renderer;
 class ascii_renderer;
 class scene;
 
-class node {
+class node : public std::enable_shared_from_this<node> {
 	friend class scene;
 
 public:
 	// location of lower left corner of node in parent's coordinate system
 	// more positive z-locations are closer to foreground
-	point<3> get_location() {return location;}
+	point<3> get_location() const {return location;}
 	void set_location(point<3> l);
 	void shift(point<3> delta);  // adds delta to the node's location
 	void shift(int dx, int dy, int dz);
@@ -26,7 +26,7 @@ public:
 
 	void add_child(std::shared_ptr<node> child);
 	void remove_child(std::shared_ptr<node> child);
-	const std::set<std::shared_ptr<node>> &get_children();
+	const std::vector<std::shared_ptr<node>> &get_children() const;
 
 	std::weak_ptr<scene> get_scene();
 
@@ -43,37 +43,20 @@ private:
 
 	std::set<std::shared_ptr<node>> children;
 	std::weak_ptr<node> parent;
-	std::weak_ptr<scene> scn;
+	std::weak_ptr<scene> scn; // an invariant should be that all of the children of a node n have the same scn pointer as n
 	void compute_scene_locations_(point<3> parent_location);
 };
 
-/*
-struct compare_z_ptr {
-	bool operator()(const std::shared_ptr<node> &a, const std::shared_ptr<node> &b) {
-		return a->location.z < b->location.z;	
-	}
-};
-*/
-
 class scene : public std::enable_shared_from_this<scene> {
 	friend class node;
-
-
 public:
 	scene() : root(nullptr) {}
-	std::shared_ptr<const node> get_root() {return root;}
-	void set_root(std::shared_ptr<node> r);	
+	std::shared_ptr<const node> get_root() const {return root;}
+	void set_root(std::shared_ptr<node> r);
 	void refresh_scene_locations(); // recomputes scene locations
-	std::vector<std::shared_ptr<node>> nodes(); // set of nodes, sorted by z coordinate
-
-	
 private:
 	std::shared_ptr<node> root;
 	bool scene_locations_are_dirty;
-
-	// collection of all nodes in scene
-	// sorted by z-coordinate
-	// std::set<std::shared_ptr<node>,compare_z_ptr> nodes;
 };
 
 class view {

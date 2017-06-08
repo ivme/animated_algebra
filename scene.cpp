@@ -61,14 +61,13 @@ void node::compute_scene_locations_(point<3> parent_location) {
 	}
 }
 
-
 // compare_z (class def in graphics.h)
 bool compare_z::operator()(const std::shared_ptr<node> &a, const std::shared_ptr<node> &b) {
 	return a->get_location().z < b->get_location().z;
 }
 
 // scene
-const std::set<std::shared_ptr<node>> &node::get_children() {
+const std::vector<std::shared_ptr<node>> &node::get_children() const {
 	return children;
 }
 
