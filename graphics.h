@@ -3,6 +3,7 @@
 
 #include <array>
 #include <algorithm>
+#include <iostream>
 
 class node;
 
@@ -78,6 +79,9 @@ struct point<3> {
 	int y;
 	int z;
 };
+
+std::ostream &operator<<(std::ostream &os, const point<2> &p);
+std::ostream &operator<<(std::ostream &os, const point<3> &p);
 
 template <size_t DIM>
 point<DIM> operator+(const point<DIM> &lhs, const point<DIM> &rhs) {
