@@ -125,8 +125,6 @@ public:
 	std::shared_ptr<IMAGE_TYPE> flatten_and_crop(located<rect,2> cropping_rect);
 	void insert(p_loc_image);
 	located<rect,2> bounding_rect() {
-		// debug
-		// std::cout << "bounding_rect().width == " << full_image_bounding_rect.width << "; bounding_rect.height == " << full_image_bounding_rect.height << std::endl;
 		return full_image_bounding_rect;
 	}
 
