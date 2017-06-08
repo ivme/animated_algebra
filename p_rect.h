@@ -12,6 +12,8 @@ public:
 	unsigned int val = 0;
 };
 
+bool operator==(const length &lhs, const length &rhs);
+
 // "partitioned rectangle"
 class p_rect : public node {
 public:
