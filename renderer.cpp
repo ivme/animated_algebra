@@ -55,17 +55,20 @@ namespace bdc {
 
 template <class IMAGE_TYPE>
 std::shared_ptr<IMAGE_TYPE> renderer<IMAGE_TYPE>::render(const view& v) {
-	auto scn = v.scn.lock();
-	auto nodes = scn->nodes();
+	auto scn_ = v.scn.lock();
+	if (!scn_) {return std::make_shared<located<IMAGE_TYPE,3>>();}
+	auto nodes = scn_->nodes();
 	std::shared_ptr<IMAGE_TYPE> p_img;
 	std::shared_ptr<located<IMAGE_TYPE,3>> p_located_img;
 	layered_image<IMAGE_TYPE> layered_img{};
 	
 	for (auto node_ptr : nodes) {
-		p_img = node_ptr->render(*this);
-		auto scene_location = node_ptr->get_scene_location();
-		p_located_img = std::make_shared<located<IMAGE_TYPE,3>>(*p_img,scene_location);
-		layered_img.insert(p_located_img);
+		if (node_ptr->is_renderable()) {
+			p_img = node_ptr->render(*this);
+			auto scene_location = node_ptr->get_scene_location();
+			p_located_img = std::make_shared<located<IMAGE_TYPE,3>>(*p_img,scene_location);
+			layered_img.insert(p_located_img);
+		}
 	}
 	return layered_img.flatten_and_crop(scene_rect_to_pixel_rect(v.rectangle));
 }
