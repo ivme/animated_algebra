@@ -20,6 +20,7 @@ enum class dimension : int {x = 0, y = 1};
 class p_rect : public node {
 public:
 	p_rect(std::vector<length> x_lengths_, std::vector<length> y_lengths_) : x_lengths(x_lengths_), y_lengths(y_lengths_) {}
+	virtual located<rect,2> own_bounding_rect() const override;
 
 	// split along specified dimension, x or y
 	// split(x,{1,3}) splits the rectangle along the first vertical partition and the third vertical partition
