@@ -18,13 +18,20 @@ bool operator==(const length &lhs, const length &rhs);
 class p_rect : public node {
 public:
 	p_rect(std::vector<length> x_lengths_, std::vector<length> y_lengths_) : x_lengths(x_lengths_), y_lengths(y_lengths_) {}
-	virtual std::shared_ptr<ascii_image> render(renderer<ascii_image> &r) const override {return r.render(*this);};
-	virtual std::shared_ptr<ascii_image> render(ascii_renderer &r) const override {return r.render(*this);}
 
-	int width() const;
-	int height() const;
+	// unit_size must be an integer multiple of both of the following
+	// ascii_renderer::scene_x_coordinates_per_pixel
+	// ascii_renderer::scene_y_coordinates_per_pixel
+	static constexpr int unit_size = 4;
+	int width() const;  // width in scene coordinates
+	int height() const;  // height in scene coordinates
+	int width_in_units() const;
+	int height_in_units() const;
 	std::vector<length> x_lengths;
 	std::vector<length> y_lengths;
+
+	virtual std::shared_ptr<ascii_image> render(renderer<ascii_image> &r) const override {return r.render(*this);};
+	virtual std::shared_ptr<ascii_image> render(ascii_renderer &r) const override {return r.render(*this);}
 };
 
 #endif

@@ -6,14 +6,22 @@ located<rect,2> p_rect::own_bounding_rect() const {
 	return located<rect,2>(rect(width()+1,height()+1),get_location());
 }
 
-int p_rect::width() const {
+int p_rect::width_in_units() const {
 	int out = 0;
 	for (auto it = x_lengths.begin(); it != x_lengths.end(); ++it) {out += it->val;}
 	return out;
 }
 
-int p_rect::height() const {
+int p_rect::height_in_units() const {
 	int out = 0;
 	for (auto it = y_lengths.begin(); it != y_lengths.end(); ++it) {out += it->val;}
 	return out;
+}
+
+int p_rect::width() const {
+	return width_in_units() * unit_size;
+}
+
+int p_rect::height() const {
+	return height_in_units() * unit_size;
 }
