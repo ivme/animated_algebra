@@ -2,6 +2,14 @@
 #include "renderer.h"
 
 // node
+
+node::node() :
+	location(0,0,0),
+	scene_location(0,0,0),
+	children(),
+	parent(),
+	scn() {}
+
 void node::make_scene_locations_dirty_() {
 	std::shared_ptr<scene> s = get_scene().lock();
 	if (s) {s->scene_locations_are_dirty = true;}
@@ -10,6 +18,10 @@ void node::make_scene_locations_dirty_() {
 void node::set_location(point<3> l) {
 	make_scene_locations_dirty_();
 	location = l;
+}
+
+void node::set_location(int x, int y, int z) {
+	set_location(point<3>(x,y,z));
 }
 
 void node::shift(point<3> delta) {
@@ -31,8 +43,9 @@ void node::set_scene(std::weak_ptr<scene> s) {
 	}
 }
 
-void node::set_parent(std::weak_ptr<node> p) {
-	if (auto old_parent = parent.lock()) {
+void node::set_parent(std::weak_ptr<node> p, bool preserve_scene_location) {
+	std::shared_ptr<node> old_parent{};
+	if ((old_parent = parent.lock())) {
 		old_parent->remove_child(shared_from_this());
 	}
 	auto new_parent = p.lock();
@@ -40,6 +53,11 @@ void node::set_parent(std::weak_ptr<node> p) {
 		new_parent->children.push_back(shared_from_this());
 		if (scn.lock() != new_parent->scn.lock()) {
 			set_scene(new_parent->scn);
+		}
+		if (old_parent && preserve_scene_location) {
+			auto old_p_scene_loc = old_parent->get_scene_location();
+			auto new_p_scene_loc = new_parent->get_scene_location();
+			this->location += old_p_scene_loc - new_p_scene_loc;
 		}
 	}
 	parent = p;
@@ -50,8 +68,8 @@ std::weak_ptr<node> node::get_parent() {
 	return parent;
 }
 
-void node::add_child(std::shared_ptr<node> child) {
-	child->set_parent(std::weak_ptr<node>(shared_from_this()));
+void node::add_child(std::shared_ptr<node> child, bool preserve_scene_location) {
+	child->set_parent(std::weak_ptr<node>(shared_from_this()),preserve_scene_location);
 }
 
 void node::remove_child(std::shared_ptr<node> child) {
@@ -75,7 +93,17 @@ point<3> node::get_scene_location() {
 	} else {
 		return point<3>();
 	}
-	
+}
+
+void node::change_child_spacing(int delta, dimension dim) const {
+	for (int i = 0; i < children.size(); ++i) {
+		switch(dim) {
+		case dimension::x:
+			children[i]->shift(i * delta,0); break;
+		case dimension::y:
+			children[i]->shift(0,i * delta); break;
+		}
+	}
 }
 
 located<rect,2> node::own_bounding_rect() const {
@@ -142,4 +170,7 @@ located<rect,2> scene::bounding_rect() const {
 }
 
 // view
+void view::view_whole_scene() {
+	rectangle = scn->bounding_rect();
+}
 std::shared_ptr<image<wchar_t>> view::render(renderer<ascii_image> &r) {return r.render(*this);}

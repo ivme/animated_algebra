@@ -7,10 +7,14 @@
 #include "scene.h"
 #include "p_rect.h"
 #include "aa_controller.h"
+#include "animator.h"
+#include "action.h"
+#include "quad_factor_animator.h"
+//#include "stack_cutter.h"
 #include <cassert>
 #include <iostream>
 #include <thread>
-
+#include <memory>
 
 void sleep() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1000)));
@@ -49,6 +53,13 @@ void test_algebra() {
 	assert(std::get<1>(algebra::fdiv_qr(-5,3)) == 1);
 	assert(std::get<0>(algebra::fdiv_qr(5,-3)) == -2);
 	assert(std::get<1>(algebra::fdiv_qr(5,-3)) == -1);
+
+	assert(std::get<0>(algebra::tdiv_qr(5,3)) == 1);
+	assert(std::get<1>(algebra::tdiv_qr(5,3)) == 2);
+	assert(std::get<0>(algebra::tdiv_qr(-5,3)) == -1);
+	assert(std::get<1>(algebra::tdiv_qr(-5,3)) == -2);
+	assert(std::get<0>(algebra::tdiv_qr(5,-3)) == -1);
+	assert(std::get<1>(algebra::tdiv_qr(5,-3)) == 2);
 
 	assert(std::get<0>(algebra::gcd_ext(5,3)) == 1); // gcd(5,3) == 1
 	assert(std::get<1>(algebra::gcd_ext(5,3)) == -1); // 1 == (-1)(5) + (2)(3)
@@ -198,6 +209,9 @@ void test_graphics() {
 	compare_z cmp_z = compare_z{};
 	assert(cmp_z(rect4,rect5));
 	assert(!cmp_z(rect5,rect4));
+
+	assert(point<3>(1,2,3) + point<3>(4,5,6) == point<3>(5,7,9));
+	assert(point<3>(1,2,-1) - point<3>(3,5,-7) == point<3>(-2,-3,6));
 }
 
 void test_scene() {
@@ -206,14 +220,14 @@ void test_scene() {
 
 	auto rect1_ptr = unit_p_rect_ptr();
 	auto rect2_ptr = unit_p_rect_ptr();
-	auto s1 = std::make_shared<scene>();
-	s1->set_root(rect1_ptr);
+
+	view v1{};
+	v1.scn = std::shared_ptr<scene>(new scene);
+	v1.scn->set_root(rect1_ptr);
 	rect1_ptr->add_child(rect2_ptr);
 	rect2_ptr->set_location(point<3>(ascii_renderer::h_pixels_per_unit() + 1,0,1));
 	
-	view v1{};
-	v1.scn = std::weak_ptr<scene>(s1);
-	v1.rectangle = s1->bounding_rect();
+	v1.rectangle = v1.scn->bounding_rect();
 	
 	auto snapshot1 = v1.render(r);
 	assert(snapshot1->pixel_at(0,0) == bdc::ur);
@@ -280,9 +294,122 @@ void test_scene() {
 	// img->show(vwr);;
 }
 
+void test_animator() {
+	ascii_viewer vwr{};
+	ascii_renderer r{};
+
+	auto unit = unit_p_rect_ptr();
+	view v{};
+	auto s = std::make_shared<scene>();
+	s->set_root(unit);
+	v.scn = s;
+	animator m{};
+	m.v = v;
+
+	auto shift1 = std::make_shared<shift>(unit,2,10,0); // shift unit node 1 right
+	shift1->fixed_frame_count = 5;
+	shift1->use_frame_count();
+	m.set_root_action(shift1);
+	vwr.present(*m.animate());
+
+	unit->set_location(0,0,0);
+	shift1->node_speed = 5;
+	shift1->use_node_speed();
+	vwr.present(*m.animate());	
+	/*
+	auto a = std::make_shared<animation<wchar_t>>();
+	a->set_animation_speed(5);
+	
+	auto unit = unit_p_rect_ptr();
+	view v{};
+	auto s = std::make_shared<scene>();
+	s->set_root(unit);
+	v.scn = s;
+	animator m{v};
+
+	unit->set_location(20,0,0);	
+	m.snapshot();
+	assert(a->frame_count() == 1);
+
+	m.use_node_speed();
+	m.node_speed = 10;
+	m.shift(unit, -20, 0);
+	assert(a->frame_count() == 3);
+	assert(unit->get_location() == point<3>(0,0,0));
+	
+	m.use_frame_count();
+	m.frame_count = 5;
+	m.shift(unit, 2, 12);
+	assert(a->frame_count() == 8);
+	assert(unit->get_location() == point<3>(2,12,0));
+
+	
+
+	vwr.present(*a);*/
+
+}
+/*
+void test_stack_cutter() {
+	ascii_viewer vwr{};
+	ascii_renderer r{};
+	length one{"1",1};
+	length x{"x",2};
+	auto rect_ptr = std::make_shared<p_rect>(std::vector<length>({x}),std::vector<length>({one,one,one,one,one,one}));
+	auto s = std::make_shared<scene>();
+	s->set_root(rect_ptr);
+	view v{};
+	v.scn = std::weak_ptr<scene>(s);
+	auto bounding_rect = s->bounding_rect();
+	v.rectangle = located<rect,3>(rect(STD_VIEW_WIDTH,STD_VIEW_HEIGHT),bounding_rect.location);
+	auto a = std::make_shared<animation<wchar_t>>();
+	a->set_animation_speed(3);
+	a->append_frame(v.render(r));
+
+	stack_cutter c{v,a};
+	c.y_spacing = 2;
+	c.x_spacing = 4;
+	c.cut_and_stack(rect_ptr,3);
+	vwr.present(*a);
+}
+*/
 void test_aa_controller() {
 	aa_controller ctrl;
-	// ctrl.prompt_for_quadratic_coeffs(false);
+	ctrl.animate_quadratic_factorization(6,22,20);
+}
+
+void test_quad_factor_animator() {
+	// TODO: test edge case where b = 0 and c = 0
+
+	// (2x + 3)(x + 4) = 2x^2 + 11x + 12
+	quad_factor_animator qfa{2,11,12};
+	qfa.set_up_scene();
+	auto scn = qfa.v.scn;
+	assert(scn);
+	auto root = scn->get_root();
+	assert(root->get_children().size() == 3);
+/*
+#ifdef PRIVACY_OFF
+	int var_length_scene_coordinates = quad_factor_animator::default_var_val * p_rect::unit_size;
+	assert(qfa.col1->width() == var_length_scene_coordinates);
+	assert(qfa.col1->height() == var_length_scene_coordinates * 2);
+	assert(qfa.col2->width() == var_length_scene_coordinates);
+	assert(qfa.col2->height() == 11 * p_rect::unit_size);
+	assert(qfa.col3->width() == p_rect::unit_size);
+	assert(qfa.col3->height() == 12 * p_rect::unit_size);
+#endif
+*/
+
+	// qfa.set_up_actions();
+
+	ascii_viewer vwr{};
+	vwr.present(*qfa.animate());
+
+	qfa = quad_factor_animator(4,16,15);
+	vwr.present(*qfa.animate());
+
+	qfa = quad_factor_animator(3,23,14);
+	vwr.present(*qfa.animate());
+
 }
 
 int main() {
@@ -294,6 +421,8 @@ int main() {
 	// test_viewer();
 	test_p_rect();
 	test_scene();
-	test_aa_controller();
-	
+	//test_animator();
+	//test_aa_controller();
+	//test_stack_cutter();
+	test_quad_factor_animator();
 }

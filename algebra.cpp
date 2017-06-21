@@ -128,3 +128,10 @@ std::tuple<int,int> algebra::fdiv_qr(int a, int b) {
 	int r = a - q * b;
 	return std::tuple<int,int>(q, r);
 }
+
+// truncated division
+std::tuple<int,int> algebra::tdiv_qr(int a, int b) {
+	int q = a / b;
+	int r = a - q * b;
+	return std::tuple<int,int>(q,r);
+}

@@ -12,7 +12,8 @@ public:
 	static float discriminant(float a, float b, float c);
 	static bool is_square_number(int n);
 	static std::tuple<int,int,int> gcd_ext(int a, int b);
-	static std::tuple<int,int> fdiv_qr(int a, int b);
+	static std::tuple<int,int> fdiv_qr(int a, int b); // floored division with remainder
+	static std::tuple<int,int> tdiv_qr(int a, int b); // truncated division with remainder
 	static int gcd(int a, int b);
 	static std::string term_to_string(int coeff, std::string var);
 	static std::string product_to_string(const std::string &a, const std:: string &b);

@@ -25,7 +25,7 @@ The question is whether there should be at least one pixel for every scene coord
 Which should be a finer resolution -- scene coordinates or pixel coordinates?
 If scene coordinates are the finest:
 	PROS: We can 'zoom out' of a scene, i.e. if a scene measures 1000 x 1000 in scene coordinates, we could render the whole thing as a full-resolution image with 1000x1000 pixels, or we could render it smaller, using only 100x100 pixels, say.
-	CONS: We cannot 'zoom in' on a region within a scene.  i.e. if the scene contains a unit circle at the scene's origin, it can never be rendered with more than 4 pixels.  Assuming simple square, grascale pixels, you would never be able to see the circle at all.
+	CONS: We cannot 'zoom in' on a region within a scene.  i.e. if the scene contains a unit circle at the scene's origin, it can never be rendered with more than 4 pixels.  Assuming simple square, grayscale pixels, you would never be able to see the circle at all.
 
 I think we want scene coordinates to be the finest.  That is, there is at least one scene coordinate for every pixel.
 

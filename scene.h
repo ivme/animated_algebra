@@ -14,17 +14,22 @@ class node : public std::enable_shared_from_this<node> {
 	friend class scene;
 
 public:
+	node();
 	// location of lower left corner of node in parent's coordinate system
 	// more positive z-locations are closer to foreground
 	point<3> get_location() const {return location;}
+
+	// moving methods
 	void set_location(point<3> l);
+	void set_location(int x, int y, int z);
 	void shift(point<3> delta);  // adds delta to the node's location
 	void shift(int dx, int dy, int dz = 0);
+	void change_child_spacing(int delta, dimension dim) const;
 
-	void set_parent(std::weak_ptr<node> p);
+	void set_parent(std::weak_ptr<node> p, bool preserve_scene_location = false);
 	std::weak_ptr<node> get_parent();
 
-	void add_child(std::shared_ptr<node> child);
+	void add_child(std::shared_ptr<node> child, bool preserve_scene_location = false);
 	void remove_child(std::shared_ptr<node> child);
 	const std::vector<std::shared_ptr<node>> &get_children() const;
 
@@ -39,7 +44,7 @@ public:
 	virtual std::shared_ptr<ascii_image> render(ascii_renderer &r) const;
 
 private:
-	point<3> location;
+	point<3> location = point<3>(0,0,0);
 	
 	point<3> scene_location;
 	// bool scene_location_is_dirty;
@@ -57,7 +62,7 @@ class scene : public std::enable_shared_from_this<scene> {
 	friend class node;
 public:
 	scene() : root(nullptr) {}
-	std::shared_ptr<const node> get_root() const {return root;}
+	std::shared_ptr<node> get_root() const {return root;}
 	void set_root(std::shared_ptr<node> r);
 	void refresh_scene_locations(); // recomputes scene locations
 	std::vector<std::shared_ptr<node>> nodes();
@@ -67,11 +72,15 @@ private:
 	bool scene_locations_are_dirty;
 };
 
+
 class view {
 public:
+	view() : rectangle(rect(150,100),point<2>(0,0)), scn(nullptr) {}
 	located<rect,2> rectangle;
+	std::shared_ptr<scene> scn;
+
+	void view_whole_scene();
 	std::shared_ptr<image<wchar_t>> render(renderer<ascii_image> &r);
-	std::weak_ptr<scene> scn;
 };
 
 #endif

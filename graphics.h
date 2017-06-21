@@ -7,6 +7,8 @@
 
 class node;
 
+enum class dimension : int {x = 0, y = 1};
+
 template<size_t DIM> 
 struct point {
 	point() : coord(std::array<int,DIM>()) {}
@@ -92,7 +94,7 @@ point<DIM> operator+(const point<DIM> &lhs, const point<DIM> &rhs) {
 
 template <size_t DIM>
 point<DIM> operator-(const point<DIM> &lhs, const point<DIM> &rhs) {
-	point<2> out;
+	point<DIM> out = lhs;
 	out -= rhs;
 	return out;
 }
