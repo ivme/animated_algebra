@@ -132,18 +132,4 @@ private:
 	void create_children();
 };
 
-class add_child : public action {
-public:
-	add_child(std::shared_ptr<node> parent_, std::shared_ptr<node> child_, bool preserve_scene_location_ = true) :
-				action(parent_,0), child(child_), preserve_scene_location(preserve_scene_location_) {}
-	// set parent as the parent of child, preserving scene locations
-	virtual bool own_act() override {child->set_parent(n,preserve_scene_location); return false;}
-
-#ifndef PRIVACY_OFF
-private:
-#endif
-	std::shared_ptr<node> child;
-	bool preserve_scene_location;
-};
-
 #endif
