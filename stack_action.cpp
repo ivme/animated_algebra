@@ -39,7 +39,7 @@ void stack_action::create_children() {
 	};
 
 	action::callback_func add_space_children2 = [add_settle_down,dx2_,dy2_](std::shared_ptr<action> parent, std::shared_ptr<action> finished_action) {
-		auto space_children2 = std::make_shared<space_children>(finished_action->get_node(),parent->get_current_frame() + 1,dx2_,dy2_);
+		auto space_children2 = std::make_shared<space_children>(finished_action->get_node(),parent->get_current_frame(),dx2_,dy2_);
 		space_children2->did_finish = add_settle_down;
 		parent->add_child(space_children2);
 	};
