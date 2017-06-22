@@ -115,11 +115,11 @@ bool shift::own_act() {
 
 	if (current_frame < x_r) {n->shift(x_increment + 1,0);}
 	else if (current_frame < f_count) {n->shift(x_increment,0);}
-	else {remaining_action = false;}
 
 	if (current_frame < y_r) {n->shift(0,y_increment + 1);}
 	else if (current_frame < f_count) {n->shift(0,y_increment);}
-	else {remaining_action = false;}
+
+	if (current_frame >= f_count - 1) {remaining_action = false;}
 
 	// do not update current_frame here.  it is updated in action::act()
 	return remaining_action;
