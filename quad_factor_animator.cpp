@@ -78,23 +78,16 @@ std::shared_ptr<animation<wchar_t>> quad_factor_animator::animate() {
 	// set parent of resulting collection of p_rects to group3
 	group3 = col3->split(dimension::y,b0);
 
-	// shift group3 right to make room for stacking and swapping x's and y's for group2
-	// increase in width of group2 after these actions = unit_size + group2b->bounding_rect().height - 1
-	render_action(std::make_shared<shift>(group3,1,unit_size + group2b->bounding_rect().height - 1,0));
+	// shift group 3 to allow space for 
+	// stacking group 2.
+	render_action(std::make_shared<shift>(group3,1,unit_size + var_val * unit_size,0));
 
 	//	stack_horizontal group2 (since its children are group2a and group2b,
 	//	only those groups will separate and stack)
 	//		space group2's children vertically
 	//		space group2's children horizontally
 	//		settle group2's children down
-	render_action(std::make_shared<stack_action>(group2,0,dimension::x,unit_size,4));
-
-	// merge group2b into a single p_rect
-	auto rect2b = p_rect::merge(group2b, dimension::y);
-
-	// swap x lengths and y lengths for group2b
-	rect2b->swap_x_y();
-	snapshot();
+	render_action(std::make_shared<stack_action>(group2,0,dimension::x,unit_size / 2,unit_size));
 
 	if (b0 > 1) {
 		// stack_horizontal group3
@@ -102,17 +95,31 @@ std::shared_ptr<animation<wchar_t>> quad_factor_animator::animate() {
 		// space group3's children horizontally
 		// settle group3's children down
 		
-		render_action(std::make_shared<stack_action>(group3,0,dimension::x,2,0));
+		render_action(std::make_shared<stack_action>(group3,0,dimension::x,unit_size / 2,0));
 	}
 
 	if (a1 > 1) {
-		// shift group3 right to make room for stacking of group2b
-		// after stacking, group2b will increase by (a1 - 1) * var_val * p_rect::unit_size
-		render_action(std::make_shared<shift>(group3,0,(a1 - 1) * var_val * unit_size,0));
+		// shift group3 right to make space for stacking of group2b
+		render_action(std::make_shared<shift>(group3,0, (a1 - 1) * var_val * unit_size,0));
 
 		// stack group2b horizontally
-		render_action(std::make_shared<stack_action>(group2b,0,dimension::x,4,0));
+		render_action(std::make_shared<stack_action>(group2b,0,dimension::x,unit_size / 2,0));
 	}
+
+	// merge group2b into a single p_rect
+	auto rect2b = p_rect::merge(group2b, dimension::y);
+
+	// if necessary, move group3 to make space
+	// for swapping group2b's x's and y's
+	int height_2b = rect2b->height();
+	int width_2b = rect2b->width();
+	if (height_2b > width_2b) {
+		render_action(std::make_shared<shift>(group3,0,height_2b - width_2b,0));
+	}
+
+	// swap x lengths and y lengths for group2b
+	rect2b->swap_x_y();
+	snapshot();
 	
 	// group 2b and 3 under a common parent, preserving scene locations
 	auto group_2b_3 = std::make_shared<node>();
@@ -138,8 +145,12 @@ std::shared_ptr<animation<wchar_t>> quad_factor_animator::animate() {
 	if (a0 > 1) {
 		// shift group2a, group 2b, and group3 right
 		// to make room for stacking of group1
-		render_action(std::make_shared<shift>(group_2b_3,0,(a0 - 1) * var_val * unit_size, 0));
-		render_action(std::make_shared<shift>(group2a,0,(a0 - 1) * var_val * unit_size, 0));
+		auto shift_2b_3 = std::make_shared<shift>(group_2b_3,0,(a0 - 1) * var_val * unit_size, 0);
+		auto shift_2a = std::make_shared<shift>(group2a,0,(a0 - 1) * var_val * unit_size, 0);
+		auto shift_2a_2b_3 = std::make_shared<action>();
+		shift_2a_2b_3->add_child(shift_2a);
+		shift_2a_2b_3->add_child(shift_2b_3);
+		render_action(shift_2a_2b_3);
 
 		// stack group1 horizontally
 		render_action(std::make_shared<stack_action>(group1,0,dimension::x,unit_size));
