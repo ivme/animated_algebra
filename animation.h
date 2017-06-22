@@ -28,7 +28,7 @@ public:
 
 private:
 	std::vector<std::shared_ptr<image<PIXEL_TYPE>>> frames; // must use pointers because image is abstract class
-	double fps = 6; // frames per second
+	double fps = 3; // frames per second
 };
 
 #endif
