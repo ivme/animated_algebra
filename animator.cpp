@@ -6,7 +6,8 @@
 #include <algorithm>
 #include <iostream> // debug
 
-animator::animator() : v(), r(), root_action(std::make_shared<action>()) {}
+animator::animator() : v(), r(), root_action(std::make_shared<action>()),
+						animation_(std::make_shared<animation<wchar_t>>()) {}
 animator::~animator() = default;
 
 void animator::render_action() {
@@ -30,6 +31,10 @@ void animator::render_action(std::shared_ptr<action> action_) {
 
 void animator::snapshot() {
 	animation_->append_frame(v.render(r));
+}
+
+std::shared_ptr<animation<wchar_t>> animator::animate() {
+	return animation_;
 }
 
 

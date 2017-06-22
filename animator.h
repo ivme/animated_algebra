@@ -13,7 +13,7 @@ public:
 
 	virtual void set_up_scene() {}
 	// virtual void set_up_actions() {}
-	virtual std::shared_ptr<animation<wchar_t>> animate() {return animation_;}
+	virtual std::shared_ptr<animation<wchar_t>> animate();
 	void snapshot();
 	virtual void will_render_frame() {}
 	virtual void did_render_frame() {}
