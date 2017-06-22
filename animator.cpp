@@ -29,6 +29,10 @@ void animator::render_action(std::shared_ptr<action> action_) {
 	}
 }
 
+void animator::pause(int frame_count) {
+	for (int i = 0; i < frame_count; ++i) {snapshot();}
+}
+
 void animator::snapshot() {
 	animation_->append_frame(v.render(r));
 }

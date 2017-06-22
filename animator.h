@@ -14,6 +14,7 @@ public:
 	virtual void set_up_scene() {}
 	// virtual void set_up_actions() {}
 	virtual std::shared_ptr<animation<wchar_t>> animate();
+	void pause(int frame_count);
 	void snapshot();
 	virtual void will_render_frame() {}
 	virtual void did_render_frame() {}
@@ -29,6 +30,7 @@ protected:
 	// append resulting frames to a
 	void render_action();
 	void render_action(std::shared_ptr<action> action_);
+
 	std::shared_ptr<animation<wchar_t>> animation_;
 	std::shared_ptr<action> root_action;
 	bool remaining_action = false;
