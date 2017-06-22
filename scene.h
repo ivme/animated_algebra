@@ -75,7 +75,7 @@ private:
 
 class view {
 public:
-	view() : rectangle(rect(150,100),point<2>(0,0)), scn(nullptr) {}
+	view() : rectangle(rect(170,100),point<2>(0,0)), scn(nullptr) {}
 	located<rect,2> rectangle;
 	std::shared_ptr<scene> scn;
 
