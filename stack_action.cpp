@@ -49,8 +49,6 @@ void stack_action::create_children() {
 	if (initial_spacing != 0) {
 		add_child(space_children1);
 	} else {
-		// debug
-		std::cout << "stack_action::create_chilren() --- no initial spacing" << std::endl;
 		add_space_children2(shared_from_this(),space_children1);
 	}
 	

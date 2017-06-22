@@ -140,8 +140,6 @@ void space_children::create_children() {
 	children.clear();
 	std::shared_ptr<shift> child_shift;
 	for (int i = 1; i < n->get_children().size(); ++i) {
-		// debug
-		std::cout << "adding child shift(...,...," << dx * i << "," << dy * i << ")" << std::endl;
 		child_shift = std::make_shared<shift>(n->get_children()[i],0,dx * i, dy * i);
 		child_shift->fixed_frame_count = this->fixed_frame_count;
 		child_shift->node_speed = this->node_speed;
