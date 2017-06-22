@@ -129,9 +129,12 @@ std::shared_ptr<animation<wchar_t>> quad_factor_animator::animate() {
 		render_action(make_move_action<shift>(group3,0,height_2b - width_2b,0));
 	}
 
+	// pause the animation for half a second
+	// to clarify the swap visually 
+	pause(animation_->get_animation_speed() / 2);
 	// swap x lengths and y lengths for group2b
 	rect2b->swap_x_y();
-	snapshot();
+	pause(animation_->get_animation_speed() / 2);
 	
 	// group 2b and 3 under a common parent, preserving scene locations
 	auto group_2b_3 = std::make_shared<node>();
