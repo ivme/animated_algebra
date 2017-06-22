@@ -31,8 +31,8 @@ private:
 	move::frame_count_method_type fcm = move::frame_count_method_type::limit;
 	int fixed_frame_count = 1;
 	int node_speed = 2;
-	int high_frame_limit = 5;
-	int low_frame_limit = 0;
+	int high_frame_limit = 15;
+	int low_frame_limit = 3;
 	void apply_move_settings(std::shared_ptr<move> n);
 	template <class MOVE_TYPE, typename... Args>
 	std::shared_ptr<MOVE_TYPE> make_move_action(Args... args) {
