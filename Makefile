@@ -18,7 +18,7 @@ directories:
 ${BUILD_DIR}/stack_action.o: stack_action.cpp stack_action.h action.h scene.h image.h matrix.h graphics.h viewer.h
 	$(CC) ${CXX_FLAGS} -c -o $@ $<
 
-${BUILD_DIR}/aa_controller.o: aa_controller.cpp aa_controller.h quad_factor_animator.h p_rect.h renderer.h scene.h image.h matrix.h graphics.h viewer.h algebra.h
+${BUILD_DIR}/aa_controller.o: aa_controller.cpp aa_controller.h quad_factor_animator.h animator.h animation.h p_rect.h renderer.h scene.h image.h matrix.h graphics.h viewer.h algebra.h stack_action.h
 	$(CC) ${CXX_FLAGS} -c -o $@ $<
 
 ${BUILD_DIR}/quad_factor_animator.o: quad_factor_animator.cpp quad_factor_animator.h animator.h animation.h p_rect.h renderer.h scene.h image.h matrix.h graphics.h viewer.h algebra.h stack_action.h
@@ -30,7 +30,7 @@ ${BUILD_DIR}/renderer.o: renderer.cpp p_rect.h renderer.h scene.h image.h matrix
 ${BUILD_DIR}/p_rect.o: p_rect.cpp p_rect.h renderer.h scene.h image.h matrix.h graphics.h viewer.h
 	$(CC) ${CXX_FLAGS} -c -o $@ $<
 
-${BUILD_DIR}/animator.o: animator.cpp animator.h image.h matrix.h graphics.h viewer.h
+${BUILD_DIR}/animator.o: animator.cpp animator.h image.h matrix.h graphics.h viewer.h animation.h
 	$(CC) ${CXX_FLAGS} -c -o $@ $<
 
 ${BUILD_DIR}/action.o: action.cpp action.h scene.h image.h matrix.h graphics.h viewer.h
