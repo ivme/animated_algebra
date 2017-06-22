@@ -36,19 +36,7 @@ protected:
 	int current_frame = 0;  // frames since the start of the action
 	bool remaining_action;
 };
-/*
-class sequential_action : public action {
-public:
-	sequential_action(std::shared_ptr<node> n_, int start_frame_) : action(n_,start_frame_), action_queue() {}
-	virtual bool act(int frame_number) override;
 
-#ifndef PRIVACY_OFF
-protected:
-#endif
-	std::queue<std::shared_ptr<action>> action_queue;
-
-};
-*/
 class move : public action {
 	friend class move;
 public:
@@ -94,21 +82,21 @@ protected:
 
 	frame_count_method_type frame_count_method;
 	virtual void internal_update() {}
-	virtual void global_update() {internal_update(); update_children_frame_count_settings();} // update this object's internal settings and those of its children
+	virtual void global_update(); // update this object's internal settings and those of its children
 
-	void update_children_frame_count_settings();
+	virtual void update_children_frame_count_settings();
 };
 
 class shift : public move {
 public:
 	shift(std::shared_ptr<node> n_, int start_frame_, int dx_, int dy_, frame_count_method_type fcm = fixed);	
 	virtual bool own_act() override;
-	virtual void use_frame_count() override {frame_count_method = fixed; compute_f_count_and_increments();} 
-	virtual void use_node_speed() override {frame_count_method = speed; compute_f_count_and_increments();}
-	virtual void use_frame_limit() override {frame_count_method = limit; compute_f_count_and_increments();}
+	int get_f_count() {return f_count;}
 
 private:
 	virtual void internal_update() override {compute_f_count_and_increments();}
+	void compute_f_count();
+	void compute_increments();
 	void compute_f_count_and_increments();
 	int f_count;
 	int x_increment;
@@ -123,6 +111,7 @@ class space_children : public move {
 public:
 	space_children(std::shared_ptr<node> n_, int start_frame_, int dx_, int dy_, frame_count_method_type fcm = fixed);
 	virtual bool own_act() override;
+	virtual void update_children_frame_count_settings() override;
 
 private:
 	int dx;

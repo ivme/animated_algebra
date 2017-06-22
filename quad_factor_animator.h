@@ -27,6 +27,20 @@ private:
 	std::string var_name;
 	int var_val;
 
+	// move settings
+	move::frame_count_method_type fcm = move::frame_count_method_type::limit;
+	int fixed_frame_count = 1;
+	int node_speed = 2;
+	int high_frame_limit = 5;
+	int low_frame_limit = 0;
+	void apply_move_settings(std::shared_ptr<move> n);
+	template <class MOVE_TYPE, typename... Args>
+	std::shared_ptr<MOVE_TYPE> make_move_action(Args... args) {
+		auto action_ = std::make_shared<MOVE_TYPE>(args...);
+		apply_move_settings(action_);
+		return action_;
+	}
+
 	std::queue<std::shared_ptr<action>> action_queue;
 	void initialize_columns();
 	std::set<int> get_split_points(std::shared_ptr<p_rect> rect_to_cut, unsigned int sub_rect_count) const;

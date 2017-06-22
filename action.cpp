@@ -26,18 +26,12 @@ bool action::act(int frame_number) {
 	++current_frame;
 	return remaining_action;
 }
-/*
-// sequential_action
-bool sequential_action::act(int frame_number) {
-	if (action::act(frame_number)) {return true;}
-	else if (action_queue.empty()) {return false;}
-	else {
-		children.push_back(action_queue.front());
-		action_queue.pop();
-		return true;
-	}
+
+void move::global_update() {
+	this->internal_update();
+	update_children_frame_count_settings();
 }
-*/
+
 // move
 void move::update_children_frame_count_settings() {
 	std::shared_ptr<move> move_child_ptr;
@@ -54,7 +48,7 @@ void move::update_children_frame_count_settings() {
 	}
 }
 
-void shift::compute_f_count_and_increments() {
+void shift::compute_f_count() {
 	if (frame_count_method == fixed) {f_count = fixed_frame_count;}
 	else {
 		int d_max = (std::abs(dx) > std::abs(dy)) ? dx : dy;
@@ -69,10 +63,10 @@ void shift::compute_f_count_and_increments() {
 			}
 		}
 	}
+}
 
+void shift::compute_increments() {
 	if (f_count == 0) {
-		// debug
-		std::cout << "f_count == 0" << std::endl;
 		x_increment = 0;
 		y_increment = 0;
 		return;
@@ -102,6 +96,11 @@ void shift::compute_f_count_and_increments() {
 	quo_rem = algebra::fdiv_qr(dy,f_count);
 	y_increment = std::get<0>(quo_rem);
 	y_r = std::get<1>(quo_rem);
+}
+
+void shift::compute_f_count_and_increments() {
+	compute_f_count();
+	compute_increments();
 }
 
 shift::shift(std::shared_ptr<node> n_, int start_frame_, int dx_, int dy_, frame_count_method_type fcm) : 
@@ -141,14 +140,28 @@ void space_children::create_children() {
 	std::shared_ptr<shift> child_shift;
 	for (int i = 1; i < n->get_children().size(); ++i) {
 		child_shift = std::make_shared<shift>(n->get_children()[i],0,dx * i, dy * i);
-		child_shift->fixed_frame_count = this->fixed_frame_count;
-		child_shift->node_speed = this->node_speed;
-		child_shift->low_frame_limit = this->low_frame_limit;
-		child_shift->high_frame_limit = this->high_frame_limit;
-		child_shift->use_frame_count_method(frame_count_method);
-
 		children.push_back(child_shift);
 	}
+
+	update_children_frame_count_settings();
+}
+
+void space_children::update_children_frame_count_settings() {
+	if (children.size() > 0) {
+		auto last = std::dynamic_pointer_cast<shift>(children.back());
+		last->fixed_frame_count = this->fixed_frame_count;
+		last->node_speed = this->node_speed;
+		last->low_frame_limit = this->low_frame_limit;
+		last->high_frame_limit = this->high_frame_limit;		
+		last->use_frame_count_method(frame_count_method);
+
+		for (size_t i = 0; i != children.size()-1; ++i) {
+			auto child = std::dynamic_pointer_cast<shift>(children[i]);
+			child->set_fixed_frame_count(last->get_f_count());
+			child->use_frame_count_method(frame_count_method_type::fixed);
+		}
+	}
+	
 }
 
 // settle

@@ -306,16 +306,19 @@ void test_animator() {
 	animator m{};
 	m.v = v;
 
-	auto shift1 = std::make_shared<shift>(unit,2,10,0); // shift unit node 1 right
-	shift1->fixed_frame_count = 5;
+	auto shift1 = std::make_shared<shift>(unit,1,10,0); // shift unit node 1 right
+	shift1->fixed_frame_count = 2;
 	shift1->use_frame_count();
 	m.set_root_action(shift1);
-	vwr.present(*m.animate());
+	m.render_action();
+	auto animation_ = m.animate();
 
+	vwr.present(*m.animate());
+/*
 	unit->set_location(0,0,0);
 	shift1->node_speed = 5;
 	shift1->use_node_speed();
-	vwr.present(*m.animate());	
+	vwr.present(*m.animate());	*/
 	/*
 	auto a = std::make_shared<animation<wchar_t>>();
 	a->set_animation_speed(5);
@@ -402,12 +405,18 @@ void test_quad_factor_animator() {
 	// qfa.set_up_actions();
 
 	ascii_viewer vwr{};
-	vwr.present(*qfa.animate());
+	//vwr.present(*qfa.animate());
 
 	qfa = quad_factor_animator(4,16,15);
-	vwr.present(*qfa.animate());
+	//vwr.present(*qfa.animate());
 
 	qfa = quad_factor_animator(3,23,14);
+	//vwr.present(*qfa.animate());
+
+	qfa = quad_factor_animator(10,17,3);
+	//vwr.present(*qfa.animate());
+
+	qfa = quad_factor_animator(1,2,1);
 	vwr.present(*qfa.animate());
 
 }
@@ -421,8 +430,8 @@ int main() {
 	// test_viewer();
 	test_p_rect();
 	test_scene();
-	//test_animator();
-	//test_aa_controller();
-	//test_stack_cutter();
+	// test_animator();
+	// test_aa_controller();
+	// test_stack_cutter();
 	test_quad_factor_animator();
 }
