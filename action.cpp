@@ -26,7 +26,7 @@ bool action::act(int frame_number) {
 	++current_frame;
 	return remaining_action;
 }
-
+/*
 // sequential_action
 bool sequential_action::act(int frame_number) {
 	if (action::act(frame_number)) {return true;}
@@ -37,7 +37,7 @@ bool sequential_action::act(int frame_number) {
 		return true;
 	}
 }
-
+*/
 // move
 void move::update_children_frame_count_settings() {
 	std::shared_ptr<move> move_child_ptr;

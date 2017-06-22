@@ -36,7 +36,7 @@ protected:
 	int current_frame = 0;  // frames since the start of the action
 	bool remaining_action;
 };
-
+/*
 class sequential_action : public action {
 public:
 	sequential_action(std::shared_ptr<node> n_, int start_frame_) : action(n_,start_frame_), action_queue() {}
@@ -48,7 +48,7 @@ protected:
 	std::queue<std::shared_ptr<action>> action_queue;
 
 };
-
+*/
 class move : public action {
 	friend class move;
 public:

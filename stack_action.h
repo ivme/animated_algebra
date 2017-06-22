@@ -3,7 +3,7 @@
 
 #include "action.h"
 
-class stack_action : public sequential_action {
+class stack_action : public action {
 	// this action assumes that the child nodes of 
 	// n_ are already stacked either horizontally or
 	// vertically
