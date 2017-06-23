@@ -28,8 +28,8 @@ private:
 	int var_val;
 
 	// move settings
-	move::frame_count_method_type fcm = move::frame_count_method_type::limit;
-	int fixed_frame_count = 1;
+	move::frame_count_method_type fcm = move::frame_count_method_type::fixed;
+	int fixed_frame_count = 5;
 	int node_speed = 2;
 	int high_frame_limit = 15;
 	int low_frame_limit = 3;
