@@ -220,5 +220,14 @@ std::shared_ptr<ascii_image> ascii_renderer::render(const p_rect &pr) {
 	return output;
 }
 
+std::shared_ptr<ascii_image> ascii_renderer::render(const text_node& n) {
+	std::string text = n.get_text();
+	int text_size = text.size();
+	auto output = std::make_shared<ascii_image>(rect(text_size,1));
+	pixel_range<wchar_t> pixels{output,0,0,text_size,1};
+	std::copy(text.begin(),text.end(),pixels.begin());
+	return output;
+}
+
 // explicit instantiations
 template class renderer<ascii_image>;

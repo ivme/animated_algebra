@@ -5,6 +5,7 @@
 //#define USE_BOX_DRAWING_CHARACTERS
 
 #include "scene.h"
+#include "text_node.h"
 
 class length;
 class p_rect;
@@ -19,6 +20,7 @@ public:
 	located<rect,2> scene_rect_to_pixel_rect(located<rect,2> scene_rect);
 	virtual std::shared_ptr<IMAGE_TYPE> render(const node&) = 0;
 	virtual std::shared_ptr<IMAGE_TYPE> render(const p_rect&) = 0;
+	virtual std::shared_ptr<IMAGE_TYPE> render(const text_node&) = 0;
 };
 
 
@@ -26,6 +28,7 @@ class ascii_renderer : public renderer<ascii_image> {
 public:
 	virtual std::shared_ptr<ascii_image> render(const node&) override {return std::shared_ptr<ascii_image>();}
 	virtual std::shared_ptr<ascii_image> render(const p_rect &) override;
+	virtual std::shared_ptr<ascii_image> render(const text_node&) override;
 	static rect pixel_dimensions(const p_rect &pr);
 
 	static constexpr int scene_x_coordinates_per_pixel = 1;

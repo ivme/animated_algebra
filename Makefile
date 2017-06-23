@@ -7,8 +7,8 @@ ifeq (${PRIVACY_OFF}, true)
 	CXX_FLAGS += -DPRIVACY_OFF -g
 endif
 
-OBJECTS = ${BUILD_DIR}/algebra.o ${BUILD_DIR}/graphics.o ${BUILD_DIR}/matrix.o ${BUILD_DIR}/image.o ${BUILD_DIR}/viewer.o ${BUILD_DIR}/renderer.o ${BUILD_DIR}/p_rect.o ${BUILD_DIR}/scene.o ${BUILD_DIR}/aa_controller.o ${BUILD_DIR}/animation.o ${BUILD_DIR}/animator.o ${BUILD_DIR}/action.o ${BUILD_DIR}/quad_factor_animator.o ${BUILD_DIR}/stack_action.o
-HEADERS = stack_action.h quad_factor_animator.h p_rect.h renderer.h scene.h image.h matrix.h graphics.h viewer.h algebra.h aa_controller.h animator.h action.h animation.h
+OBJECTS = ${BUILD_DIR}/algebra.o ${BUILD_DIR}/graphics.o ${BUILD_DIR}/matrix.o ${BUILD_DIR}/image.o ${BUILD_DIR}/viewer.o ${BUILD_DIR}/renderer.o ${BUILD_DIR}/p_rect.o ${BUILD_DIR}/scene.o ${BUILD_DIR}/aa_controller.o ${BUILD_DIR}/animation.o ${BUILD_DIR}/animator.o ${BUILD_DIR}/action.o ${BUILD_DIR}/quad_factor_animator.o ${BUILD_DIR}/stack_action.o ${BUILD_DIR}/text_node.o
+HEADERS = stack_action.h quad_factor_animator.h p_rect.h renderer.h scene.h image.h matrix.h graphics.h viewer.h algebra.h aa_controller.h animator.h action.h animation.h text_node.h
 
 all: ${OBJECTS} ${BUILD_DIR}/test
 
@@ -34,6 +34,9 @@ ${BUILD_DIR}/animator.o: animator.cpp animator.h image.h matrix.h graphics.h vie
 	$(CC) ${CXX_FLAGS} -c -o $@ $<
 
 ${BUILD_DIR}/action.o: action.cpp action.h scene.h image.h matrix.h graphics.h viewer.h
+	$(CC) ${CXX_FLAGS} -c -o $@ $<
+
+${BUILD_DIR}/text_node.o: text_node.cpp text_node.h scene.h image.h matrix.h graphics.h viewer.h
 	$(CC) ${CXX_FLAGS} -c -o $@ $<
 
 ${BUILD_DIR}/scene.o: scene.cpp scene.h image.h matrix.h graphics.h viewer.h
