@@ -23,7 +23,7 @@ private:
 #endif
 	int a, b, c; // quadratic coeffs, ax^2 + bx + c
 	std::shared_ptr<p_rect> col1, col2, col2a, col2b, col3;
-	std::shared_ptr<node> group1, group2, group2a, group2b, group3;
+	std::shared_ptr<node> p_rects, group1, group2, group2a, group2b, group3;
 	std::string var_name;
 	int var_val;
 
