@@ -44,7 +44,6 @@ public:
 	void swap_x_y();
 	std::vector<length> x_lengths;
 	std::vector<length> y_lengths;
-	
 
 	virtual bool is_renderable() const override {return true;}
 	virtual std::shared_ptr<ascii_image> render(renderer<ascii_image> &r) const override {return r.render(*this);};
