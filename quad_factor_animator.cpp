@@ -35,9 +35,12 @@ void quad_factor_animator::set_up_scene() {
 	col3 = std::make_shared<p_rect>(std::vector<length>(1,unit_length),std::vector<length>(c,unit_length));
 	col2->set_location(col1->width() + p_rect::unit_size,0,0);
 	col3->set_location(col1->width() + col2->width() + 2 * p_rect::unit_size,0,0);
-	v.scn->get_root()->add_child(col1);
-	v.scn->get_root()->add_child(col2);
-	v.scn->get_root()->add_child(col3);
+	p_rects = std::make_shared<node>();
+	p_rects->add_child(col1);
+	p_rects->add_child(col2);
+	p_rects->add_child(col3);
+	v.scn->get_root()->add_child(p_rects);
+	p_rects->shift(p_rect::unit_size, p_rect::unit_size);
 }
 
 void quad_factor_animator::apply_move_settings(std::shared_ptr<move> n) {
@@ -138,14 +141,17 @@ std::shared_ptr<animation<wchar_t>> quad_factor_animator::animate() {
 	
 	// group 2b and 3 under a common parent, preserving scene locations
 	auto group_2b_3 = std::make_shared<node>();
+	v.scn->get_root()->add_child(group_2b_3); // must be added to the scene for preserve_scene_location to work
 	group_2b_3->set_location(rect2b->get_scene_location());
-	v.scn->get_root()->add_child(group_2b_3,true);
+	p_rects->add_child(group_2b_3,true);
 	group_2b_3->add_child(rect2b,true);
 	group_2b_3->add_child(group3,true);
 
 	// group 1 and 2a under a common parent, preserving scene locations
 	auto group_1_2a = std::make_shared<node>();
-	v.scn->get_root()->add_child(group_1_2a,true);
+	v.scn->get_root()->add_child(group_1_2a);
+	group_1_2a->set_location(group1->get_scene_location());
+	p_rects->add_child(group_1_2a,true);
 	group_1_2a->add_child(group1,true);
 	group_1_2a->add_child(group2a,true);
 
