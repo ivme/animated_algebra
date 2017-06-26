@@ -21,7 +21,10 @@ bool operator< (const length &lhs, const length &rhs);
 // "partitioned rectangle"
 class p_rect : public node {
 public:
-	p_rect(std::vector<length> x_lengths_, std::vector<length> y_lengths_) : x_lengths(x_lengths_), y_lengths(y_lengths_) {}
+	enum display_style_type : int {empty = 0, labels_and_lines = 1, center_factored = 2, center_expanded = 3};
+
+	p_rect(std::vector<length> x_lengths_, std::vector<length> y_lengths_) :
+			x_lengths(x_lengths_), y_lengths(y_lengths_), display_style(labels_and_lines) {}
 	virtual located<rect,2> own_bounding_rect() const override;
 
 	// split along specified dimension, x or y
@@ -47,6 +50,21 @@ public:
 	std::vector<length> x_lengths;
 	std::vector<length> y_lengths;
 
+	bool show_interior_lines = true;
+	bool show_sub_rect_labels = true;
+	bool show_center_expanded = false; // display an algebraic representation of the expanded form of this p_rect in the center of the p_rect
+	bool show_center_factored = false; // display an algebraic representation of the factored form of this p_rect in the center of the p_rect 
+	void add_left_label(); // labels vertical axis on left
+	void add_bottom_label(); // labels whole p_rect in center of rect
+	std::string x_label_text() const;
+	std::string y_label_text() const;
+	std::string get_factored_string() const;
+	std::string get_expanded_string() const;
+	std::string label_text(dimension dim) const;
+	void set_display_style(display_style_type ds);
+	display_style_type get_display_style();
+	static void set_children_display_style(std::shared_ptr<node> n, display_style_type ds); // all children of n must be p_rects
+
 	std::map<length,int> get_length_frequency_map(dimension dim) const;
 	std::map<std::string,int> get_var_coeff_map(dimension dim) const;
 
@@ -57,6 +75,7 @@ public:
 #ifndef PRIVACY_OFF
 private:
 #endif
+	display_style_type display_style;
 	std::set<int> get_split_points(dimension dim, unsigned int sub_rect_count) const;
 };
 /*

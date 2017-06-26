@@ -70,6 +70,64 @@ void p_rect::swap_x_y() {
 	x_lengths.swap(y_lengths);
 }
 
+std::string p_rect::x_label_text() const {
+	return p_rect::label_text(dimension::x);
+}
+
+std::string p_rect::y_label_text() const {
+	return p_rect::label_text(dimension::y);
+}
+
+std::string p_rect::get_factored_string() const {
+	return algebra::enclose(x_label_text()) + algebra::enclose(y_label_text());
+}
+
+std::string p_rect::get_expanded_string() const {
+	return algebra::sum_to_string(algebra::expand(get_var_coeff_map(dimension::x),get_var_coeff_map(dimension::y)));
+}
+
+std::string p_rect::label_text(dimension dim) const {
+	return algebra::sum_to_string(get_var_coeff_map(dim));
+}
+
+void p_rect::set_display_style(display_style_type ds) {
+	display_style = ds;
+	switch (ds) {
+		case display_style_type::empty:
+		show_interior_lines = false;
+		show_sub_rect_labels = false;
+		show_center_factored = false;
+		show_center_expanded = false;
+		break;
+		case display_style_type::labels_and_lines:
+		show_interior_lines = true;
+		show_sub_rect_labels = true;
+		show_center_factored = false;
+		show_center_expanded = false;
+		break;
+		case display_style_type::center_factored:
+		show_interior_lines = false;
+		show_sub_rect_labels = false;
+		show_center_factored = true;
+		show_center_expanded = false;
+		break;
+		case display_style_type::center_expanded:
+		show_interior_lines = false;
+		show_sub_rect_labels = false;
+		show_center_factored = false;
+		show_center_expanded = true;
+	}
+}
+
+p_rect::display_style_type p_rect::get_display_style() {
+	return display_style;
+}
+
+void p_rect::set_children_display_style(std::shared_ptr<node> n, display_style_type ds) {
+	for (auto child : n->get_children()) {
+		std::dynamic_pointer_cast<p_rect>(child)->set_display_style(ds);
+	}
+}
 
 std::shared_ptr<node> p_rect::split(dimension dim,std::set<int> split_points) {
 	auto out = std::make_shared<node>();
@@ -120,6 +178,7 @@ std::shared_ptr<node> p_rect::split(dimension dim,std::set<int> split_points) {
 			break;
 		}
 		out->add_child(sub_rect);
+		sub_rect->set_display_style(this->display_style);
 	}
 	
 	out->set_location(this->get_location());
@@ -196,6 +255,7 @@ std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension di
 		merged_rect->set_parent(gp,true);
 	}
 	
+	merged_rect->set_display_style(zero_child->display_style);
 	return merged_rect;
 }
 
