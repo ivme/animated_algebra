@@ -54,8 +54,8 @@ std::array<int,3> aa_controller::prompt_for_quadratic_coeffs(bool allow_negative
 	for (int i = 0; i < 3; ++i) {
 		std::cout << vars[i] << " = " << std::endl;
 		std::cin >> out[i];
-		while (!allow_negatives && out[i] < 0) {
-			std::cout << "Non-negative values are not permitted." << std::endl;
+		while (!allow_negatives && out[i] <= 0) {
+			std::cout << "Only positive values are permitted.  Please enter a new value." << std::endl;
 			std::cout << vars[i] << " = " << std::endl;
 			std::cin >> out[i];
 		}
