@@ -33,6 +33,12 @@ void animator::pause(int frame_count) {
 	for (int i = 0; i < frame_count; ++i) {snapshot();}
 }
 
+void animator::pause(double seconds) {
+	if (animation_) {
+		pause((int) (animation_->get_animation_speed() * seconds));
+	}
+}
+
 void animator::snapshot() {
 	animation_->append_frame(v.render(r));
 }

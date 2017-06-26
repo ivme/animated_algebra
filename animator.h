@@ -15,6 +15,7 @@ public:
 	// virtual void set_up_actions() {}
 	virtual std::shared_ptr<animation<wchar_t>> animate();
 	void pause(int frame_count);
+	void pause(double seconds);
 	void snapshot();
 	virtual void will_render_frame() {}
 	virtual void did_render_frame() {}
