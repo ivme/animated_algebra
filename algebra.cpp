@@ -74,7 +74,10 @@ std::string algebra::factorization_to_string(std::tuple<bool,int,int,int,int> f)
 }
 
 std::string algebra::term_to_string(int coeff, std::string var) {
+	if (var == "") {return std::to_string(coeff);}
 	switch (coeff) {
+		case 0:
+		return "0";
 		case 1:
 		return var;
 		case -1:
@@ -92,6 +95,7 @@ std::string algebra::product_to_string(const std::string &a, const std:: string 
 }
 
 std::string algebra::line_to_string(int coeff, std::string var, int constant) {
+	if (coeff == 0) {return std::to_string(constant);}
 	std::string s = term_to_string(coeff,var);
 	if (constant > 0) {
 		return s + " + " + std::to_string(constant);
