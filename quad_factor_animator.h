@@ -33,13 +33,23 @@ private:
 	int node_speed = 2;
 	int high_frame_limit = 15;
 	int low_frame_limit = 3;
+
 	void apply_move_settings(std::shared_ptr<move> n);
+
 	template <class MOVE_TYPE, typename... Args>
 	std::shared_ptr<MOVE_TYPE> make_move_action(Args... args) {
 		auto action_ = std::make_shared<MOVE_TYPE>(args...);
 		apply_move_settings(action_);
 		return action_;
 	}
+
+	// renders the children of parent with
+	// a different display style, then reverts
+	// to the original display styles
+	// pause_before == length (seconds) of pause before changing display style
+	// pause_during == length (seconds) of time for which children are displayed with the new style
+	// pause_after == length (seconds) of pause after reverting to original display styles
+	void flash_display_style(std::vector<std::shared_ptr<node>> p_rects, p_rect::display_style_type ds, double pause_before, double pause_during, double pause_after);
 
 	std::queue<std::shared_ptr<action>> action_queue;
 	void initialize_columns();
