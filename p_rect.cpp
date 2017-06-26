@@ -229,7 +229,7 @@ std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension di
 
 	dimension other_dim = dim == dimension::x ? dimension::y : dimension::x;
 
-	for (auto child : parent->get_children()) {
+	for (auto child : sorted_children) {
 		auto p_rect_child = std::dynamic_pointer_cast<p_rect>(child);
 		if (p_rect_child->get_lengths(dim) != lengths) {
 			throw std::runtime_error("merging p_rects with different lengths");
@@ -244,8 +244,10 @@ std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension di
 	switch (dim) {
 		case dimension::x:
 		merged_rect = std::make_shared<p_rect>(lengths,other_lengths);
+		break;
 		case dimension::y:
 		merged_rect = std::make_shared<p_rect>(other_lengths,lengths);
+		break;
 	}
 	
 	merged_rect->set_location(parent->get_location());
