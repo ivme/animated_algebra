@@ -39,6 +39,24 @@ int p_rect::height() const {
 	return height_in_units() * unit_size;
 }
 
+std::map<length,int> p_rect::get_length_frequency_map(dimension dim) const {
+	std::map<length,int> out{};
+	for (auto len : get_lengths(dim)) {++out[len];}
+	return out;
+}
+
+std::map<std::string,int> p_rect::get_var_coeff_map(dimension dim) const {
+	std::map<std::string,int> out{};
+	auto lengths = get_lengths(dim);
+	for (auto len : lengths) {
+		std::string name{};
+		if (len.name == "1") {name = "";}
+		else (name = len.name);
+		++out[name];
+	}
+	return out;
+}
+
 const std::vector<length> &p_rect::get_lengths(dimension dim) const {
 	switch (dim) {
 		case dimension::x:

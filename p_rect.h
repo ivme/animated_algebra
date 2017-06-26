@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include "renderer.h"
 #include "action.h"
 
@@ -45,6 +46,9 @@ public:
 	void swap_x_y();
 	std::vector<length> x_lengths;
 	std::vector<length> y_lengths;
+
+	std::map<length,int> get_length_frequency_map(dimension dim) const;
+	std::map<std::string,int> get_var_coeff_map(dimension dim) const;
 
 	virtual bool is_renderable() const override {return true;}
 	virtual std::shared_ptr<ascii_image> render(renderer<ascii_image> &r) const override {return r.render(*this);};
