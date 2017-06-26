@@ -81,10 +81,36 @@ void test_algebra() {
 	assert(std::get<3>(f2) == 1);
 	assert(std::get<4>(f2) == 2);
 
+	assert(algebra::term_to_string(0,"x") == "0");
+	assert(algebra::term_to_string(1,"x") == "x");
+	assert(algebra::term_to_string(2,"x") == "2x");
+	assert(algebra::term_to_string(-1,"x") == "-x");
+	assert(algebra::term_to_string(2,"") == "2");
+	assert(algebra::term_to_string(1,"1") == "1");
+	assert(algebra::term_to_string(5,"") == "5");
+
 	assert(algebra::product_to_string("a","b") == "a*b");
 	assert(algebra::product_to_string("1","b") == "b");
 	assert(algebra::product_to_string("a","1") == "a");
 	assert(algebra::product_to_string("a","a") == "a^2");
+
+	assert(algebra::enclose("x") == "(x)");
+	assert(algebra::line_to_string(0,"x",1) == "1");
+	assert(algebra::line_to_string(1,"x",4) == "x + 4");
+	assert(algebra::line_to_string(2,"x",-3) == "2x - 3");
+
+	assert(algebra::sum_to_string({{"",4}}) == "4");
+	assert(algebra::sum_to_string({{"x",0}}) == "0");
+	assert(algebra::sum_to_string({{"x",1}}) == "x");
+	assert(algebra::sum_to_string({{"y",-3},{"x",2}}) == "2x - 3y");
+	assert(algebra::sum_to_string({{"a",-2},{"c",-3},{"b",1}}) == "-2a + b - 3c");
+	assert(algebra::sum_to_string({{"",2},{"x",1}}) == "2 + x");
+
+	std::map<std::string,int> x{{"x",1}};
+	assert(algebra::sum_to_string(algebra::expand(x,x)) == "x^2");
+	std::map<std::string,int> x_p_2{{"",2},{"x",1}};
+	std::map<std::string,int> x_m_4{{"",-4},{"x",1}};
+	assert(algebra::sum_to_string(algebra::expand(x_p_2,x_m_4)) == "-8 - 2x + x^2");
 	/* user input required
 	int a,b,c;
 	std::cout << "a = " << std::endl;
