@@ -12,6 +12,8 @@
 // animated algebra controller
 class aa_controller {
 public:
+	// launch
+	void launch();
 
 	// prompt user for (a,b,c) of ax^2 +bx + c
 	std::array<int,3> prompt_for_quadratic_coeffs(bool allow_negatives);
@@ -22,6 +24,9 @@ private:
 	scene scene_;
 	view view_;
 	std::shared_ptr<viewer> viewer_;
-};
 
+	static void display_welcome_message();
+	static void display_main_menu();
+	static int select_menu_option(void (*display_menu)(), int greatest_menu_option);
+};
 #endif
