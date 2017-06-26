@@ -4,6 +4,7 @@
 #include <tuple>
 #include <memory>
 #include <string>
+#include <map>
 
 class algebra {
 public:
@@ -18,6 +19,9 @@ public:
 	static std::string term_to_string(int coeff, std::string var);
 	static std::string product_to_string(const std::string &a, const std:: string &b);
 	static std::string line_to_string(int coeff, std::string var, int constant);
+	static std::string sum_to_string(std::map<std::string,int> var_coeff_map);
+	static std::map<std::string,int> expand(std::map<std::string,int> sum1, std::map<std::string,int>sum2); // expand sum1 * sum2
+	static std::string enclose(std::string expr);
 };
 
 #endif

@@ -30,6 +30,28 @@ std::tuple<bool,int,int,int,int> algebra::quad_factor(int a, int b, int c) {
 		return f;
 }
 
+std::map<std::string,int> algebra::expand(std::map<std::string,int> sum1, std::map<std::string,int>sum2) {
+	std::map<std::string,int> product;
+	for (auto pair1 : sum1) {
+		std::string var1 = pair1.first;
+		for (auto pair2 : sum2) {
+			std::string var2 = pair2.first;
+			std::string compound_var;
+			if (var1 == var2) {
+				if (var1 == "") {compound_var = "";}
+				else {compound_var = var1 + "^2";}
+			}
+			else {
+				// canonical order
+				if (var1 < var2) {compound_var = var1 + var2;}
+				else {compound_var = var2 + var1;}
+			}
+			product[compound_var] += pair1.second * pair2.second;
+		}
+	}
+	return product;
+}
+
 int signum(int x) {
 	if (x < 0) return -1;
 	if (x > 0) return 1;
@@ -79,6 +101,37 @@ std::string algebra::line_to_string(int coeff, std::string var, int constant) {
 	} else {
 		return s + " - " + std::to_string(-1 * constant);
 	}
+}
+
+std::string algebra::sum_to_string(std::map<std::string,int> var_coeff_map) {
+	if (var_coeff_map.empty()) {return "0";}
+	auto it = var_coeff_map.begin();
+	auto end = var_coeff_map.end();
+	std::string out{};
+	if (it->second != 0) {
+		out += algebra::term_to_string(it->second,it->first);
+	}
+	++it;
+	while (it != end) {
+		if (it->second > 0) {
+			out += " + ";
+			out += algebra::term_to_string(it->second,it->first);
+		}
+		if (it->second < 0) {
+			out += " - ";
+			out += algebra::term_to_string(-1*(it->second),it->first);	
+		}
+		++it;
+	}
+	
+	if (out.empty()) {return "0";}
+	else {return out;}
+}
+
+std::string algebra::enclose(std::string expr) {
+	expr.insert(expr.begin(),'(');
+	expr.push_back(')');
+	return expr;
 }
 
 float algebra::discriminant(float a, float b, float c) {
