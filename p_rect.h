@@ -34,7 +34,11 @@ public:
 	std::shared_ptr<node> split(dimension dim,std::set<int> split_points);
 	std::shared_ptr<node> split(dimension dim, int sub_rect_count);
 
-	static std::shared_ptr<p_rect> merge(std::shared_ptr<node> parent, dimension dim); // dim == x => merge along horizontal edges
+	// merge the children of parent into a single p_rect
+	// replace parent in the node tree with the merged p_rect
+	// return a pointer to the merged p_rect
+	// dim == x => merge along horizontal edges
+	static std::shared_ptr<p_rect> merge(std::shared_ptr<node> parent, dimension dim); 
 
 	// unit_size must be an integer multiple of both of the following
 	// ascii_renderer::scene_x_coordinates_per_pixel
@@ -78,10 +82,43 @@ private:
 	display_style_type display_style;
 	std::set<int> get_split_points(dimension dim, unsigned int sub_rect_count) const;
 };
+
+/*******            p_rect actions            *********/
 /*
-class merge_action : public action {
-	merge_action(std::shared_ptr<node> n_) : action(n_,0) {}
-	virtual void own_act() override {p_rect::merge(n);}
-}
+// does nothing for pause_before frames
+// changes the display style, then does nothing for pause_during frames
+// reverts to the original display style, then does nothing for pause_after frames
+class flash_display_style : public action {
+	flash_display_style(std::shared_ptr<p_rect> pr_, p_rect::display_style_type ds_,
+						size_t pause_before_ = 1, size_t pause_during_ = 1, size_t pause_after_ = 1) : 
+							pr(pr_), ds(ds_), pause_during(pause_during_), pause_after(pause_after_),
+							change_frame(pause_before_), revert_frame(pause_before_ + pause_during_), 
+							end_frame(pause_before_ + pause_during_ + pause_after_)
+						{
+							if (pr) {original_ds = pr->get_display_style();}
+							else {throw std::runtime_error("flash_display_style called with null_ptr argument");}
+						}
+	virtual bool own_act() override;
+
+#ifndef PRIVACY_OFF
+private:
+#endif
+	std::shared_ptr<p_rect> pr;
+	p_rect::display_style_type ds, original_ds;
+	size_t pause_during, pause_after;
+	size_t change_frame, revert_frame, end_frame;
+};
+
+// renders the children of parent with
+// a different display style, then reverts
+// to the original display styles
+// pause_before == length (seconds) of pause before changing display style
+// pause_during == length (seconds) of time for which children are displayed with the new style
+// pause_after == length (seconds) of pause after reverting to original display styles
+class flash_children_display_style : public action {
+public:
+	flash_children_display_style(std::shared_ptr<node> parent, double pause_before, double pause_during, double pause_after);
+	virtual bool own_act() override;
+};
 */
 #endif

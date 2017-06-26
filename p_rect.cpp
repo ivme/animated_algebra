@@ -284,3 +284,20 @@ std::set<int> p_rect::get_split_points(dimension dim, unsigned int sub_rect_coun
 std::shared_ptr<node> p_rect::split(dimension dim, int sub_rect_count) {
 	return split(dim,get_split_points(dim,sub_rect_count));
 }
+
+/********              p_rect actions               ********/
+/*
+bool flash_display_style::own_act() {
+	if (current_frame > end_frame) {return false;}
+	if (pause_during == 0) {return false;}
+	if (current_frame == change_frame) {
+			pr->set_display_style(ds);
+			return true;
+	}
+	if (current_frame == revert_frame) {
+		pr->set_display_style(original_ds);
+		if (pause_after > 0) {return true;}
+		else {return false;} 
+	}
+	return true;
+}*/
