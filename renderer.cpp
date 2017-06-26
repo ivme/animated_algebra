@@ -152,6 +152,39 @@ void draw_v_lines(const p_rect &pr, std::shared_ptr<ascii_image> img) {
 	}
 }
 
+void draw_interior_lines(const p_rect &pr, std::shared_ptr<ascii_image> img) {
+	rect dim = ascii_renderer::pixel_dimensions(pr);
+	std::vector<int> x_p = x_partitions(pr);
+	for (int i = 1; i < x_p.size() - 1; ++i) {
+		// draw a vertical line at x_p[i]
+		pixel_range<wchar_t> range{img,x_p[i],0,x_p[i]+1,dim.height};
+		copy(bdc::v,range.begin(),range.end());
+	}
+
+	std::vector<int> y_p = y_partitions(pr);
+	for (int i = 1; i < y_p.size() - 1; ++i) {
+		// draw a horizontal line at y_p[i]
+		pixel_range<wchar_t> range{img,0,y_p[i],dim.width,y_p[i] + 1};
+		copy(bdc::h,range.begin(),range.end());
+	}
+}
+
+void draw_boundary_lines(const p_rect &pr, std::shared_ptr<ascii_image> img) {
+	rect dim = ascii_renderer::pixel_dimensions(pr);
+	std::vector<int> left_right = {0,dim.width-1};
+	for (auto x : left_right) {
+		// draw a vertical line at x
+		pixel_range<wchar_t> range{img,x,0,x + 1,dim.height};
+		copy(bdc::v,range.begin(),range.end());
+	}
+	std::vector<int> bot_top = {0,dim.height-1};
+	for (auto y : bot_top) {
+		// draw a horizontal line at y
+		pixel_range<wchar_t> range{img,0,y,dim.width,y + 1};
+		copy(bdc::h,range.begin(),range.end());
+	}
+}
+
 void draw_interior_intersections(const p_rect &pr, std::shared_ptr<ascii_image> img) {
 	for (int x : x_partitions(pr)) {
 		for (int y : y_partitions(pr)) {
@@ -184,6 +217,13 @@ void draw_corners(const p_rect &pr, std::shared_ptr<ascii_image> img) {
 	img->pixel_at(dim.width - 1, dim.height - 1) = bdc::dl;
 }
 
+void draw_centered_text(std::string text,point<2> center,std::shared_ptr<ascii_image> img) {
+	int left_x = center.x - text.size() / 2;
+	int right_x = left_x + text.size();
+	pixel_range<wchar_t> range{img,left_x,center.y,right_x,center.y + 1};
+	std::copy(text.begin(),text.end(),range.begin());
+}
+
 void draw_labels(const p_rect &pr, std::shared_ptr<ascii_image> img) {
 	int left = 0;  // leftmost x-coordinate of current cell
 	int bottom = 0;  // bottom y-coordinate of current cell
@@ -203,6 +243,16 @@ void draw_labels(const p_rect &pr, std::shared_ptr<ascii_image> img) {
 	}
 }
 
+void draw_center_label(const p_rect &pr, std::shared_ptr<ascii_image> img, std::string text) {
+	ascii_renderer r{};
+	if (text.size() > pr.width() - 1) {
+		text.resize(pr.width() - 1, L' ');
+	}
+	int x_mid = r.scene_x_coordinate_to_pixels(pr.width() / 2);
+	int y_mid = r.scene_y_coordinate_to_pixels(pr.height() / 2);
+	draw_centered_text(text,point<2>(x_mid,y_mid),img);
+}
+
 std::shared_ptr<ascii_image> ascii_renderer::render(const p_rect &pr) {
 	rect dim = pixel_dimensions(pr);
 	auto output = std::make_shared<ascii_image>(dim);
@@ -210,13 +260,25 @@ std::shared_ptr<ascii_image> ascii_renderer::render(const p_rect &pr) {
 		return output;
 	}
 
-	draw_h_lines(pr,output);
-	draw_v_lines(pr,output);
-	draw_interior_intersections(pr,output);
+	draw_boundary_lines(pr,output);
+
+	if (pr.show_interior_lines) {
+		draw_interior_lines(pr,output);
+		draw_interior_intersections(pr,output);
+	}
 	draw_left_and_right_intersections(pr,output);
 	draw_top_and_bottom_intersections(pr,output);
 	draw_corners(pr,output);
-	draw_labels(pr,output);
+
+	if (pr.show_sub_rect_labels) {
+		draw_labels(pr,output);
+	}
+	if (pr.show_center_factored) {
+		draw_center_label(pr,output,pr.get_factored_string());
+	}
+	if (pr.show_center_expanded) {
+		draw_center_label(pr,output,pr.get_expanded_string());
+	}
 	return output;
 }
 
