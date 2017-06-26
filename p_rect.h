@@ -15,6 +15,7 @@ public:
 };
 
 bool operator==(const length &lhs, const length &rhs);
+bool operator< (const length &lhs, const length &rhs);
 
 // "partitioned rectangle"
 class p_rect : public node {

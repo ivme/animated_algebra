@@ -1,10 +1,19 @@
 #include "p_rect.h"
+#include "algebra.h"
 #include <stdexcept>
 #include <typeinfo>
 #include <algorithm>
 #include <iterator>
 
-bool operator==(const length &lhs, const length &rhs) {return lhs.name == rhs.name && lhs.val == rhs.val;}
+bool operator==(const length &lhs, const length &rhs) {return !(lhs < rhs) && !(rhs < lhs);}
+bool operator< (const length &lhs, const length &rhs) {
+	if (lhs.val < rhs.val) {return true;}
+	else if (lhs.val > rhs.val) {return false;}
+	else {
+		// lhs.val == rhs.val
+		return lhs.name < rhs.name;
+	}
+}
 
 located<rect,2> p_rect::own_bounding_rect() const {
 	return located<rect,2>(rect(width()+1,height()+1),get_location());
