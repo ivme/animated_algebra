@@ -204,6 +204,7 @@ std::shared_ptr<animation<wchar_t>> quad_factor_animator::animate() {
 	auto rect_1_2a = p_rect::merge(group_1_2a, dimension::x);
 	flash_display_style({rect_1_2a},p_rect::display_style_type::center_factored,.5,2.0,.5);
 	
+	flash_display_style(group_2b_3->get_children(),p_rect::display_style_type::center_expanded,.5,2.0,.5);
 	// stack group_2b_3 vertically
 	render_action(make_move_action<stack_action>(group_2b_3,0,dimension::y));
 	auto rect_2b_3 = p_rect::merge(group_2b_3, dimension::x);
