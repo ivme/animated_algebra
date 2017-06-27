@@ -3,6 +3,7 @@
 
 #include "animator.h"
 #include "p_rect.h"
+#include "text_node.h"
 #include <string>
 #include <queue>
 
@@ -26,6 +27,7 @@ private:
 	std::shared_ptr<node> p_rects, group1, group2, group2a, group2b, group3;
 	std::string var_name;
 	int var_val;
+	std::shared_ptr<text_node> quad_expr;
 
 	// move settings
 	move::frame_count_method_type fcm = move::frame_count_method_type::fixed;

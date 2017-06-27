@@ -204,7 +204,7 @@ std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension di
 	}
 
 	for (auto child : parent->get_children()) {
-		if (!(typeid(*child)==typeid(p_rect))) {
+		if (!(typeid(decltype(*child))==typeid(p_rect))) {
 			throw std::runtime_error("non p_rect child found in p_rect::merge");
 		}
 	}

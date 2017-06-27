@@ -81,6 +81,13 @@ void test_algebra() {
 	assert(std::get<3>(f2) == 1);
 	assert(std::get<4>(f2) == 2);
 
+	auto f3 = algebra::quad_factor(1,6,9);  // 0x^2 + 2x + 6 = (0x + 2)(x + 3)
+	assert(std::get<0>(f3) == true);
+	assert(std::get<1>(f3) == 1);
+	assert(std::get<2>(f3) == 3);
+	assert(std::get<3>(f3) == 1);
+	assert(std::get<4>(f3) == 3);
+
 	assert(algebra::term_to_string(0,"x") == "0");
 	assert(algebra::term_to_string(1,"x") == "x");
 	assert(algebra::term_to_string(2,"x") == "2x");
@@ -198,6 +205,15 @@ void test_p_rect() {
 	std::shared_ptr<image<wchar_t>> img;
 	ascii_renderer r{};
 
+	length one = length("1",1);
+	length x = length("x",2);
+	length y1 = length("y",2);
+	length y2 = length("y",2);
+
+	assert(one < x);
+	assert(x < y1);
+	assert(y1 == y2);
+
 	p_rect unit_pr = unit_p_rect();
 	img = unit_pr.render(r);
 	assert(img->pixel_at(0,0) == bdc::ur);
@@ -208,16 +224,31 @@ void test_p_rect() {
 	assert(img->pixel_at(r.h_pixels_per_unit(),r.v_pixels_per_unit()) == bdc::dl);
 	assert(img->pixel_at(r.h_pixels_per_unit() / 2, r.v_pixels_per_unit() /2) == '1');
 
-	length one{"1",1};
-	length x{"x",2};
 	p_rect pr{{x,one,one},{x,x,one}};
+	std::map<std::string,int> expected_x_var_coeff_map{{"x",1},{"",2}}; 
+	std::map<std::string,int> computed_x_var_coeff_map = pr.get_var_coeff_map(dimension::x);
+	assert(computed_x_var_coeff_map == expected_x_var_coeff_map);
+	assert(pr.label_text(dimension::x) == "2 + x");
+	assert(pr.label_text(dimension::y) == "1 + 2x");
+	assert(pr.get_factored_string() == "(2 + x)(1 + 2x)");
+	assert(pr.get_expanded_string() == "2 + 5x + 2x^2");
 	
 	img = pr.render(r);
 	assert(img->pixel_at(0,0) == bdc::ur);
 	assert(img->pixel_at(1,0) == bdc::h);
 	assert(img->pixel_at(0,1) == bdc::v);
-	//ascii_viewer v{};
-	//img->show(v);
+
+	pr.set_display_style(p_rect::display_style_type::center_factored);
+	img = pr.render(r);
+	ascii_viewer vwr{};
+	// img->show(vwr);
+
+	pr.set_display_style(p_rect::display_style_type::center_expanded);
+	img = pr.render(r);
+	// img->show(vwr);
+
+	pr.set_display_style(p_rect::display_style_type::labels_and_lines);
+	// pr.render(r)->show(vwr);
 }
 
 void test_graphics() {
@@ -403,7 +434,10 @@ void test_stack_cutter() {
 */
 void test_aa_controller() {
 	aa_controller ctrl;
-	ctrl.animate_quadratic_factorization(6,22,20);
+	ctrl.launch();
+	//auto coeffs = ctrl.prompt_for_quadratic_coeffs(false);
+	//ctrl.animate_quadratic_factorization(coeffs);
+
 }
 
 void test_quad_factor_animator() {
@@ -415,7 +449,7 @@ void test_quad_factor_animator() {
 	auto scn = qfa.v.scn;
 	assert(scn);
 	auto root = scn->get_root();
-	assert(root->get_children().size() == 3);
+	// assert(root->get_children().size() == 3);
 /*
 #ifdef PRIVACY_OFF
 	int var_length_scene_coordinates = quad_factor_animator::default_var_val * p_rect::unit_size;
@@ -431,16 +465,16 @@ void test_quad_factor_animator() {
 	// qfa.set_up_actions();
 
 	ascii_viewer vwr{};
-	//vwr.present(*qfa.animate());
+	vwr.present(*qfa.animate());
 
 	qfa = quad_factor_animator(4,16,15);
-	//vwr.present(*qfa.animate());
+	vwr.present(*qfa.animate());
 
 	qfa = quad_factor_animator(3,23,14);
-	//vwr.present(*qfa.animate());
+	vwr.present(*qfa.animate());
 
 	qfa = quad_factor_animator(10,17,3);
-	//vwr.present(*qfa.animate());
+	vwr.present(*qfa.animate());
 
 	qfa = quad_factor_animator(1,2,1);
 	vwr.present(*qfa.animate());
@@ -459,5 +493,7 @@ int main() {
 	// test_animator();
 	// test_aa_controller();
 	// test_stack_cutter();
-	test_quad_factor_animator();
+	// test_quad_factor_animator();
+	 test_aa_controller();
+
 }

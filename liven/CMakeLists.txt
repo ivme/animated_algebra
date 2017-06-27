@@ -1,0 +1,17 @@
+set(SRC
+	action.cpp
+	animation.cpp
+	animator.cpp
+	graphics.cpp
+	image.cpp
+	matrix.cpp
+	renderer.cpp
+	scene.cpp
+	stack_action.cpp
+	text_node.cpp
+	viewer.cpp
+)
+
+add_library(liven ${SRC})
+
+add_subdirectory(tests)

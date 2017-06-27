@@ -18,18 +18,17 @@ public:
 	virtual double scene_x_coordinate_to_pixels(int scene_coord) = 0;
 	virtual double scene_y_coordinate_to_pixels(int scene_coord) = 0;
 	located<rect,2> scene_rect_to_pixel_rect(located<rect,2> scene_rect);
-	virtual std::shared_ptr<IMAGE_TYPE> render(const node&) = 0;
-	virtual std::shared_ptr<IMAGE_TYPE> render(const p_rect&) = 0;
-	virtual std::shared_ptr<IMAGE_TYPE> render(const text_node&) = 0;
+	std::shared_ptr<IMAGE_TYPE> render(const node&) {
+		std::cout << __PRETTY_FUNCTION__ << std::endl;
+		return std::shared_ptr<ascii_image>();
+	}
 };
 
 
 class ascii_renderer : public renderer<ascii_image> {
 public:
-	virtual std::shared_ptr<ascii_image> render(const node&) override {return std::shared_ptr<ascii_image>();}
-	virtual std::shared_ptr<ascii_image> render(const p_rect &) override;
-	virtual std::shared_ptr<ascii_image> render(const text_node&) override;
-	static rect pixel_dimensions(const p_rect &pr);
+	using renderer::render;
+	std::shared_ptr<ascii_image> render(const text_node& n);
 
 	static constexpr int scene_x_coordinates_per_pixel = 1;
 	static constexpr int scene_y_coordinates_per_pixel = 2;
@@ -37,9 +36,6 @@ public:
 	// these could be non-integer values.  truncate for now.
 	virtual double scene_x_coordinate_to_pixels(int scene_coord) override {return (double) scene_coord / (double) scene_x_coordinates_per_pixel;}
 	virtual double scene_y_coordinate_to_pixels(int scene_coord) override {return (double) scene_coord / (double) scene_y_coordinates_per_pixel;}
-	
-	static int h_pixels_per_unit();
-	static int v_pixels_per_unit();
 };
 
 namespace bdc {

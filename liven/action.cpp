@@ -1,5 +1,5 @@
 #include "action.h"
-#include "algebra.h"
+#include <tuple>
 #include <cmath>
 #include <iostream>
 #include <typeinfo>
@@ -65,6 +65,17 @@ void shift::compute_f_count() {
 	}
 }
 
+// floored division
+// returns (quotient, remainder)
+std::tuple<int,int> fdiv_qr(int a, int b) {
+	int q = a / b;
+	if ((q < 0) && (q * b != a)) {
+		q -= 1;
+	}
+	int r = a - q * b;
+	return std::tuple<int,int>(q, r);
+}
+
 void shift::compute_increments() {
 	if (f_count == 0) {
 		x_increment = 0;
@@ -90,10 +101,10 @@ void shift::compute_increments() {
 	dx = (x_increment + 1) * x_r + (x_increment)(f_count - x_r);
 	*/
 
-	auto quo_rem = algebra::fdiv_qr(dx,f_count);
+	auto quo_rem = fdiv_qr(dx,f_count);
 	x_increment = std::get<0>(quo_rem);
 	x_r = std::get<1>(quo_rem);
-	quo_rem = algebra::fdiv_qr(dy,f_count);
+	quo_rem = fdiv_qr(dy,f_count);
 	y_increment = std::get<0>(quo_rem);
 	y_r = std::get<1>(quo_rem);
 }

@@ -33,8 +33,8 @@ public:
 	void align_center();
 	void set_h_align(horizontal_align_type align);
 
-	std::string get_text() const {return text;}
-	void set_text();
+	std::string get_text() const;
+	void set_text(std::string text_);
 
 private:
 	int get_offset(horizontal_align_type align); // return anchor's offset relative to location

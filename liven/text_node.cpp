@@ -38,3 +38,11 @@ void text_node::set_h_align(horizontal_align_type align) {
 	set_location(get_anchor().x - get_offset(align), loc.y, loc.z);
 }
 
+std::string text_node::get_text() const {
+	return text;
+}
+
+void text_node::set_text(std::string text_) {
+	text = text_;
+}
+

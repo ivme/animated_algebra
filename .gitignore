@@ -1,1 +1,19 @@
 /build
+scratch.cpp
+scratch
+/Testing
+*CMakeCache.txt
+*CTestTestfile.cmake
+*cmake_install.cmake
+.DS_Store
+*CMakeFiles
+*Makefile
+libanimated_algebra.a
+/liven/libliven.a
+main
+
+# test executables
+/liven/tests/test_graphics
+/liven/tests/test_image
+/liven/tests/test_matrix
+/liven/tests/test_scene

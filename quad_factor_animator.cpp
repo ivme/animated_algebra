@@ -42,6 +42,13 @@ void quad_factor_animator::set_up_scene() {
 	p_rect::set_children_display_style(p_rects,p_rect::display_style_type::center_expanded);
 	v.scn->get_root()->add_child(p_rects);
 	p_rects->shift(p_rect::unit_size, p_rect::unit_size);
+
+	// text_node for the quadratic expression
+	quad_expr = std::make_shared<text_node>();
+	quad_expr->set_text(algebra::sum_to_string({{"x^2",a},{"x",b},{"1",c}}));
+	v.scn->get_root()->add_child(quad_expr);
+	quad_expr->align_left();
+	quad_expr->set_anchor(point<2>(0,0));
 }
 
 void quad_factor_animator::apply_move_settings(std::shared_ptr<move> n) {
