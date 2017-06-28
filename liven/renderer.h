@@ -6,6 +6,7 @@
 
 #include "scene.h"
 #include "text_node.h"
+#include "grid_node.h"
 
 class length;
 class p_rect;
@@ -15,27 +16,27 @@ class renderer {
 public:
 	std::shared_ptr<IMAGE_TYPE> render(const view&);
 
-	virtual double scene_x_coordinate_to_pixels(int scene_coord) = 0;
-	virtual double scene_y_coordinate_to_pixels(int scene_coord) = 0;
+	virtual double scene_x_coordinate_to_pixels(int scene_coord) const = 0;
+	virtual double scene_y_coordinate_to_pixels(int scene_coord) const = 0;
 	located<rect,2> scene_rect_to_pixel_rect(located<rect,2> scene_rect);
-	std::shared_ptr<IMAGE_TYPE> render(const node&) {
-		std::cout << __PRETTY_FUNCTION__ << std::endl;
-		return std::shared_ptr<ascii_image>();
-	}
+	virtual std::shared_ptr<IMAGE_TYPE> render(const node&) = 0;
+	virtual std::shared_ptr<IMAGE_TYPE> render(const grid_node&) = 0;
+	virtual std::shared_ptr<IMAGE_TYPE> render(const text_node&) = 0;
 };
 
 
 class ascii_renderer : public renderer<ascii_image> {
 public:
-	using renderer::render;
-	std::shared_ptr<ascii_image> render(const text_node& n);
+	virtual std::shared_ptr<ascii_image> render(const node&) override {return std::shared_ptr<ascii_image>();}
+	virtual std::shared_ptr<ascii_image> render(const grid_node&) override;
+	virtual std::shared_ptr<ascii_image> render(const text_node&) override;
 
 	static constexpr int scene_x_coordinates_per_pixel = 1;
 	static constexpr int scene_y_coordinates_per_pixel = 2;
 
-	// these could be non-integer values.  truncate for now.
-	virtual double scene_x_coordinate_to_pixels(int scene_coord) override {return (double) scene_coord / (double) scene_x_coordinates_per_pixel;}
-	virtual double scene_y_coordinate_to_pixels(int scene_coord) override {return (double) scene_coord / (double) scene_y_coordinates_per_pixel;}
+	// these could be non-integer values, which can be problematic.
+	virtual double scene_x_coordinate_to_pixels(int scene_coord) const override {return (double) scene_coord / (double) scene_x_coordinates_per_pixel;}
+	virtual double scene_y_coordinate_to_pixels(int scene_coord) const override {return (double) scene_coord / (double) scene_y_coordinates_per_pixel;}
 };
 
 namespace bdc {

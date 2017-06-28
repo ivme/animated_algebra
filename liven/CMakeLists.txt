@@ -9,6 +9,7 @@ set(SRC
 	scene.cpp
 	stack_action.cpp
 	text_node.cpp
+	grid_node.cpp
 	viewer.cpp
 )
 

@@ -3,6 +3,7 @@
 #include <string>
 #include "renderer.h"
 #include <iostream> // debug
+#include <cassert>
 
 namespace bdc {
 #ifdef USE_BOX_DRAWING_CHARACTERS
@@ -92,6 +93,53 @@ std::shared_ptr<ascii_image> ascii_renderer::render(const text_node& n) {
 	pixel_range<wchar_t> pixels{output,0,0,text_size,1};
 	std::copy(text.begin(),text.end(),pixels.begin());
 	return output;
+}
+
+// grid_node rendering
+
+template <class T, class OutputIt>
+void copy(T t, OutputIt first, OutputIt last) {
+	for (auto it = first; it != last; ++it) {
+		*it = t;
+	}
+}
+
+void draw_h_lines(const grid_node &gn, std::shared_ptr<ascii_image> img, const ascii_renderer &r) {
+	for (int y : gn.h_partitions) {
+		// draw a horizontal line at y
+		int pixel_y = r.scene_y_coordinate_to_pixels(y);
+		pixel_range<wchar_t> range{img,0,pixel_y,img->pixel_width(),pixel_y + 1};
+		copy(bdc::h,range.begin(),range.end());
+	}
+}
+	
+void draw_v_lines(const grid_node &gn, std::shared_ptr<ascii_image> img, const ascii_renderer &r) {
+	for (int x : gn.v_partitions) {
+		// draw a vertical line at x
+		int pixel_x = r.scene_x_coordinate_to_pixels(x);
+		pixel_range<wchar_t> range{img,pixel_x,0,pixel_x + 1,img->pixel_height()};
+		copy(bdc::v,range.begin(),range.end());
+	}
+}
+
+void draw_intersections(const grid_node &gn, std::shared_ptr<ascii_image> img, const ascii_renderer &r) {
+	for (int x : gn.v_partitions) {
+		int pixel_x = r.scene_x_coordinate_to_pixels(x);
+		for (int y : gn.h_partitions) {
+			int pixel_y = r.scene_y_coordinate_to_pixels(y);
+			img->pixel_at(pixel_x,pixel_y) = bdc::vh;
+		}
+	}
+}
+
+std::shared_ptr<ascii_image> ascii_renderer::render(const grid_node &gn) {
+	int pixel_width = std::ceil(scene_x_coordinate_to_pixels(gn.width));
+	int pixel_height = std::ceil(scene_y_coordinate_to_pixels(gn.height));
+	auto out = std::make_shared<ascii_image>(rect(pixel_width,pixel_height));
+	draw_v_lines(gn,out,*this);
+	draw_h_lines(gn,out,*this);
+	draw_intersections(gn,out,*this);
+	return out;
 }
 
 // explicit instantiations

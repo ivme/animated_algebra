@@ -161,6 +161,19 @@ liven/fast:
 .PHONY : liven/fast
 
 #=============================================================================
+# Target rules for targets named test_renderer
+
+# Build rule for target.
+test_renderer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_renderer
+.PHONY : test_renderer
+
+# fast build rule for target.
+test_renderer/fast:
+	$(MAKE) -f liven/tests/CMakeFiles/test_renderer.dir/build.make liven/tests/CMakeFiles/test_renderer.dir/build
+.PHONY : test_renderer/fast
+
+#=============================================================================
 # Target rules for targets named test_scene
 
 # Build rule for target.
@@ -185,6 +198,19 @@ test_graphics: cmake_check_build_system
 test_graphics/fast:
 	$(MAKE) -f liven/tests/CMakeFiles/test_graphics.dir/build.make liven/tests/CMakeFiles/test_graphics.dir/build
 .PHONY : test_graphics/fast
+
+#=============================================================================
+# Target rules for targets named test_grid_node
+
+# Build rule for target.
+test_grid_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_grid_node
+.PHONY : test_grid_node
+
+# fast build rule for target.
+test_grid_node/fast:
+	$(MAKE) -f liven/tests/CMakeFiles/test_grid_node.dir/build.make liven/tests/CMakeFiles/test_grid_node.dir/build
+.PHONY : test_grid_node/fast
 
 #=============================================================================
 # Target rules for targets named test_image
@@ -359,8 +385,10 @@ help:
 	@echo "... edit_cache"
 	@echo "... animated_algebra"
 	@echo "... liven"
+	@echo "... test_renderer"
 	@echo "... test_scene"
 	@echo "... test_graphics"
+	@echo "... test_grid_node"
 	@echo "... test_image"
 	@echo "... test_matrix"
 	@echo "... aa_controller.o"
