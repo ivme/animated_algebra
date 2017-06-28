@@ -60,7 +60,10 @@ class pixel_range {
 public:
 	pixel_range() : img(nullptr) {}
 	pixel_range(std::shared_ptr<image<PIXEL_TYPE>> img_, int low_x_ = 0, int low_y_ = 0, int high_x_ = 0, int high_y_ = 0) :
-				img(img_), low_x(low_x_), low_y(low_y_), high_x(high_x_), high_y(high_y_) {}
+				img(img_), low_x(low_x_), low_y(low_y_), high_x(high_x_), high_y(high_y_) {
+					if (high_x > img->pixel_width()) {throw std::runtime_error("high_x larger than image's width");}
+					if (high_y > img->pixel_height()) {throw std::runtime_error("high_y larger than image's height");}
+				}
 	pixel_range(std::shared_ptr<image<PIXEL_TYPE>> img_, located<rect,2> r) : img(img_), low_x(r.location.x), low_y(r.location.y),
 																			  high_x(r.location.x + r.width), high_y(r.location.y + r.height) {}
 
