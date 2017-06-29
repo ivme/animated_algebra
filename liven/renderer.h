@@ -61,6 +61,16 @@ namespace bdc {
 	extern wchar_t vl;
 
 	extern wchar_t vh;
+
+	extern wchar_t u;
+
+	extern wchar_t d;
+
+	extern wchar_t r;
+
+	extern wchar_t l;
+
+	extern wchar_t p;
 }
 
 #endif
