@@ -161,6 +161,19 @@ liven/fast:
 .PHONY : liven/fast
 
 #=============================================================================
+# Target rules for targets named test_rect_node
+
+# Build rule for target.
+test_rect_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_rect_node
+.PHONY : test_rect_node
+
+# fast build rule for target.
+test_rect_node/fast:
+	$(MAKE) -f liven/tests/CMakeFiles/test_rect_node.dir/build.make liven/tests/CMakeFiles/test_rect_node.dir/build
+.PHONY : test_rect_node/fast
+
+#=============================================================================
 # Target rules for targets named test_renderer
 
 # Build rule for target.
@@ -385,6 +398,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... animated_algebra"
 	@echo "... liven"
+	@echo "... test_rect_node"
 	@echo "... test_renderer"
 	@echo "... test_scene"
 	@echo "... test_graphics"

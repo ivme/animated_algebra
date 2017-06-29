@@ -19,3 +19,4 @@ main
 /liven/tests/test_scene
 /liven/tests/test_grid_node
 /liven/tests/test_renderer
+/liven/tests/test_rect_node

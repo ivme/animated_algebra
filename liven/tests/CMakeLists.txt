@@ -25,3 +25,7 @@ add_test(test_grid_node ${PROJECT_BINARY_DIR}/test_grid_node)
 add_executable(test_renderer test_renderer.cpp)
 target_link_libraries(test_renderer liven)
 add_test(test_renderer ${PROJECT_BINARY_DIR}/test_renderer)
+
+add_executable(test_rect_node test_rect_node.cpp)
+target_link_libraries(test_rect_node liven)
+add_test(test_rect_node ${PROJECT_BINARY_DIR}/test_rect_node)
