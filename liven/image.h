@@ -45,9 +45,16 @@ class pixel_range {
 			return !(*this == other);
 		}
 
+		// prefix increment
 		iterator &operator++() {
 			if (current_x < range.high_x - 1) {current_x++;}
 			else {current_x = range.low_x; current_y++;}
+			return (*this);
+		}
+		// prefix decrement
+		iterator &operator--() {
+			if (current_x == range.low_x) {current_x = range.high_x - 1; --current_y;}
+			else {--current_x;}
 			return (*this);
 		}
 		PIXEL_TYPE &operator*() const {return range.img->pixel_at(current_x,current_y);}
