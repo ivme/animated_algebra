@@ -47,7 +47,6 @@ Cons:
 	This could quickly become tedious.
 */
 
-
 #ifndef DEFAULT_RENDERER
 #define DEFAULT_RENDERER normal_renderer
 #endif
@@ -79,11 +78,9 @@ struct generic_node {
     if (!pImpl) return;
     pImpl->render();
   }
-
   std::shared_ptr<const void> ptr_to_wrapped() {
   	return pImpl->ptr_to_wrapped();
   }
-
   template<class T,class...Us>
   generic_node(std::function<void(const T&)> render_func_, std::shared_ptr<T> t_) :
     pImpl(std::make_shared<renderable_model<T>>(render_func_, t_)) {}
@@ -121,7 +118,7 @@ void caps_renderer::render<text_node>(const text_node &tn) {
 }
 
 template<class NODE,class RENDERER = DEFAULT_RENDERER>
-generic_node make_node(std::shared_ptr<NODE> n) {
+generic_node make_node(std::shared_ptr<NODE> n, RENDERER renderer = RENDERER()) {
 	std::function<void(const NODE&)> rndr = static_cast<void(*)(const NODE&)>(RENDERER::render);
 	return generic_node{rndr,n};
 }
@@ -130,8 +127,8 @@ int main() {
 	auto tn = std::make_shared<text_node>("hello");
 	std::vector<generic_node> nodes{};
 	nodes.push_back(make_node(tn));
+	nodes.push_back(make_node(tn,normal_renderer{}));
 	nodes.push_back(make_node<text_node,normal_renderer>(tn));
-	nodes.push_back(make_node<text_node,caps_renderer>(tn));
 	for (generic_node n : nodes) {n.render();}
 	tn->text = "world";
 	for (generic_node n : nodes) {n.render();}
