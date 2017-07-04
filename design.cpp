@@ -9,9 +9,18 @@
 Still store a pointer to the rendering function in each node,
 but use type erasure to provide node interface.
 Pros:
+	Easy to make a templated factory function that selects the
+	correct rendering function via overload resolution.
+
+	Also easy to group rendering functions into rendering
+	classes, and to leverage library rendering functionality
+	in a custom renderer (see caps_renderer) for all but a few 
+	special cases (see template specialization of
+	caps_renderer::render<text_node>).
+
 	No downcasts are needed in the rendering functions.
 
-	renderable_concepts of different underlying type can
+	generic_nodes of different wrapped types can
 	be stored in the same container (e.g. vector), which
 	makes it easy to build a tree out of them -- each one
 	could hold a vector of pointers to its children.
@@ -22,20 +31,19 @@ Pros:
 	from library types.
 
 Cons:
-	In order to access the wrapped renderable object t
-	from a pointer to renderable_concept, the user would
-	need to downcast to the correct renderable_model subclass.
+	It's not possible to access the wrapped renderable object t
+	from a generic_node.  This makes it impossible to
+	update the wrapped renderable object, except whatever
+	update capability is provided by generic_node's interface,
+	which is the same for all wrapped types.
 
-	Even after downcasting, the user would still need to access
-	the wrapped type through the member variable t, which is
-	awkward, e.g.
-		struct circle {int radius;};
-		renderable_model<circle> circle_model{{5}}; // set radius = 5
-		renderable_concept *concept_ptr = &circle_model;
-		auto recovered_circle = static_cast<*renderable_model<circle>>(concept_ptr);
-		recovered_circle->t.radius; // awkward extra t
+
 */
 
+
+#ifndef DEFAULT_RENDERER
+#define DEFAULT_RENDERER normal_renderer
+#endif
 
 struct renderable_concept {
   virtual void render() const = 0;
@@ -50,7 +58,6 @@ struct renderable_model : renderable_concept {
   	render_func{render_func_},
     t{std::forward<Us>(us)...}
   {}
-  void set_render_func(std::function<void(const T &)> fn) {render_func = fn;}
   void render() const final override {
 	render_func(t);
   }
@@ -69,12 +76,6 @@ private:
   std::shared_ptr<renderable_concept> pImpl;
 };
 
-struct node;
-struct text_node;
-struct rect_node;
-void render_text_node_default(const text_node &tn);
-void render_text_node_caps(const text_node &tn);
-
 struct node {};
 
 struct rect_node : public node {
@@ -85,27 +86,41 @@ struct rect_node : public node {
 struct text_node : public node {
 	text_node(std::string text_) : text(text_) {}
 	std::string text;
-	static constexpr void (*default_render)(const text_node&) = render_text_node_default;
 };
 
-void render_text_node_default(const text_node &tn) {
-	std::cout << tn.text << std::endl;
-}
+struct normal_renderer {
+	static void render(const rect_node &rn) {std::cout << rn.width << "," << rn.height << std::endl;}
+	static void render(const text_node &tn) {std::cout << tn.text << std::endl;}
+};
 
-void render_text_node_caps(const text_node &tn) {
+struct caps_renderer {
+	template<class T>
+	static void render(const T &rn) {normal_renderer::render(rn);}
+};
+
+// explicitly specialize caps_renderer to render text_nodes in all caps	
+template<>
+void caps_renderer::render<text_node>(const text_node &tn) {
 	std::string upper_text = tn.text;
 	for (auto &c : upper_text) {c = std::toupper(c);}
 	std::cout << upper_text << std::endl;
 }
 
-template<class T>
-generic_node make_node(T t, void (*render_func_)(const text_node&) = T::default_render) {
-	return generic_node{std::function<void(const T&)>(render_func_),std::forward<T>(t)};
+template<class NODE,class RENDERER = DEFAULT_RENDERER>
+generic_node make_node(NODE n) {
+	std::function<void(const NODE&)> rndr = static_cast<void(*)(const NODE&)>(RENDERER::render);
+	return generic_node{rndr,std::forward<NODE>(n)};
 }
 
 int main() {
 	auto tn1 = make_node(text_node{"hello"});
 	tn1.render();
-	auto tn2 = make_node(text_node{"hello"},render_text_node_caps);
+	auto tn2 = make_node<text_node,normal_renderer>(text_node{"hello"});
 	tn2.render();
+	auto tn3 = make_node<text_node,caps_renderer>(text_node{"hello"});
+	tn3.render();
+	auto rn1 = make_node(rect_node{});
+	rn1.render();
+	auto rn2 = make_node<rect_node,normal_renderer>(rect_node{});
+	rn2.render();
 }
