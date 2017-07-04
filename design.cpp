@@ -6,9 +6,17 @@
 #include <utility>
 
 /*
-Still store a pointer to the rendering function in each node,
-but use type erasure to provide node interface.
+Use type erasure for node interface, but store the wrapped
+object by reference via a shared_ptr.
 Pros:
+	If we store a pointer to the wrapped object prior to
+	node constructed, we still have access to the wrapped
+	object in a reasonably natural way (see tn in main()).
+
+	Given a generic_node, we can examine the address of
+	the wrapped object via ptr_to_wrapped -- even if we
+	don't know the type of the wrapped object.
+
 	Easy to make a templated factory function that selects the
 	correct rendering function via overload resolution.
 
@@ -31,13 +39,12 @@ Pros:
 	from library types.
 
 Cons:
-	It's not possible to access the wrapped renderable object t
-	from a generic_node.  This makes it impossible to
-	update the wrapped renderable object, except whatever
-	update capability is provided by generic_node's interface,
-	which is the same for all wrapped types.
-
-
+	It's necessary to store a pointer to the wrapped object
+	before node construction in order to be able to access
+	the wrapped object without downcasting.  This is awkward
+	because the user needs to manually keep track of which 
+	pointers point to objects wrapped by which generic_nodes.
+	This could quickly become tedious.
 */
 
 
@@ -46,20 +53,24 @@ Cons:
 #endif
 
 struct renderable_concept {
-  virtual void render() const = 0;
+	virtual std::shared_ptr<const void> ptr_to_wrapped() const = 0;
+	virtual void render() const = 0;
 };
 
 template<class T>
 struct renderable_model : renderable_concept {
-  T t;
+  std::shared_ptr<T> t;
   std::function<void(const T&)> render_func;
   template<class...Us>
-  renderable_model(std::function<void(const T &)> render_func_, Us&&...us ):
+  renderable_model(std::function<void(const T &)> render_func_, std::shared_ptr<T> t_):
   	render_func{render_func_},
-    t{std::forward<Us>(us)...}
+    t{t_}
   {}
+  std::shared_ptr<const void> ptr_to_wrapped() const final override {
+  	return t;
+  }
   void render() const final override {
-	render_func(t);
+	render_func(*t);
   }
 };
 
@@ -68,22 +79,25 @@ struct generic_node {
     if (!pImpl) return;
     pImpl->render();
   }
+
+  std::shared_ptr<const void> ptr_to_wrapped() {
+  	return pImpl->ptr_to_wrapped();
+  }
+
   template<class T,class...Us>
-  generic_node(std::function<void(const T&)> render_func_, Us&&... us):
-    pImpl( std::make_shared<renderable_model<T>>(render_func_, std::forward<Us>(us)...)) {}
+  generic_node(std::function<void(const T&)> render_func_, std::shared_ptr<T> t_) :
+    pImpl(std::make_shared<renderable_model<T>>(render_func_, t_)) {}
 
 private:
   std::shared_ptr<renderable_concept> pImpl;
 };
 
-struct node {};
-
-struct rect_node : public node {
+struct rect_node {
 	int width;
 	int height;
 };
 
-struct text_node : public node {
+struct text_node {
 	text_node(std::string text_) : text(text_) {}
 	std::string text;
 };
@@ -107,20 +121,18 @@ void caps_renderer::render<text_node>(const text_node &tn) {
 }
 
 template<class NODE,class RENDERER = DEFAULT_RENDERER>
-generic_node make_node(NODE n) {
+generic_node make_node(std::shared_ptr<NODE> n) {
 	std::function<void(const NODE&)> rndr = static_cast<void(*)(const NODE&)>(RENDERER::render);
-	return generic_node{rndr,std::forward<NODE>(n)};
+	return generic_node{rndr,n};
 }
 
 int main() {
-	auto tn1 = make_node(text_node{"hello"});
-	tn1.render();
-	auto tn2 = make_node<text_node,normal_renderer>(text_node{"hello"});
-	tn2.render();
-	auto tn3 = make_node<text_node,caps_renderer>(text_node{"hello"});
-	tn3.render();
-	auto rn1 = make_node(rect_node{});
-	rn1.render();
-	auto rn2 = make_node<rect_node,normal_renderer>(rect_node{});
-	rn2.render();
+	auto tn = std::make_shared<text_node>("hello");
+	std::vector<generic_node> nodes{};
+	nodes.push_back(make_node(tn));
+	nodes.push_back(make_node<text_node,normal_renderer>(tn));
+	nodes.push_back(make_node<text_node,caps_renderer>(tn));
+	for (generic_node n : nodes) {n.render();}
+	tn->text = "world";
+	for (generic_node n : nodes) {n.render();}
 }
