@@ -1,6 +1,5 @@
 /build
-scratch.cpp
-scratch
+scratch*
 /Testing
 *CMakeCache.txt
 *CTestTestfile.cmake
