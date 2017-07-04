@@ -44,16 +44,36 @@ struct renderable_concept {
 template<class T>
 struct renderable_model : renderable_concept {
   T t;
+  std::function<void(const T&)> render_func;
   template<class...Us>
-  renderable_model(Us&&...us ):
+  renderable_model(std::function<void(const T &)> render_func_, Us&&...us ):
+  	render_func{render_func_},
     t{std::forward<Us>(us)...}
   {}
-  std::function<void(const T&)> render_func;
   void set_render_func(std::function<void(const T &)> fn) {render_func = fn;}
   void render() const final override {
 	render_func(t);
   }
 };
+
+struct generic_node {
+  void render() {
+    if (!pImpl) return;
+    pImpl->render();
+  }
+  template<class T,class...Us>
+  generic_node(std::function<void(const T&)> render_func_, Us&&... us):
+    pImpl( std::make_shared<renderable_model<T>>(render_func_, std::forward<Us>(us)...)) {}
+
+private:
+  std::shared_ptr<renderable_concept> pImpl;
+};
+
+struct node;
+struct text_node;
+struct rect_node;
+void render_text_node_default(const text_node &tn);
+void render_text_node_caps(const text_node &tn);
 
 struct node {};
 
@@ -65,6 +85,7 @@ struct rect_node : public node {
 struct text_node : public node {
 	text_node(std::string text_) : text(text_) {}
 	std::string text;
+	static constexpr void (*default_render)(const text_node&) = render_text_node_default;
 };
 
 void render_text_node_default(const text_node &tn) {
@@ -77,11 +98,14 @@ void render_text_node_caps(const text_node &tn) {
 	std::cout << upper_text << std::endl;
 }
 
+template<class T>
+generic_node make_node(T t, void (*render_func_)(const text_node&) = T::default_render) {
+	return generic_node{std::function<void(const T&)>(render_func_),std::forward<T>(t)};
+}
 
 int main() {
-	auto rm_tn = renderable_model<text_node>{"hello"};
-	rm_tn.set_render_func(render_text_node_default);
-	rm_tn.render();
-	rm_tn.set_render_func(render_text_node_caps);
-	rm_tn.render();
+	auto tn1 = make_node(text_node{"hello"});
+	tn1.render();
+	auto tn2 = make_node(text_node{"hello"},render_text_node_caps);
+	tn2.render();
 }
