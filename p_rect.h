@@ -6,6 +6,7 @@
 #include <map>
 #include "renderer.h"
 #include "action.h"
+#include "grid_node.h"
 
 struct length {
 public:
@@ -72,7 +73,6 @@ public:
 	std::map<length,int> get_length_frequency_map(dimension dim) const;
 	std::map<std::string,int> get_var_coeff_map(dimension dim) const;
 
-	virtual bool is_renderable() const override {return true;}
 	virtual std::shared_ptr<ascii_image> render(renderer<ascii_image> &r) const override {return r.render(*this);};
 	virtual std::shared_ptr<ascii_image> render(ascii_renderer &r) const override {return r.render(*this);}
 
@@ -81,6 +81,7 @@ private:
 #endif
 	display_style_type display_style;
 	std::set<int> get_split_points(dimension dim, unsigned int sub_rect_count) const;
+	std::shared_ptr<grid_node> grid;
 };
 
 /*******            p_rect actions            *********/
