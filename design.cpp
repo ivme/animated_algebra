@@ -69,6 +69,9 @@ struct renderable_model : renderable_concept {
 };
 
 struct node {
+	point<3> get_location() const {return location;}
+	void set_location(point<3> l) {location = l;}
+
 	void render() {
 		if (p_renderable) {p_renderable->render();}
 	}
@@ -78,20 +81,22 @@ struct node {
 
 	template<class WRAPPED,class RENDERER = DEFAULT_RENDERER>
 	node(std::shared_ptr<WRAPPED> w, RENDERER renderer = RENDERER()) :
-	p_renderable(std::make_shared<renderable_model<WRAPPED>>(
-		std::function<void(const WRAPPED&)>(static_cast<void(*)(const WRAPPED&)>(RENDERER::render)),
-		w)
-	)
+		p_renderable(std::make_shared<renderable_model<WRAPPED>>(
+			std::function<void(const WRAPPED&)>(static_cast<void(*)(const WRAPPED&)>(RENDERER::render)),
+			w)
+		),
+		location(0,0,0)
 	{}
 
 	template<class WRAPPED, class RENDERER = DEFAULT_RENDERER>
 	node(const WRAPPED &w, RENDERER renderer = RENDERER()) :
 		node(std::make_shared<WRAPPED>(w), renderer) {}
 
-	node() : p_renderable() {}
+	node() : p_renderable(), location(0,0,0) {}
 
 private:
 	std::shared_ptr<renderable_concept> p_renderable;
+	point<3> location;
 };
 
 struct rect_node {
