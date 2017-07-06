@@ -12,6 +12,8 @@ libanimated_algebra.a
 main
 
 # test executables
+/tests/test_circle_node
+
 /liven/tests/test_graphics
 /liven/tests/test_image
 /liven/tests/test_matrix
