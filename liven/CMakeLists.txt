@@ -5,6 +5,7 @@ set(SRC
 	graphics.cpp
 	image.cpp
 	matrix.cpp
+	node.cpp
 	renderer.cpp
 	scene.cpp
 	stack_action.cpp
