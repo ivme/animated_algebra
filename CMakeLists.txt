@@ -7,7 +7,7 @@ set (ANIMATED_ALGEBRA_MINOR_VERSION 1)
 add_definitions(-DPRIVACY_OFF)
 enable_testing()
 add_compile_options(
-    -std=c++11
+    -std=c++14
     -g
 )
 

@@ -2,10 +2,12 @@
 #define IMAGE_H
 
 #include "matrix.h"
-#include "viewer.h"
 #include "graphics.h"
+#include "global_defs.h"
 #include <set>
 #include <iostream> // debug
+
+namespace liven {
 
 template <class PIXEL_TYPE>
 class image {
@@ -16,7 +18,6 @@ public:
 	image(rect pixel_dimensions) {}
 	image(matrix<PIXEL_TYPE> pixels_) {}
 
-	virtual void show(viewer &v) const = 0;
 	virtual PIXEL_TYPE &pixel_at(unsigned int x, unsigned int y) = 0; // (0,0) = lower left of image
 
 	virtual int pixel_height() const = 0;
@@ -105,11 +106,12 @@ class ascii_image : public image<wchar_t> {
 	friend class ascii_viewer;
 
 public:
+	using pixel_type = wchar_t;
+
 	ascii_image() : pixels(matrix<wchar_t>(0,0)) {}
 	ascii_image(rect pixel_dimensions) : pixels(matrix<wchar_t>(pixel_dimensions.height, pixel_dimensions.width,default_pixel)) {	}
 	ascii_image(matrix<wchar_t> pixels_) : pixels(pixels_) {}
 
-	void show(viewer &v) const override {v.show(*this);}
 	wchar_t &pixel_at(unsigned int x, unsigned int y) override; // (0,0) = lower left of image
 	wchar_t cpixel_at(unsigned int x, unsigned int y) const {return pixels.centry(pixels.rows() - y - 1, x);}
 	int pixel_height() const override {return pixels.rows();}
@@ -131,8 +133,8 @@ class layered_image {
 
 public:
 	layered_image() : images() {}
-	std::shared_ptr<IMAGE_TYPE> flatten();
-	std::shared_ptr<IMAGE_TYPE> flatten_and_crop(located<rect,2> cropping_rect);
+	IMAGE_TYPE flatten();
+	IMAGE_TYPE flatten_and_crop(located<rect,2> cropping_rect);
 	void insert(p_loc_image);
 	located<rect,2> bounding_rect() {
 		return full_image_bounding_rect;
@@ -143,6 +145,6 @@ private:
 	std::vector<p_loc_image> images;
 };
 
-
+}
 
 #endif

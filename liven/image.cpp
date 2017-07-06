@@ -1,13 +1,15 @@
 #include "image.h"
 #include <typeinfo>
 
+using namespace liven;
+
 wchar_t &ascii_image::pixel_at(unsigned int x, unsigned int y) {
 	return pixels.entry(pixels.rows() - y - 1, x);
 }
 
 // layered_image
 template <class IMAGE_TYPE>
-std::shared_ptr<IMAGE_TYPE> layered_image<IMAGE_TYPE>::flatten() {
+IMAGE_TYPE layered_image<IMAGE_TYPE>::flatten() {
 	return flatten_and_crop(bounding_rect());
 }
 
@@ -18,7 +20,7 @@ void layered_image<IMAGE_TYPE>::insert(p_loc_image p_img) {
 }
 
 template <class IMAGE_TYPE>
-std::shared_ptr<IMAGE_TYPE> layered_image<IMAGE_TYPE>::flatten_and_crop(located<rect,2> cropping_rect) {
+IMAGE_TYPE layered_image<IMAGE_TYPE>::flatten_and_crop(located<rect,2> cropping_rect) {
 	// iterate through images from background to foreground
 	// if the image intersects with the cropping rect
 	// copy pixels from intersection onto output
@@ -47,12 +49,14 @@ std::shared_ptr<IMAGE_TYPE> layered_image<IMAGE_TYPE>::flatten_and_crop(located<
 			std::copy(src_range.begin(),src_range.end(),dest_range.begin());
 		}
 	}
-	return out_ptr;
+	return *out_ptr;
 }
 
-// explicit instantiations
-ascii_image ascii_img{};
-pixel_range<wchar_t> pr{};
-layered_image<ascii_image> l_img{};
-template std::shared_ptr<ascii_image> layered_image<ascii_image>::flatten();
-template void layered_image<ascii_image>::insert(p_loc_image p_img);
+namespace liven {
+	// explicit instantiations
+	ascii_image ascii_img{};
+	pixel_range<wchar_t> pr{};
+	layered_image<ascii_image> l_img{};
+	template ascii_image layered_image<ascii_image>::flatten();
+	template void layered_image<ascii_image>::insert(p_loc_image p_img);
+}

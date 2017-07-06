@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace liven;
+
 template<typename T>
 T &matrix<T>::entry(unsigned int row, unsigned int col) {
 	if (row >= rows()) {
@@ -24,6 +26,8 @@ T matrix<T>::centry(unsigned int row, unsigned int col) const {
 	return data[row * cols() + col];
 }
 
-// explicit instantiations
-template class matrix<wchar_t>;
-template class matrix<int>;
+namespace liven {
+	// explicit instantiations
+	template class matrix<wchar_t>;
+	template class matrix<int>;
+}

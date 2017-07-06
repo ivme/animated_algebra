@@ -4,6 +4,8 @@
 #include <iostream>
 #include <typeinfo>
 
+using namespace liven;
+
 bool action::act(int frame_number) {
 	if (frame_number < get_start_frame()) {return true;}
 	if (current_frame == 0) {will_start();}

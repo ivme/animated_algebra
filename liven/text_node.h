@@ -4,7 +4,9 @@
 #include "scene.h"
 #include <string>
 
-class text_node : public node {
+namespace liven {
+
+class text_node {
 public:
 	enum horizontal_align_type : int {left = -1, center = 0, right = 1};
 	// anchor differs from location.
@@ -14,8 +16,8 @@ public:
 	// left-aligned				the bottom left
 	// center-aligned			the bottom center
 	// right-aligned			the bottom right
-	point<2> get_anchor();
-	void set_anchor(point<2> new_anchor);
+	point<2> get_anchor(const node& wrapping_node);
+	void set_anchor(const node &wrapping_node, point<2> new_anchor);
 
 	// the width and height of a single character
 	// measured in scene coordinates
@@ -41,5 +43,7 @@ private:
 	horizontal_align_type h_align = horizontal_align_type::center;
 	std::string text;
 };
+
+}
 
 #endif

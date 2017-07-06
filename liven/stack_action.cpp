@@ -2,6 +2,8 @@
 #include <iostream> // debug
 #include <memory>
 
+using namespace liven;
+
 stack_action::stack_action(std::shared_ptr<node> n_, int start_frame_, dimension dim_, int initial_spacing_, int final_spacing_) :
 							move(n_,start_frame_), dim(dim_), initial_spacing(initial_spacing_), final_spacing(final_spacing_) {}
 

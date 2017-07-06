@@ -1,9 +1,17 @@
+#include "ascii_renderer.h"
+#include "image.h"
+#include "text_node.h"
+#include "grid_node.h"
+#include "graphics.h"
 #include <numeric>
 #include <cmath>
 #include <string>
-#include "renderer.h"
 #include <iostream> // debug
 #include <cassert>
+
+using namespace liven;
+
+namespace liven {
 
 namespace bdc {
 #ifdef USE_BOX_DRAWING_CHARACTERS
@@ -73,46 +81,15 @@ namespace bdc {
 #endif
 }
 
-template <class IMAGE_TYPE>
-std::shared_ptr<IMAGE_TYPE> renderer<IMAGE_TYPE>::render(const view& v) {
-	if (!v.scn) {return std::make_shared<located<IMAGE_TYPE,3>>();}
-	auto nodes = v.scn->nodes();
-	std::shared_ptr<IMAGE_TYPE> p_img;
-	std::shared_ptr<located<IMAGE_TYPE,3>> p_located_img;
-	layered_image<IMAGE_TYPE> layered_img{};
-	
-	for (auto node_ptr : nodes) {
-		if (node_ptr->is_renderable()) {
-			p_img = node_ptr->render(*this);
-			auto scene_location = node_ptr->get_scene_location();
-			int x = std::floor(scene_x_coordinate_to_pixels(scene_location.x));
-			int y = std::floor(scene_y_coordinate_to_pixels(scene_location.y));
-			int z = scene_location.z;
-			point<3> pixel_location{x,y,z};
-			p_located_img = std::make_shared<located<IMAGE_TYPE,3>>(*p_img,pixel_location);
-			layered_img.insert(p_located_img);
-		}
-	}
-	return layered_img.flatten_and_crop(scene_rect_to_pixel_rect(v.rectangle));
 }
 
-template <class IMAGE_TYPE>
-located<rect,2> renderer<IMAGE_TYPE>::scene_rect_to_pixel_rect(located<rect,2> scene_rect) {
-	int x = std::floor(scene_x_coordinate_to_pixels(scene_rect.location.x));
-	int y = std::floor(scene_y_coordinate_to_pixels(scene_rect.location.y));
-	int width = std::ceil(scene_x_coordinate_to_pixels(scene_rect.width));
-	int height = std::ceil(scene_y_coordinate_to_pixels(scene_rect.height));
-	return located<rect,2>(rect(width,height),point<2>(x,y));
-}
-
-
-std::shared_ptr<ascii_image> ascii_renderer::render(const text_node& n) {
+ascii_image ascii_renderer::render(const text_node& n) {
 	std::string text = n.get_text();
 	int text_size = text.size();
 	auto output = std::make_shared<ascii_image>(rect(text_size,1));
 	pixel_range<wchar_t> pixels{output,0,0,text_size,1};
 	std::copy(text.begin(),text.end(),pixels.begin());
-	return output;
+	return *output;
 }
 
 // grid_node rendering
@@ -193,25 +170,23 @@ void draw_boundary_intersections(const grid_node &gn, std::shared_ptr<ascii_imag
 	if (vp_width && hp_height) {img->pixel_at(sg.width,sg.height) = bdc::ul;}
 }
 
-std::shared_ptr<ascii_image> ascii_renderer::render(const grid_node &gn) {
-	if (gn.v_partitions.empty() && gn.h_partitions.empty()) {return std::make_shared<ascii_image>();}
+ascii_image ascii_renderer::render(const grid_node &gn) {
+	if (gn.v_partitions.empty() && gn.h_partitions.empty()) {return ascii_image();}
 	if (gn.height == 0 && gn.width == 0) {
 		auto pnt = std::make_shared<ascii_image>(rect(1,1));
 		pnt->pixel_at(0,0) = bdc::p;
-		return pnt;
+		return *pnt;
 	}
 	int pixel_width = std::ceil(scene_x_coordinate_to_pixels(gn.width)) + 1;
 	int pixel_height = std::ceil(scene_y_coordinate_to_pixels(gn.height)) + 1;
 	auto out = std::make_shared<ascii_image>(rect(pixel_width,pixel_height));
-	if (gn.height != 0) {draw_v_lines(gn,out,*this);}
-	if (gn.width != 0) {draw_h_lines(gn,out,*this);}
+	ascii_renderer r{};
+	if (gn.height != 0) {draw_v_lines(gn,out,r);}
+	if (gn.width != 0) {draw_h_lines(gn,out,r);}
 	if (!(gn.height == 0) && !(gn.width == 0)) {
-		draw_interior_intersections(gn,out,*this);
-		draw_boundary_intersections(gn,out,*this);
+		draw_interior_intersections(gn,out,r);
+		draw_boundary_intersections(gn,out,r);
 	}
 	
-	return out;
+	return *out;
 }
-
-// explicit instantiations
-template class renderer<ascii_image>;

@@ -2,8 +2,13 @@
 #define SCENE_H
 
 #include "image.h"
+#include "node.h"
 #include <list>
 #include <memory>
+
+namespace liven {
+
+using image_type = render_type::image_type;
 
 class scene : public std::enable_shared_from_this<scene> {
 	friend class node;
@@ -26,7 +31,9 @@ public:
 	std::shared_ptr<scene> scn;
 
 	void view_whole_scene();
-	std::shared_ptr<image<wchar_t>> render(renderer<ascii_image> &r);
+	image_type render();
 };
+
+}
 
 #endif

@@ -3,17 +3,19 @@
 
 #include <vector>
 #include <memory>
+#include "global_defs.h"
 #include "image.h"
 
-template <class PIXEL_TYPE>
+namespace liven {
+
 class animation {
 	friend class viewer;
 public:
-	animation() : frames(std::vector<std::shared_ptr<image<PIXEL_TYPE>>>()) {}
-	animation(std::vector<std::shared_ptr<image<PIXEL_TYPE>>> frames) : frames(frames) {}
+	animation() : frames(std::vector<image_type>()) {}
+	animation(std::vector<image_type> frames) : frames(frames) {}
 
-	typedef typename std::vector<std::shared_ptr<image<PIXEL_TYPE>>>::iterator iterator;
-	typedef typename std::vector<std::shared_ptr<image<PIXEL_TYPE>>>::const_iterator const_iterator;
+	typedef typename std::vector<image_type>::iterator iterator;
+	typedef typename std::vector<image_type>::const_iterator const_iterator;
 	iterator begin() {return frames.begin();}
 	iterator end() {return frames.end();}
 
@@ -22,13 +24,16 @@ public:
 	void set_animation_period(double period); // period = length of time between frames
 	int get_animation_period();
 
-	void present(viewer &v) const {v.present(*this);}
-	void append_frame(std::shared_ptr<image<PIXEL_TYPE>> f) {frames.push_back(f);}
+	template <class VIEWER>
+	void present(VIEWER &v);
+	void append_frame(image_type f) {frames.push_back(f);}
 	size_t frame_count() {return frames.size();}
 
 private:
-	std::vector<std::shared_ptr<image<PIXEL_TYPE>>> frames; // must use pointers because image is abstract class
+	std::vector<image_type> frames; // must use pointers because image is abstract class
 	double fps = 10; // frames per second
 };
+
+}
 
 #endif

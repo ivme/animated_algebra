@@ -1,18 +1,4 @@
-#include "viewer.h"
-#include "image.h"
-#include "animation.h"
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include <string> // debug
-
-template<class PIXEL_TYPE>
-void viewer::present(const animation<PIXEL_TYPE> &a) {
-	for (auto frame : a.frames) {
-		frame->show(*this);
-		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1000 / a.fps)));
-	}
-}
+#include "ascii_viewer.h"
 
 void ascii_viewer::show(const ascii_image &img) {
 	// debug
@@ -49,6 +35,3 @@ void ascii_viewer::clear_display() {
 	image_width = 0;
 	image_height = 0;
 }
-
-// explicit instantiations
-template void viewer::present(const animation<wchar_t> &);

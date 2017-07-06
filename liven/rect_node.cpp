@@ -1,5 +1,7 @@
 #include "rect_node.h"
 
+using namespace liven;
+
 std::shared_ptr<rect_node> rect_node::make(int width_, int height_) {
 	auto out = std::shared_ptr<rect_node>(new rect_node(width_,height_));
 	out->add_child(out->get_grid());

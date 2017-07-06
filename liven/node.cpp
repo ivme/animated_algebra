@@ -1,12 +1,11 @@
 #include "node.h"
 #include "scene.h"
 
-template<class WRAPPED,class RENDERER = DEFAULT_RENDERER>
-node::node(std::shared_ptr<WRAPPED> w, RENDERER renderer = RENDERER()) :
-	p_renderable(std::make_shared<renderable_model<WRAPPED>>(
-		std::function<void(const WRAPPED&)>(static_cast<void(*)(const WRAPPED&)>(RENDERER::render)),
-		w)
-	),
+using namespace liven;
+
+template<class WRAPPED>
+node::node(std::shared_ptr<WRAPPED> w) :
+	p_renderable(std::make_shared<renderable_model<WRAPPED>>(w)),
 	location(0,0,0),
 	scene_location(0,0,0),
 	children(),
@@ -14,9 +13,9 @@ node::node(std::shared_ptr<WRAPPED> w, RENDERER renderer = RENDERER()) :
 	scn()
 {}
 
-template<class WRAPPED, class RENDERER = DEFAULT_RENDERER>
-node::node(const WRAPPED &w, RENDERER renderer = RENDERER()) :
-		node(std::make_shared<WRAPPED>(w), renderer) {}
+template<class WRAPPED>
+node::node(const WRAPPED &w) :
+		node(std::make_shared<WRAPPED>(w)) {}
 
 node::node() :
 	p_renderable(),
@@ -27,13 +26,13 @@ node::node() :
 	scn()
 {}
 
-void node::make_scene_locations_dirty_() {
+void node::make_scene_locations_dirty() {
 	std::shared_ptr<scene> s = get_scene().lock();
 	if (s) {s->scene_locations_are_dirty = true;}
 }
 
 void node::set_location(point<3> l) {
-	make_scene_locations_dirty_();
+	make_scene_locations_dirty();
 	location = l;
 }
 
@@ -42,12 +41,12 @@ void node::set_location(int x, int y, int z) {
 }
 
 void node::shift(point<3> delta) {
-	make_scene_locations_dirty_();
+	make_scene_locations_dirty();
 	location += delta;
 }
 
 void node::shift(int dx, int dy, int dz) {
-	make_scene_locations_dirty_();
+	make_scene_locations_dirty();
 	location.x += dx;
 	location.y += dy;
 	location.z += dz;
@@ -78,7 +77,7 @@ void node::set_parent(std::weak_ptr<node> p, bool preserve_scene_location) {
 		}
 	}
 	parent = p;
-	make_scene_locations_dirty_();
+	make_scene_locations_dirty();
 }
 
 std::weak_ptr<node> node::get_parent() {
@@ -135,8 +134,8 @@ located<rect,2> node::bounding_rect() const {
 	return out;
 }
 
-bool node::is_renderable() const {return p_renderable.bool();}
-std::shared_ptr<image> node::render() {
+bool node::is_renderable() const {return p_renderable.operator bool();}
+image_type node::render() {
 	if (!p_renderable) {throw std::runtime_error("cannot render node. p_renderable is void.");}
 	return p_renderable->render();
 }
@@ -147,10 +146,10 @@ std::shared_ptr<const void> node::ptr_to_wrapped() {
 }
 
 // recursive utility function
-void node::compute_scene_locations_(point<3> parent_location) {
+void node::compute_scene_locations(point<3> parent_location) {
 	scene_location = parent_location + location;
 	for (auto child : children) {
-		child->compute_scene_locations_(scene_location);
+		child->compute_scene_locations(scene_location);
 	}
 }
 

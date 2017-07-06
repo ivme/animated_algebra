@@ -1,5 +1,7 @@
 #include "text_node.h"
 
+using namespace liven;
+
 int text_node::get_offset(horizontal_align_type align) {
 	switch (align) {
 		case horizontal_align_type::left:
@@ -11,14 +13,15 @@ int text_node::get_offset(horizontal_align_type align) {
 	}
 }
 
-point<2> text_node::get_anchor() {
-	auto loc = get_location();
+// n is the node in which this textnode is wrapped
+point<2> text_node::get_anchor(const node &n) {
+	auto loc = n.node.get_location();
 	return point<2>(loc.x + get_offset(h_align),loc.y);
 }
 
-void text_node::set_anchor(point<2> new_anchor) {
+void text_node::set_anchor(const node &n, point<2> new_anchor) {
 	point<3> delta = point<3>(new_anchor - get_anchor());
-	shift(delta);
+	n.shift(delta);
 }
 
 void text_node::align_left() {

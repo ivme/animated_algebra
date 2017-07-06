@@ -2,7 +2,10 @@
 #define ANIMATOR_H
 
 #include "animation.h"
-#include "renderer.h"
+#include "node.h"
+#include "scene.h"
+
+namespace liven {
 
 class action;
 
@@ -13,7 +16,7 @@ public:
 
 	virtual void set_up_scene() {}
 	// virtual void set_up_actions() {}
-	virtual std::shared_ptr<animation<wchar_t>> animate();
+	virtual std::shared_ptr<animation> animate();
 	void pause(int frame_count);
 	void pause(double seconds);
 	void snapshot();
@@ -21,7 +24,7 @@ public:
 	virtual void did_render_frame() {}
 	void set_root_action(std::shared_ptr<action> r);
 
-	ascii_renderer r;
+	render_type r;
 	view v;
 
 #ifndef PRIVACY_OFF
@@ -32,10 +35,12 @@ protected:
 	void render_action();
 	void render_action(std::shared_ptr<action> action_);
 
-	std::shared_ptr<animation<wchar_t>> animation_;
+	std::shared_ptr<animation> animation_;
 	std::shared_ptr<action> root_action;
 	bool remaining_action = false;
 	int frame_number = 0;
 };
+
+}
 
 #endif
