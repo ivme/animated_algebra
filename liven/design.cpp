@@ -9,6 +9,9 @@
 #define Q(x) #x
 #define QUOTE(x) Q(x)
 
+#define LIVEN_DEFAULT_RENDER_TYPE liven::default_renderer
+#define LIVEN_DEFAULT_RENDER_TYPE_HEADER_PATH default_renderer.h
+
 // if the user compiling liven has specified a renderer
 // and a path to the header containing the declaration
 // of the renderer, use it.  otherwise use the default
@@ -21,8 +24,8 @@
 	#include QUOTE(LIVEN_RENDER_TYPE_HEADER_PATH)
 	#endif
 #else
-#define LIVEN_RENDER_TYPE liven::default_renderer
-#include "default_renderer.h"
+#define LIVEN_RENDER_TYPE LIVEN_DEFAULT_RENDER_TYPE
+#include QUOTE(LIVEN_DEFAULT_RENDER_TYPE_HEADER_PATH)
 #endif
 
 namespace liven {
