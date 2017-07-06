@@ -1,18 +1,4 @@
-set(SRC
-	action.cpp
-	animation.cpp
-	animator.cpp
-	graphics.cpp
-	image.cpp
-	matrix.cpp
-	renderer.cpp
-	scene.cpp
-	stack_action.cpp
-	text_node.cpp
-	grid_node.cpp
-	viewer.cpp
-	rect_node.cpp
-)
+set(SRC )
 
 add_library(liven ${SRC})
 
