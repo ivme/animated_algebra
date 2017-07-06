@@ -13,17 +13,9 @@ add_compile_options(
 
 include_directories(BEFORE ./liven)
 
-set(AA_SRC
-	aa_controller.cpp
-	algebra.cpp
-	p_rect.cpp
-	quad_factor_animator.cpp
-)
+set(AA_SRC )
 
-add_library(animated_algebra ${AA_SRC})
-
-add_executable(main main.cpp)
-target_link_libraries(main animated_algebra liven)
+# add_library(animated_algebra ${AA_SRC})
 
 add_subdirectory(liven)
 
