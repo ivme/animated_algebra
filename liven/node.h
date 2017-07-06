@@ -71,12 +71,3 @@ private:
 };
 
 } // </namespace liven>
-
-int main() {
-	liven::text_node t{"hello"};
-	std::vector<liven::node> nodes;
-	nodes.push_back(liven::text_node{"hello"});
-	nodes.push_back(liven::rect_node{1,2});
-	for (auto n : nodes) {n.render();}
-
-}
