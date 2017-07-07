@@ -5,6 +5,7 @@ namespace liven {
 class ascii_image;
 class grid_node;
 class text_node;
+class rect_node;
 
 class ascii_renderer {
 public:
@@ -12,6 +13,7 @@ public:
 
 	static image_type render(const grid_node&);
 	static image_type render(const text_node&);
+	static image_type render(const rect_node&);
 
 	static constexpr int scene_x_coordinates_per_pixel = 1;
 	static constexpr int scene_y_coordinates_per_pixel = 2;

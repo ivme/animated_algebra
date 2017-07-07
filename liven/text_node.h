@@ -17,7 +17,7 @@ public:
 	// center-aligned			the bottom center
 	// right-aligned			the bottom right
 	point<2> get_anchor(const node& wrapping_node);
-	void set_anchor(const node &wrapping_node, point<2> new_anchor);
+	void set_anchor(node &wrapping_node, point<2> new_anchor);
 
 	// the width and height of a single character
 	// measured in scene coordinates
@@ -30,10 +30,10 @@ public:
 	int width() const;  // width in scene coordinates
 	int height() const;  // height in scene coordinates
 
-	void align_left();
-	void align_right();
-	void align_center();
-	void set_h_align(horizontal_align_type align);
+	void align_left(node &n);
+	void align_right(node &n);
+	void align_center(node &n);
+	void set_h_align(node &n,horizontal_align_type align);
 
 	std::string get_text() const;
 	void set_text(std::string text_);

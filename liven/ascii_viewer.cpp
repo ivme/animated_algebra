@@ -1,5 +1,7 @@
 #include "ascii_viewer.h"
 
+using namespace liven;
+
 void ascii_viewer::show(const ascii_image &img) {
 	// debug
 	// std::cout<< "ascii_viewer::_show(const ascii_image &img)" << std::endl;

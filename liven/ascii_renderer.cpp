@@ -2,6 +2,7 @@
 #include "image.h"
 #include "text_node.h"
 #include "grid_node.h"
+#include "rect_node.h"
 #include "graphics.h"
 #include <numeric>
 #include <cmath>
@@ -189,4 +190,8 @@ ascii_image ascii_renderer::render(const grid_node &gn) {
 	}
 	
 	return *out;
+}
+
+image_type ascii_renderer::render(const rect_node &r) {
+	return render(r.get_grid());
 }
