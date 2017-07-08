@@ -99,18 +99,6 @@ void node::change_child_spacing(int delta, dimension dim) const {
 	}
 }
 
-located<rect,2> node::own_bounding_rect() const {
-	return located<rect,2>();
-}
-
-located<rect,2> node::bounding_rect() const {
-	located<rect,2> out = own_bounding_rect();
-	for (auto child : children) {
-		out = union_bounding_rect(out,child->bounding_rect());
-	}
-	return out;
-}
-
 bool node::is_renderable() const {return p_renderable.operator bool();}
 image_type node::render() {
 	if (!p_renderable) {throw std::runtime_error("cannot render node. p_renderable is void.");}

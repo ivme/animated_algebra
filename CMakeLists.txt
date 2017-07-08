@@ -19,6 +19,7 @@ set(AA_SRC
 	algebra.cpp
 	p_rect.cpp
 	quad_factor_animator.cpp
+	stack_action.cpp
 )
 
 add_library(animated_algebra ${AA_SRC})

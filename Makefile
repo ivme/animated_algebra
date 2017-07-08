@@ -413,6 +413,33 @@ quad_factor_animator.cpp.s:
 	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/quad_factor_animator.cpp.s
 .PHONY : quad_factor_animator.cpp.s
 
+stack_action.o: stack_action.cpp.o
+
+.PHONY : stack_action.o
+
+# target to build an object file
+stack_action.cpp.o:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/stack_action.cpp.o
+.PHONY : stack_action.cpp.o
+
+stack_action.i: stack_action.cpp.i
+
+.PHONY : stack_action.i
+
+# target to preprocess a source file
+stack_action.cpp.i:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/stack_action.cpp.i
+.PHONY : stack_action.cpp.i
+
+stack_action.s: stack_action.cpp.s
+
+.PHONY : stack_action.s
+
+# target to generate assembly for a file
+stack_action.cpp.s:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/stack_action.cpp.s
+.PHONY : stack_action.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -450,6 +477,9 @@ help:
 	@echo "... quad_factor_animator.o"
 	@echo "... quad_factor_animator.i"
 	@echo "... quad_factor_animator.s"
+	@echo "... stack_action.o"
+	@echo "... stack_action.i"
+	@echo "... stack_action.s"
 .PHONY : help
 
 

@@ -18,7 +18,7 @@ public:
 	void set_root(std::shared_ptr<node> r);
 	void refresh_scene_locations(); // recomputes scene locations
 	std::vector<std::shared_ptr<node>> nodes();
-	located<rect,2> bounding_rect() const; 
+
 private:
 	std::shared_ptr<node> root;
 	bool scene_locations_are_dirty;
@@ -30,7 +30,6 @@ public:
 	located<rect,2> rectangle;
 	std::shared_ptr<scene> scn;
 
-	void view_whole_scene();
 	image_type render();
 };
 

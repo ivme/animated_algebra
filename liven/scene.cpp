@@ -33,14 +33,7 @@ void scene::set_root(std::shared_ptr<node> r) {
 	scene_locations_are_dirty = true;
 }
 
-located<rect,2> scene::bounding_rect() const {
-	return root->bounding_rect();
-}
-
 // view
-void view::view_whole_scene() {
-	rectangle = scn->bounding_rect();
-}
 
 image_type view::render() {
 	if (!scn) {return image_type();}

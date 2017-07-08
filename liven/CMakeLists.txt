@@ -8,7 +8,6 @@ set(SRC
 	node.cpp
 	ascii_renderer.cpp
 	scene.cpp
-	stack_action.cpp
 	text_node.cpp
 	graphics.cpp
 	grid_node.cpp

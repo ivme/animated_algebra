@@ -86,9 +86,6 @@ public:
 	std::weak_ptr<scene> get_scene();
 	point<3> get_scene_location(); // return location of lower left corner in the enclosing scene's coordinate system
 
-	located<rect,2> own_bounding_rect() const;  // bounding rectangle of this node, not including children
-	located<rect,2> bounding_rect() const ; // bounding rect of this node and its children.
-
 	bool is_renderable() const;
 	image_type render();
 
