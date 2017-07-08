@@ -3,8 +3,8 @@
 
 #include <tuple>
 #include "algebra.h"
-#include "viewer.h"
-#include "scene.h"
+#include "liven/ascii_viewer.h"
+#include "liven/scene.h"
 
 #define STD_VIEW_WIDTH 150
 #define STD_VIEW_HEIGHT 100	
@@ -21,9 +21,9 @@ public:
 	void animate_quadratic_factorization(int a, int b, int c);
 
 private:
-	scene scene_;
-	view view_;
-	std::shared_ptr<viewer> viewer_;
+	liven::scene scene_;
+	liven::view view_;
+	liven::ascii_viewer viewer_;
 
 	static void display_welcome_message();
 	static void display_main_menu();

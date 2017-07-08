@@ -7,6 +7,7 @@ namespace liven {
 
 class grid_node {
 public:
+	grid_node() : grid_node(0,0,{},{}) {}
 	grid_node(int width_, int height_, std::vector<int> v_partitions_, std::vector<int> h_paritions_) : 
 				width(width_), height(height_), v_partitions(v_partitions_), h_partitions(h_paritions_) {
 					if (width < 0 || height < 0) {throw std::runtime_error("negative grid_node dimension");}

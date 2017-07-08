@@ -3,29 +3,6 @@
 
 using namespace liven;
 
-template<class WRAPPED>
-node::node(std::shared_ptr<WRAPPED> w) :
-	p_renderable(std::make_shared<renderable_model<WRAPPED>>(w)),
-	location(0,0,0),
-	scene_location(0,0,0),
-	children(),
-	parent(),
-	scn()
-{}
-
-template<class WRAPPED>
-node::node(const WRAPPED &w) :
-		node(std::make_shared<WRAPPED>(w)) {}
-
-node::node() :
-	p_renderable(),
-	location(0,0,0), 
-	scene_location(0,0,0),
-	children(),
-	parent(),
-	scn()
-{}
-
 void node::make_scene_locations_dirty() {
 	std::shared_ptr<scene> s = get_scene().lock();
 	if (s) {s->scene_locations_are_dirty = true;}

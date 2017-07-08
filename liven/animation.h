@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <memory>
+#include <chrono>
+#include <thread>
 #include "global_defs.h"
 #include "image.h"
 
@@ -25,7 +27,12 @@ public:
 	int get_animation_period();
 
 	template <class VIEWER>
-	void present(VIEWER &v);
+	void present(VIEWER &v) {
+		for (auto frame : frames) {
+			v.show(frame);
+			std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1000 / fps)));
+		}
+	}
 	void append_frame(image_type f) {frames.push_back(f);}
 	size_t frame_count() {return frames.size();}
 

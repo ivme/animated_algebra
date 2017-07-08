@@ -22,7 +22,7 @@ public:
 };
 
 template<class WRAPPED>
-class renderable_model : renderable_concept {
+class renderable_model : public renderable_concept {
 public:
 	renderable_model(std::shared_ptr<WRAPPED> w_):
 		w{w_}
@@ -45,12 +45,27 @@ class node : public std::enable_shared_from_this<node> {
 public:
 	// constructors
 	template<class WRAPPED>
-	node(std::shared_ptr<WRAPPED> w);
+	node(std::shared_ptr<WRAPPED> w) :
+		p_renderable(std::make_shared<renderable_model<WRAPPED>>(w)),
+		location(0,0,0),
+		scene_location(0,0,0),
+		children(),
+		parent(),
+		scn()
+	{}
 
 	template<class WRAPPED>
-	node(const WRAPPED &w);
+	node(const WRAPPED &w) :
+			node(std::make_shared<WRAPPED>(w)) {}
 
-	node();
+	node() :
+		p_renderable(),
+		location(0,0,0), 
+		scene_location(0,0,0),
+		children(),
+		parent(),
+		scn()
+	{}
 
 	// location
 	point<3> get_location() const {return location;}

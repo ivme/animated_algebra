@@ -3,7 +3,6 @@
 
 #include "matrix.h"
 #include "graphics.h"
-#include "global_defs.h"
 #include <set>
 #include <iostream> // debug
 

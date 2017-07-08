@@ -1,6 +1,8 @@
 #include "algebra.h"
 #include <cassert>
 
+using namespace liven;
+
 void main() {
 	assert(algebra::is_square_number(49));
 	assert(!algebra::is_square_number(-1));

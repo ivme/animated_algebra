@@ -4,26 +4,29 @@ project (animated_algebra)
 set (ANIMATED_ALGEBRA_MAJOR_VERSION 0)
 set (ANIMATED_ALGEBRA_MINOR_VERSION 1)
 
-add_definitions(-DPRIVACY_OFF)
+add_definitions(-DPRIVACY_OFF -DLIVEN_RENDER_TYPE=aa_renderer -DLIVEN_RENDER_TYPE_HEADER_PATH=${PROJECT_SOURCE_DIR}/aa_renderer.h)
 enable_testing()
 add_compile_options(
     -std=c++14
     -g
 )
 
-include_directories(BEFORE ./liven)
+include_directories()
 
 set(AA_SRC
 	aa_controller.cpp
+	aa_renderer.cpp
 	algebra.cpp
 	p_rect.cpp
 	quad_factor_animator.cpp
 )
 
 add_library(animated_algebra ${AA_SRC})
+target_link_libraries(animated_algebra liven)
 
 add_executable(main main.cpp)
 target_link_libraries(main animated_algebra liven)
 
 add_subdirectory(liven)
+
 

@@ -5,6 +5,13 @@
 #include <algorithm>
 #include <iterator>
 
+using liven::located;
+using liven::dimension;
+using liven::node;
+using liven::grid_node;
+using liven::point;
+using liven::rect;
+
 bool operator==(const length &lhs, const length &rhs) {return !(lhs < rhs) && !(rhs < lhs);}
 bool operator< (const length &lhs, const length &rhs) {
 	if (lhs.val < rhs.val) {return true;}
@@ -15,8 +22,8 @@ bool operator< (const length &lhs, const length &rhs) {
 	}
 }
 
-located<rect,2> p_rect::own_bounding_rect() const {
-	return located<rect,2>(rect(width()+1,height()+1),get_location());
+located<rect,2> p_rect::own_bounding_rect(std::shared_ptr<liven::node> n) const {
+	return located<rect,2>(rect(width()+1,height()+1),n->get_location());
 }
 
 int p_rect::width_in_units() const {
@@ -123,14 +130,10 @@ p_rect::display_style_type p_rect::get_display_style() {
 	return display_style;
 }
 
-void p_rect::set_children_display_style(std::shared_ptr<node> n, display_style_type ds) {
-	for (auto child : n->get_children()) {
-		std::dynamic_pointer_cast<p_rect>(child)->set_display_style(ds);
-	}
-}
+p_rect::split_response p_rect::split(std::shared_ptr<node> &n, dimension dim, std::set<int> split_points) {
+	p_rect::split_response out{};
+	out.parent = std::make_shared<node>();
 
-std::shared_ptr<node> p_rect::split(dimension dim,std::set<int> split_points) {
-	auto out = std::make_shared<node>();
 	std::vector<length> split_lengths;
 	std::vector<length> other_lengths;
 	switch(dim) {
@@ -165,78 +168,91 @@ std::shared_ptr<node> p_rect::split(dimension dim,std::set<int> split_points) {
 	}
 	
 	std::shared_ptr<p_rect> sub_rect;
+	std::shared_ptr<node> child_node;
 	for (int i = 0; i < out_split_lengths.size(); ++i) {
 		auto lengths = out_split_lengths[i];
 		switch(dim) {
 			case dimension::x:
 			sub_rect = std::make_shared<p_rect>(lengths,other_lengths);
-			sub_rect->set_location(point<3>(location_offsets[i],0,0));
+			child_node = std::make_shared<node>(sub_rect);
+			child_node->set_location(point<3>(location_offsets[i],0,0));
 			break;
 			case dimension::y:
 			sub_rect = std::make_shared<p_rect>(other_lengths,lengths);
-			sub_rect->set_location(point<3>(0,location_offsets[i],0));
+			child_node = std::make_shared<node>(sub_rect);
+			child_node->set_location(point<3>(0,location_offsets[i],0));
 			break;
 		}
-		out->add_child(sub_rect);
 		sub_rect->set_display_style(this->display_style);
+		out.parent->add_child(child_node);
+		out.children_wrapped[child_node] = sub_rect;
 	}
 	
-	out->set_location(this->get_location());
+	out.parent->set_location(n->get_location());
 
-	auto p = get_parent().lock();
+	auto p = n->get_parent().lock();
 	if (p == nullptr) {
-		auto scn_ = get_scene().lock();
+		auto scn_ = n->get_scene().lock();
 		if (scn_) {
 			// this node is the root of a scene; replace it with the new node out
-			scn_->set_root(out);
+			scn_->set_root(out.parent);
 		} // TODO: check on possible memory leak from this?
 	} else {
-		// remove this node from parent and replace it with out.
-		p->remove_child(shared_from_this());
-		p->add_child(out);
+		// remove this node from parent and replace it with
+		// the parent of the newly created p_rects
+		p->remove_child(n);
+		p->add_child(out.parent);
 	}
 	return out;
 }
 
-std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension dim) {
-	if (parent->get_children().empty()) {
-		throw std::runtime_error("children empty in p_rect::merge");
+p_rect::merge_response p_rect::merge(
+		std::shared_ptr<node> parent,
+		std::map<std::shared_ptr<node>,std::shared_ptr<p_rect>> nodes_wrapped,
+		dimension dim)
+{
+	if (nodes_wrapped.empty()) {
+		throw std::runtime_error("merging empty collection of p_rects");
 	}
 
-	for (auto child : parent->get_children()) {
-		if (!(typeid(decltype(*child))==typeid(p_rect))) {
-			throw std::runtime_error("non p_rect child found in p_rect::merge");
-		}
-	}
+	std::vector<std::shared_ptr<node>> input_nodes{};
+	// the shared set of lengths among all p_rects to be merged.
+	auto zero_rect = nodes_wrapped.begin()->second;
+	const std::vector<length> &lengths = zero_rect->get_lengths(dim);
 
-	auto zero_child = std::dynamic_pointer_cast<p_rect>(parent->get_children()[0]);
-	const std::vector<length> &lengths = zero_child->get_lengths(dim);
+	for (auto child_wrapped : nodes_wrapped) {
+		auto child_node = child_wrapped.first;
+		auto child_rect = child_wrapped.second;
+		// if (child_node->get_parent().lock() != parent) {throw std::runtime_error("p_rect::merge: child's parent is not specified parent");}
+		if (child_rect->get_lengths(dim) != lengths) {throw std::runtime_error("merging p_rects with different lengths");}
+		input_nodes.push_back(child_node);
+	}
+	
 	std::vector<length> other_lengths{};
 
-	// sort parent->get_children() by appropriate coordinate, x or y,
+	// sort input_nodes by appropriate coordinate, x or y,
 	// depending on the value of dim
-	std::vector<std::shared_ptr<node>> sorted_children = parent->get_children();
-	std::sort(sorted_children.begin(),sorted_children.end(),
+	std::sort(input_nodes.begin(),input_nodes.end(),
 		[dim](std::shared_ptr<node> a, std::shared_ptr<node> b) {
 			switch (dim) {
 				case dimension::x:
-				return a->get_location().x < b->get_location().x;
-				case dimension::y:
 				return a->get_location().y < b->get_location().y;
+				case dimension::y:
+				return a->get_location().x < b->get_location().x;
 			}
 		}
 	);
 
 	dimension other_dim = dim == dimension::x ? dimension::y : dimension::x;
 
-	for (auto child : sorted_children) {
-		auto p_rect_child = std::dynamic_pointer_cast<p_rect>(child);
-		if (p_rect_child->get_lengths(dim) != lengths) {
+	for (auto input_node : input_nodes) {
+		std::shared_ptr<p_rect> pr = nodes_wrapped[input_node];
+		if (pr->get_lengths(dim) != lengths) {
 			throw std::runtime_error("merging p_rects with different lengths");
 		}
 
 		// append p_rect_child's other lengths to other_lengths
-		auto child_other_lengths = p_rect_child->get_lengths(other_dim);
+		auto child_other_lengths = pr->get_lengths(other_dim);
 		std::copy(child_other_lengths.cbegin(), child_other_lengths.cend(),std::back_inserter(other_lengths));
 	}
 
@@ -249,16 +265,25 @@ std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension di
 		merged_rect = std::make_shared<p_rect>(other_lengths,lengths);
 		break;
 	}
-	
-	merged_rect->set_location(parent->get_location());
-	auto grandparent = parent->get_parent();
-	if (auto gp = grandparent.lock()) {
-		gp->remove_child(parent);
-		merged_rect->set_parent(gp,true);
+
+	auto merged_node = std::make_shared<node>(merged_rect);
+	auto p = input_nodes[0]->get_parent();
+	if (auto input_0_parent = p.lock()) {
+		merged_node->set_location(input_0_parent->get_location());
 	}
-	
-	merged_rect->set_display_style(zero_child->display_style);
-	return merged_rect;
+	merged_node->set_parent(parent);
+	merged_rect->set_display_style(zero_rect->display_style);
+
+	// remove input nodes from their parents
+	auto null_weak_ptr = std::weak_ptr<node>();
+	for (auto n : input_nodes) {
+		n->set_parent(null_weak_ptr);
+	}
+
+	p_rect::merge_response out{};
+	out.n = merged_node;
+	out.pr = merged_rect;
+	return out;
 }
 
 std::set<int> p_rect::get_split_points(dimension dim, unsigned int sub_rect_count) const {
@@ -281,8 +306,24 @@ std::set<int> p_rect::get_split_points(dimension dim, unsigned int sub_rect_coun
 	return split_points;
 }
 
-std::shared_ptr<node> p_rect::split(dimension dim, int sub_rect_count) {
-	return split(dim,get_split_points(dim,sub_rect_count));
+p_rect::split_response p_rect::split(std::shared_ptr<node> &n, dimension dim, int sub_rect_count) {
+	return split(n,dim,get_split_points(dim,sub_rect_count));
+}
+
+grid_node p_rect::get_grid() const {
+	std::vector<std::vector<int>> partition_vectors{{0},{0}};
+	std::vector<std::vector<length>> length_vectors{x_lengths,y_lengths};
+
+	int position;
+	for (int i = 0; i < 2; ++i) {
+		position = 0;
+		for (auto l : length_vectors[i]) {
+			position += l.val * unit_size;
+			partition_vectors[i].push_back(position);
+		}
+	}
+
+	return grid_node{width(),height(),partition_vectors[0], partition_vectors[1]};
 }
 
 /********              p_rect actions               ********/

@@ -1,6 +1,8 @@
 #include "matrix.h"
 #include <cassert>
 
+using namespace liven;
+
 int main() {
 	matrix<wchar_t> m = matrix<wchar_t>(5,3, L'e');
 	m.entry(0,2) = L'w';

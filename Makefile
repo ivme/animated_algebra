@@ -278,6 +278,33 @@ aa_controller.cpp.s:
 	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_controller.cpp.s
 .PHONY : aa_controller.cpp.s
 
+aa_renderer.o: aa_renderer.cpp.o
+
+.PHONY : aa_renderer.o
+
+# target to build an object file
+aa_renderer.cpp.o:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_renderer.cpp.o
+.PHONY : aa_renderer.cpp.o
+
+aa_renderer.i: aa_renderer.cpp.i
+
+.PHONY : aa_renderer.i
+
+# target to preprocess a source file
+aa_renderer.cpp.i:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_renderer.cpp.i
+.PHONY : aa_renderer.cpp.i
+
+aa_renderer.s: aa_renderer.cpp.s
+
+.PHONY : aa_renderer.s
+
+# target to generate assembly for a file
+aa_renderer.cpp.s:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_renderer.cpp.s
+.PHONY : aa_renderer.cpp.s
+
 algebra.o: algebra.cpp.o
 
 .PHONY : algebra.o
@@ -408,6 +435,9 @@ help:
 	@echo "... aa_controller.o"
 	@echo "... aa_controller.i"
 	@echo "... aa_controller.s"
+	@echo "... aa_renderer.o"
+	@echo "... aa_renderer.i"
+	@echo "... aa_renderer.s"
 	@echo "... algebra.o"
 	@echo "... algebra.i"
 	@echo "... algebra.s"
