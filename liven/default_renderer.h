@@ -1,11 +1,13 @@
 #ifndef DEFAULT_RENDERER_H
 #define DEFAULT_RENDERER_H
 
-#include "node_declarations.h"
 #include "ascii_image.h"
 #include <iostream>
 
 namespace liven {
+
+class rect_node;
+class text_node;
 
 class default_renderer {
 public:
