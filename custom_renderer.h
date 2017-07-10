@@ -2,7 +2,7 @@
 #define CUSTOM_RENDERER_H
 
 #include "liven/default_renderer.h"
-#include "circle_node.h"
+class circle_node;
 
 using liven::default_renderer;
 
@@ -14,6 +14,6 @@ public:
 };
 
 template<>
-custom_renderer::image_type custom_renderer::render(const circle_node &cn) {std::cout << "circle with radius " << cn.radius << std::endl; return image_type();}
+custom_renderer::image_type custom_renderer::render<circle_node>(const circle_node&);
 
 #endif

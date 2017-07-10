@@ -4,6 +4,6 @@
 using liven::node;
 
 int main() {
-	node cn{circle_node({2})};
+	circle_node cn{2};
 	cn.render();
 }

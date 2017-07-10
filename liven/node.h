@@ -1,3 +1,6 @@
+#ifndef NODE_H
+#define NODE_H
+
 #include <memory>
 #include <iostream>
 #include <vector>
@@ -39,8 +42,8 @@ struct renderable_concept {
 
 template<class WRAPPED>
 struct renderable_model : renderable_concept {
-	std::shared_ptr<WRAPPED> w;
-	renderable_model(std::shared_ptr<WRAPPED> w_):
+	WRAPPED *w;
+	renderable_model(WRAPPED *w_):
 		w{w_}
 	{}
 	image_type render() const final override {
@@ -56,13 +59,9 @@ public:
 	}
 
 	template<class WRAPPED>
-	node(std::shared_ptr<WRAPPED> w) :
+	node(WRAPPED *w) :
 		p_renderable(std::make_shared<renderable_model<WRAPPED>>(w))
 	{}
-
-	template<class WRAPPED>
-	node(const WRAPPED &w) :
-		node(std::make_shared<WRAPPED>(w)) {}
 
 	node() : p_renderable() {}
 
@@ -70,4 +69,17 @@ private:
 	std::shared_ptr<renderable_concept> p_renderable;
 };
 
+struct rect_node : public node {
+	rect_node(int w, int h) : node(this), width(w), height(h) {}
+	int width;
+	int height;
+};
+
+struct text_node : public node {
+	text_node(std::string text_) : node(this), text(text_) {}
+	std::string text;
+};
+
 } // </namespace liven>
+
+#endif

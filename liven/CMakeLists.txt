@@ -1,6 +1,8 @@
-set(SRC )
+set(SRC 
+	default_renderer.cpp
+)
 
-# add_library(liven ${SRC})
+add_library(liven ${SRC})
 
 IF(BUILD_LIVEN_TESTS)
 add_subdirectory(tests)

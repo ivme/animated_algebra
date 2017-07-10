@@ -24,10 +24,11 @@ add_compile_options(
 include_directories(BEFORE ./liven)
 
 set(AA_SRC 
-	
+	custom_renderer.cpp
+	limited_renderer.cpp
 )
 
-# add_library(animated_algebra ${AA_SRC})
+add_library(animated_algebra ${AA_SRC})
 
 add_subdirectory(liven)
 add_subdirectory(tests)
