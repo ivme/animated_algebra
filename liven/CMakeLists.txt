@@ -12,6 +12,7 @@ set(SRC
 	grid_node.cpp
 	viewer.cpp
 	rect_node.cpp
+	node.cpp
 )
 
 add_library(liven ${SRC})
