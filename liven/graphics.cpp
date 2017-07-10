@@ -1,5 +1,7 @@
 #include "graphics.h"
 
+using namespace liven;
+
 std::ostream &operator<<(std::ostream &os, const point<2> &p) {os << "(" << p.x << "," << p.y << ")"; return os;}
 std::ostream &operator<<(std::ostream &os, const point<3> &p) {os << "(" << p.x << "," << p.y << "," << p.z << ")"; return os;}
 

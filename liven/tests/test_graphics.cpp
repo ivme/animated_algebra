@@ -1,6 +1,8 @@
 #include "graphics.h"
 #include <cassert>
 
+using namespace liven;
+
 int main() {
 	using located_rect_2 = located<rect,2>;
 	located<rect,2> rect0{rect(3,5),point<2>(-1,-4)};

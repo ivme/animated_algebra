@@ -6,6 +6,8 @@
 #include <chrono>
 #include <string> // debug
 
+using namespace liven;
+
 template<class PIXEL_TYPE>
 void viewer::present(const animation<PIXEL_TYPE> &a) {
 	for (auto frame : a.frames) {

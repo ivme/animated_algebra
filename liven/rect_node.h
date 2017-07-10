@@ -3,6 +3,8 @@
 
 #include "grid_node.h"
 
+namespace liven {
+
 class rect_node : public node {
 
 public:
@@ -45,5 +47,7 @@ private:
 
 	void update_grid();
 };
+
+} // liven
 
 #endif

@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 
+namespace liven {
+
 template <class T> 
 class matrix {
 public:
@@ -55,5 +57,7 @@ std::wostream &operator <<(std::wostream &os,const matrix<T> &m) {
 	}
 	return os;
 }
+
+} // liven
 
 #endif

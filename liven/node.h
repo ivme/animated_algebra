@@ -2,6 +2,9 @@
 #define NODE_H
 
 #include "image.h"
+
+namespace liven {
+
 template <class PIXEL_TYPE>
 class renderer;
 class ascii_renderer;
@@ -54,5 +57,7 @@ private:
 	void compute_scene_locations_(point<3> parent_location);
 	void make_scene_locations_dirty_();
 };
+
+} // liven
 
 #endif

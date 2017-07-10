@@ -4,6 +4,8 @@
 #include "scene.h"
 #include <string>
 
+namespace liven {
+
 class text_node : public node {
 public:
 	enum horizontal_align_type : int {left = -1, center = 0, right = 1};
@@ -41,5 +43,7 @@ private:
 	horizontal_align_type h_align = horizontal_align_type::center;
 	std::string text;
 };
+
+} // liven
 
 #endif

@@ -5,6 +5,8 @@
 #include <memory>
 #include "image.h"
 
+namespace liven {
+
 template <class PIXEL_TYPE>
 class animation {
 	friend class viewer;
@@ -30,5 +32,7 @@ private:
 	std::vector<std::shared_ptr<image<PIXEL_TYPE>>> frames; // must use pointers because image is abstract class
 	double fps = 10; // frames per second
 };
+
+}
 
 #endif

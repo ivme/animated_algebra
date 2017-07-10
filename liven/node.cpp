@@ -2,6 +2,8 @@
 #include "scene.h"
 #include "renderer.h"
 
+using namespace liven;
+
 node::node() :
 	location(0,0,0),
 	scene_location(0,0,0),

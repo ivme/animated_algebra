@@ -21,9 +21,9 @@ public:
 	void animate_quadratic_factorization(int a, int b, int c);
 
 private:
-	scene scene_;
-	view view_;
-	std::shared_ptr<viewer> viewer_;
+	liven::scene scene_;
+	liven::view view_;
+	std::shared_ptr<liven::viewer> viewer_;
 
 	static void display_welcome_message();
 	static void display_main_menu();

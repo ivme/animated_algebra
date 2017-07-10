@@ -1,5 +1,7 @@
 #include "animation.h"
 
+using namespace liven;
+
 template <class PIXEL_TYPE>
 void animation<PIXEL_TYPE>::set_animation_speed(double speed) {
 	fps = speed;

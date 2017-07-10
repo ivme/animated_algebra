@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+namespace liven {
+
 template <class PIXEL_TYPE>
 class animation;
 template <class PIXEL_TYPE>
@@ -38,5 +40,7 @@ private:
 	}
 	void show(const ascii_image &img) override;
 };
+
+}
 
 #endif

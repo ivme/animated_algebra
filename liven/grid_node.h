@@ -3,6 +3,8 @@
 
 #include "scene.h"
 
+namespace liven {
+
 class grid_node : public node {
 public:
 	grid_node(int width_, int height_, std::vector<int> v_partitions_, std::vector<int> h_paritions_) : 
@@ -30,5 +32,7 @@ public:
 	virtual std::shared_ptr<ascii_image> render(ascii_renderer &r);
 
 };
+
+}
 
 #endif

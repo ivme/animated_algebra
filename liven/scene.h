@@ -6,6 +6,8 @@
 #include <list>
 #include <memory>
 
+namespace liven {
+
 class scene : public std::enable_shared_from_this<scene> {
 	friend class node;
 public:
@@ -30,5 +32,7 @@ public:
 	void view_whole_scene();
 	std::shared_ptr<image<wchar_t>> render(renderer<ascii_image> &r);
 };
+
+} // liven
 
 #endif

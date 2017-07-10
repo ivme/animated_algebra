@@ -20,26 +20,26 @@ bool operator==(const length &lhs, const length &rhs);
 bool operator< (const length &lhs, const length &rhs);
 
 // "partitioned rectangle"
-class p_rect : public node {
+class p_rect : public liven::node {
 public:
 	enum display_style_type : int {empty = 0, labels_and_lines = 1, center_factored = 2, center_expanded = 3};
 
 	p_rect(std::vector<length> x_lengths_, std::vector<length> y_lengths_) :
 			x_lengths(x_lengths_), y_lengths(y_lengths_), display_style(labels_and_lines) {}
-	virtual located<rect,2> own_bounding_rect() const override;
+	virtual liven::located<liven::rect,2> own_bounding_rect() const override;
 
 	// split along specified dimension, x or y
 	// split(x,{1,3}) splits the rectangle along the first vertical partition and the third vertical partition
 	// return a node whose children are the result of the split
 	// the children are indexed starting with closest to lower left at 0
-	std::shared_ptr<node> split(dimension dim,std::set<int> split_points);
-	std::shared_ptr<node> split(dimension dim, int sub_rect_count);
+	std::shared_ptr<liven::node> split(liven::dimension dim,std::set<int> split_points);
+	std::shared_ptr<liven::node> split(liven::dimension dim, int sub_rect_count);
 
 	// merge the children of parent into a single p_rect
 	// replace parent in the node tree with the merged p_rect
 	// return a pointer to the merged p_rect
 	// dim == x => merge along horizontal edges
-	static std::shared_ptr<p_rect> merge(std::shared_ptr<node> parent, dimension dim); 
+	static std::shared_ptr<p_rect> merge(std::shared_ptr<liven::node> parent, liven::dimension dim); 
 
 	// unit_size must be an integer multiple of both of the following
 	// ascii_renderer::scene_x_coordinates_per_pixel
@@ -50,7 +50,7 @@ public:
 	int width_in_units() const;
 	int height_in_units() const;
 
-	const std::vector<length> &get_lengths(dimension dim) const;
+	const std::vector<length> &get_lengths(liven::dimension dim) const;
 	void swap_x_y();
 	std::vector<length> x_lengths;
 	std::vector<length> y_lengths;
@@ -65,23 +65,23 @@ public:
 	std::string y_label_text() const;
 	std::string get_factored_string() const;
 	std::string get_expanded_string() const;
-	std::string label_text(dimension dim) const;
+	std::string label_text(liven::dimension dim) const;
 	void set_display_style(display_style_type ds);
 	display_style_type get_display_style();
-	static void set_children_display_style(std::shared_ptr<node> n, display_style_type ds); // all children of n must be p_rects
+	static void set_children_display_style(std::shared_ptr<liven::node> n, display_style_type ds); // all children of n must be p_rects
 
-	std::map<length,int> get_length_frequency_map(dimension dim) const;
-	std::map<std::string,int> get_var_coeff_map(dimension dim) const;
+	std::map<length,int> get_length_frequency_map(liven::dimension dim) const;
+	std::map<std::string,int> get_var_coeff_map(liven::dimension dim) const;
 
-	virtual std::shared_ptr<ascii_image> render(renderer<ascii_image> &r) const override {return r.render(*this);};
-	virtual std::shared_ptr<ascii_image> render(ascii_renderer &r) const override {return r.render(*this);}
+	virtual std::shared_ptr<liven::ascii_image> render(liven::renderer<liven::ascii_image> &r) const override {return r.render(*this);};
+	virtual std::shared_ptr<liven::ascii_image> render(liven::ascii_renderer &r) const override {return r.render(*this);}
 
 #ifndef PRIVACY_OFF
 private:
 #endif
 	display_style_type display_style;
-	std::set<int> get_split_points(dimension dim, unsigned int sub_rect_count) const;
-	std::shared_ptr<grid_node> grid;
+	std::set<int> get_split_points(liven::dimension dim, unsigned int sub_rect_count) const;
+	std::shared_ptr<liven::grid_node> grid;
 };
 
 /*******            p_rect actions            *********/

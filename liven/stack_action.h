@@ -3,6 +3,8 @@
 
 #include "action.h"
 
+namespace liven {
+
 class stack_action : public move {
 	// this action assumes that the child nodes of 
 	// n_ are already stacked either horizontally or
@@ -36,5 +38,7 @@ private:
 
 
 };
+
+} // liven
 
 #endif

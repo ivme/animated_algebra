@@ -5,6 +5,7 @@
 #include <iostream> // debug
 #include <cassert>
 
+namespace liven {
 namespace bdc {
 #ifdef USE_BOX_DRAWING_CHARACTERS
 	wchar_t ur = u'└'; // up and right
@@ -71,7 +72,10 @@ namespace bdc {
 
 	wchar_t p = '.';
 #endif
-}
+} // bdc
+} // liven
+
+using namespace liven;
 
 template <class IMAGE_TYPE>
 std::shared_ptr<IMAGE_TYPE> renderer<IMAGE_TYPE>::render(const view& v) {
@@ -213,5 +217,7 @@ std::shared_ptr<ascii_image> ascii_renderer::render(const grid_node &gn) {
 	return out;
 }
 
+namespace liven {
 // explicit instantiations
 template class renderer<ascii_image>;
+}

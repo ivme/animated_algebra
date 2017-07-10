@@ -7,6 +7,8 @@
 #include <set>
 #include <iostream> // debug
 
+namespace liven {
+
 template <class PIXEL_TYPE>
 class image {
 public:
@@ -143,6 +145,6 @@ private:
 	std::vector<p_loc_image> images;
 };
 
-
+} // liven
 
 #endif

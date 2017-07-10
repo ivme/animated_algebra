@@ -8,6 +8,8 @@
 #include "text_node.h"
 #include "grid_node.h"
 
+namespace liven {
+
 class length;
 class p_rect;
 
@@ -72,5 +74,7 @@ namespace bdc {
 
 	extern wchar_t p;
 }
+
+} // liven
 
 #endif

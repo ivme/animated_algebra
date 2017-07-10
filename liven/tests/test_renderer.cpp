@@ -3,6 +3,7 @@
 #include <iostream> // debug
 #include "viewer.h"
 
+using namespace liven;
 
 grid_node gride_node_from_image_units(
 		int image_width,

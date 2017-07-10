@@ -1,6 +1,8 @@
 #include "image.h"
 #include <typeinfo>
 
+using namespace liven;
+
 wchar_t &ascii_image::pixel_at(unsigned int x, unsigned int y) {
 	return pixels.entry(pixels.rows() - y - 1, x);
 }

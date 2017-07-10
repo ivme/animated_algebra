@@ -5,6 +5,18 @@
 #include <algorithm>
 #include <iterator>
 
+using liven::scene;
+using liven::view;
+using liven::viewer;
+using liven::node;
+using liven::located;
+using liven::dimension;
+using liven::ascii_image;
+using liven::ascii_viewer;
+using liven::renderer;
+using liven::point;
+using liven::rect;
+
 bool operator==(const length &lhs, const length &rhs) {return !(lhs < rhs) && !(rhs < lhs);}
 bool operator< (const length &lhs, const length &rhs) {
 	if (lhs.val < rhs.val) {return true;}

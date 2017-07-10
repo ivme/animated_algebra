@@ -4,6 +4,8 @@
 #include "animation.h"
 #include "renderer.h"
 
+namespace liven {
+
 class action;
 
 class animator {
@@ -37,5 +39,7 @@ protected:
 	bool remaining_action = false;
 	int frame_number = 0;
 };
+
+} // liven
 
 #endif

@@ -1,6 +1,8 @@
 #include "scene.h"
 #include <cassert>
 
+using namespace liven;
+
 int main() {
 	auto node1 = std::make_shared<node>();
 	auto node2 = std::make_shared<node>();

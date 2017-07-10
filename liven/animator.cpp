@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <iostream> // debug
 
+using namespace liven;
+
 animator::animator() : v(), r(), root_action(std::make_shared<action>()),
 						animation_(std::make_shared<animation<wchar_t>>()) {}
 animator::~animator() = default;

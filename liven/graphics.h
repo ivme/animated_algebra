@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <iostream>
 
+namespace liven {
+
 class node;
 
 enum class dimension : int {x = 0, y = 1};
@@ -187,5 +189,7 @@ located<rect,2> union_bounding_rect(const located<rect,DIM> &a, const located<re
 
 	return located<rect,2>(rect(max_x - min_x, max_y - min_y),point<2>(min_x,min_y));
 }
+
+} // liven
 
 #endif

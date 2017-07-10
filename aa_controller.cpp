@@ -6,6 +6,16 @@
 #include <iostream>
 #include <string>
 
+using liven::scene;
+using liven::view;
+using liven::viewer;
+using liven::node;
+using liven::located;
+using liven::dimension;
+using liven::ascii_image;
+using liven::ascii_viewer;
+using liven::renderer;
+
 void aa_controller::launch() {
 	display_welcome_message();
 	int user_selection = select_menu_option(&display_main_menu,2);

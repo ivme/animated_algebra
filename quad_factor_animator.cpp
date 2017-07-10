@@ -6,6 +6,24 @@
 #include <typeinfo> //debug
 #include <cassert> //debug
 
+using liven::scene;
+using liven::view;
+using liven::viewer;
+using liven::node;
+using liven::located;
+using liven::dimension;
+using liven::ascii_image;
+using liven::ascii_viewer;
+using liven::renderer;
+using liven::point;
+using liven::rect;
+using liven::action;
+using liven::stack_action;
+using liven::shift;
+using liven::animation;
+using liven::move;
+using liven::text_node;
+
 quad_factor_animator::quad_factor_animator(int a_, int b_, int c_) : animator(),
 	a(a_),
 	b(b_),

@@ -1,5 +1,7 @@
 #include "text_node.h"
 
+using namespace liven;
+
 int text_node::get_offset(horizontal_align_type align) {
 	switch (align) {
 		case horizontal_align_type::left:

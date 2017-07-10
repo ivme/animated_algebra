@@ -4,6 +4,8 @@
 #include "scene.h"
 #include <queue>
 
+namespace liven {
+
 class action : public std::enable_shared_from_this<action> {
 public:
 	using callback_func = std::function<void(std::shared_ptr<action>,std::shared_ptr<action>)>;
@@ -131,5 +133,7 @@ private:
 	int target_coordinate = 0;
 	void create_children();
 };
+
+}  // liven
 
 #endif

@@ -1,6 +1,8 @@
 #include "rect_node.h"
 #include <cassert>
 
+using namespace liven;
+
 int main() {
 	auto rn = rect_node::make(0,0);
 	assert(rn->get_children().size() == 1);
