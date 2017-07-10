@@ -15,6 +15,7 @@ using liven::ascii_image;
 using liven::ascii_viewer;
 using liven::point;
 using liven::rect;
+using liven::grid_node;
 
 bool operator==(const length &lhs, const length &rhs) {return !(lhs < rhs) && !(rhs < lhs);}
 bool operator< (const length &lhs, const length &rhs) {
@@ -289,11 +290,23 @@ std::set<int> p_rect::get_split_points(dimension dim, unsigned int sub_rect_coun
 std::shared_ptr<node> p_rect::split(dimension dim, int sub_rect_count) {
 	return split(dim,get_split_points(dim,sub_rect_count));
 }
-/*
-liven::grid_node p_rect::get_grid() {
 
+grid_node p_rect::get_grid() const {
+	std::vector<std::vector<int>> partition_vectors{{0},{0}};
+	std::vector<std::vector<length>> length_vectors{x_lengths,y_lengths};
+
+	int position;
+	for (int i = 0; i < 2; ++i) {
+		position = 0;
+		for (auto l : length_vectors[i]) {
+			position += l.val * unit_size;
+			partition_vectors[i].push_back(position);
+		}
+	}
+
+	return grid_node{width(),height(),partition_vectors[0], partition_vectors[1]};
 }
-*/
+
 /********              p_rect actions               ********/
 /*
 bool flash_display_style::own_act() {
