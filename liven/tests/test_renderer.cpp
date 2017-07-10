@@ -5,7 +5,7 @@
 
 using namespace liven;
 
-grid_node gride_node_from_image_units(
+grid_node grid_node_from_image_units(
 		int image_width,
 		int image_height,
 		std::vector<int> v_image_partitions,
@@ -76,7 +76,7 @@ int main() {
 	assert(img0b->pixel_width() == 1);
 	assert(img0b->pixel_at(0,0) == bdc::p);
 
-	grid_node gn0c = gride_node_from_image_units(0,1,{0},{0,1});
+	grid_node gn0c = grid_node_from_image_units(0,1,{0},{0,1});
 	/* the two horizontal partitions each have 0 width
 	   and therefore should not render at all.
 	   gn0c should render as
@@ -92,7 +92,7 @@ int main() {
 	assert(img0c->pixel_at(0,0) == bdc::u);
 	assert(img0c->pixel_at(0,1) == bdc::d);
 
-	grid_node gn1 = gride_node_from_image_units(1,1,{0,1},{0,1});
+	grid_node gn1 = grid_node_from_image_units(1,1,{0,1},{0,1});
 	/* should render as
 	++
 	++
@@ -110,7 +110,7 @@ int main() {
 	assert(img1->pixel_at(1,1) == bdc::dl);
 
 
-	grid_node gn2 = gride_node_from_image_units(6,4,{0,2,5,6},{0,3});
+	grid_node gn2 = grid_node_from_image_units(6,4,{0,2,5,6},{0,3});
 	/* should render as	
 
 	, ,  ,,
