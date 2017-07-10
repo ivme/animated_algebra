@@ -1,9 +1,9 @@
 #ifndef QUAD_FACTOR_ANIMATOR_H
 #define QUAD_FACTOR_ANIMATOR_H
 
-#include "animator.h"
 #include "p_rect.h"
-#include "text_node.h"
+#include "liven/animator.h"
+#include "liven/text_node.h"
 #include <string>
 #include <queue>
 
@@ -11,7 +11,7 @@ class quad_factor_animator : public liven::animator {
 public:
 	quad_factor_animator(int a, int b, int c);
 	virtual void set_up_scene() override;
-	virtual std::shared_ptr<liven::animation<wchar_t>> animate() override;
+	virtual liven::animation<liven::ascii_image> animate() override;
 	// virtual void set_up_actions() override;
 	// virtual void will_render_frame() override;
 	// virtual void did_render_frame() override;

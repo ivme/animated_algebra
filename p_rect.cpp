@@ -13,7 +13,6 @@ using liven::located;
 using liven::dimension;
 using liven::ascii_image;
 using liven::ascii_viewer;
-using liven::renderer;
 using liven::point;
 using liven::rect;
 
@@ -215,12 +214,6 @@ std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension di
 		throw std::runtime_error("children empty in p_rect::merge");
 	}
 
-	for (auto child : parent->get_children()) {
-		if (!(typeid(decltype(*child))==typeid(p_rect))) {
-			throw std::runtime_error("non p_rect child found in p_rect::merge");
-		}
-	}
-
 	auto zero_child = std::dynamic_pointer_cast<p_rect>(parent->get_children()[0]);
 	const std::vector<length> &lengths = zero_child->get_lengths(dim);
 	std::vector<length> other_lengths{};
@@ -296,7 +289,11 @@ std::set<int> p_rect::get_split_points(dimension dim, unsigned int sub_rect_coun
 std::shared_ptr<node> p_rect::split(dimension dim, int sub_rect_count) {
 	return split(dim,get_split_points(dim,sub_rect_count));
 }
+/*
+liven::grid_node p_rect::get_grid() {
 
+}
+*/
 /********              p_rect actions               ********/
 /*
 bool flash_display_style::own_act() {

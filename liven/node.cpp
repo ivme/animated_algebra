@@ -1,6 +1,6 @@
 #include "node.h"
 #include "scene.h"
-#include "renderer.h"
+#include "ascii_renderer.h"
 
 using namespace liven;
 
@@ -118,10 +118,6 @@ located<rect,2> node::bounding_rect() const {
 	}
 	return out;
 }
-
-bool node::is_renderable() const {return false;}
-std::shared_ptr<ascii_image> node::render(renderer<ascii_image> &r) const {return r.render(*this);}
-std::shared_ptr<ascii_image> node::render(ascii_renderer &r) const {return r.render(*this);}
 
 // recursive utility function
 void node::compute_scene_locations_(point<3> parent_location) {

@@ -3,8 +3,8 @@
 
 #include <tuple>
 #include "algebra.h"
-#include "viewer.h"
-#include "scene.h"
+#include "liven/viewer.h"
+#include "liven/scene.h"
 
 #define STD_VIEW_WIDTH 150
 #define STD_VIEW_HEIGHT 100	
@@ -23,7 +23,7 @@ public:
 private:
 	liven::scene scene_;
 	liven::view view_;
-	std::shared_ptr<liven::viewer> viewer_;
+	liven::ascii_viewer viewer_;
 
 	static void display_welcome_message();
 	static void display_main_menu();

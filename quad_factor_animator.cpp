@@ -1,7 +1,7 @@
 #include "quad_factor_animator.h"
 #include "p_rect.h"
-#include "action.h"
-#include "stack_action.h"
+#include "liven/action.h"
+#include "liven/stack_action.h"
 #include "algebra.h"
 #include <typeinfo> //debug
 #include <cassert> //debug
@@ -14,7 +14,6 @@ using liven::located;
 using liven::dimension;
 using liven::ascii_image;
 using liven::ascii_viewer;
-using liven::renderer;
 using liven::point;
 using liven::rect;
 using liven::action;
@@ -77,8 +76,8 @@ void quad_factor_animator::apply_move_settings(std::shared_ptr<move> n) {
 	n->set_high_frame_limit(high_frame_limit);
 }
 
-std::shared_ptr<animation<wchar_t>> quad_factor_animator::animate() {
-	animation_ = std::make_shared<animation<wchar_t>>();
+animation<ascii_image> quad_factor_animator::animate() {
+	animation_ = animation<ascii_image>();
 	int unit_size = p_rect::unit_size;
 	
 	set_up_scene();

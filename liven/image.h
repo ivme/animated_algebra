@@ -18,7 +18,6 @@ public:
 	image(rect pixel_dimensions) {}
 	image(matrix<PIXEL_TYPE> pixels_) {}
 
-	virtual void show(viewer &v) const = 0;
 	virtual PIXEL_TYPE &pixel_at(unsigned int x, unsigned int y) = 0; // (0,0) = lower left of image
 
 	virtual int pixel_height() const = 0;
@@ -111,9 +110,11 @@ public:
 	ascii_image(rect pixel_dimensions) : pixels(matrix<wchar_t>(pixel_dimensions.height, pixel_dimensions.width,default_pixel)) {	}
 	ascii_image(matrix<wchar_t> pixels_) : pixels(pixels_) {}
 
-	void show(viewer &v) const override {v.show(*this);}
-	wchar_t &pixel_at(unsigned int x, unsigned int y) override; // (0,0) = lower left of image
+	inline wchar_t &pixel_at(unsigned int x, unsigned int y) override {
+		return pixels.entry(pixels.rows() - y - 1, x);
+	} // (0,0) = lower left of image
 	wchar_t cpixel_at(unsigned int x, unsigned int y) const {return pixels.centry(pixels.rows() - y - 1, x);}
+	
 	int pixel_height() const override {return pixels.rows();}
 	int pixel_width() const override {return pixels.cols();}
 
@@ -133,9 +134,47 @@ class layered_image {
 
 public:
 	layered_image() : images() {}
-	std::shared_ptr<IMAGE_TYPE> flatten();
-	std::shared_ptr<IMAGE_TYPE> flatten_and_crop(located<rect,2> cropping_rect);
-	void insert(p_loc_image);
+
+	inline IMAGE_TYPE flatten() {
+		return flatten_and_crop(bounding_rect());
+	}
+
+	inline void insert(p_loc_image p_img) {
+		images.push_back(p_img);
+		full_image_bounding_rect = union_bounding_rect(full_image_bounding_rect,img_bounding_rect(*p_img));
+	}
+
+	IMAGE_TYPE flatten_and_crop(located<rect,2> cropping_rect) {
+		// iterate through images from background to foreground
+		// if the image intersects with the cropping rect
+		// copy pixels from intersection onto output
+		std::shared_ptr<IMAGE_TYPE> out_ptr = std::make_shared<IMAGE_TYPE>(cropping_rect);
+		std::sort(images.begin(),images.end(),compare_z());
+		for (auto img_ptr : images) {
+			located<rect,2> intersection_ = intersection(img_bounding_rect(*img_ptr),cropping_rect);
+			if (intersection_.width == 0 || intersection_.height == 0) {
+				continue;
+			} else {
+				// call each image a child and the layered image the parent.
+				// if child.location = (h,k) in parent's coordinate system, and
+				// intersection_.location = (p,q) in parent's coordinate system,
+				// then the location of the intersection in the child's coordinate 
+				// system is (p - h, q - k)
+				located<rect,2> intersection_in_img_coordinates = intersection_;
+				intersection_in_img_coordinates.location.x -= img_ptr->location.x;
+				intersection_in_img_coordinates.location.y -= img_ptr->location.y;
+
+				located<rect,2> intersection_in_crop_coordinates = intersection_;
+				intersection_in_crop_coordinates.location.x -= cropping_rect.location.x;
+				intersection_in_crop_coordinates.location.y -= cropping_rect.location.y;
+
+				auto src_range = pixel_range<typename IMAGE_TYPE::pixel_type>(img_ptr, intersection_in_img_coordinates);
+				auto dest_range = pixel_range<typename IMAGE_TYPE::pixel_type>(out_ptr, intersection_in_crop_coordinates);
+				std::copy(src_range.begin(),src_range.end(),dest_range.begin());
+			}
+		}
+		return *out_ptr;
+	}
 	located<rect,2> bounding_rect() {
 		return full_image_bounding_rect;
 	}
@@ -144,6 +183,8 @@ private:
 	located<rect,2> full_image_bounding_rect;
 	std::vector<p_loc_image> images;
 };
+
+
 
 } // liven
 

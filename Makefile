@@ -161,30 +161,17 @@ liven/fast:
 .PHONY : liven/fast
 
 #=============================================================================
-# Target rules for targets named test_rect_node
+# Target rules for targets named test_ascii_renderer
 
 # Build rule for target.
-test_rect_node: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_rect_node
-.PHONY : test_rect_node
+test_ascii_renderer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_ascii_renderer
+.PHONY : test_ascii_renderer
 
 # fast build rule for target.
-test_rect_node/fast:
-	$(MAKE) -f liven/tests/CMakeFiles/test_rect_node.dir/build.make liven/tests/CMakeFiles/test_rect_node.dir/build
-.PHONY : test_rect_node/fast
-
-#=============================================================================
-# Target rules for targets named test_renderer
-
-# Build rule for target.
-test_renderer: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_renderer
-.PHONY : test_renderer
-
-# fast build rule for target.
-test_renderer/fast:
-	$(MAKE) -f liven/tests/CMakeFiles/test_renderer.dir/build.make liven/tests/CMakeFiles/test_renderer.dir/build
-.PHONY : test_renderer/fast
+test_ascii_renderer/fast:
+	$(MAKE) -f liven/tests/CMakeFiles/test_ascii_renderer.dir/build.make liven/tests/CMakeFiles/test_ascii_renderer.dir/build
+.PHONY : test_ascii_renderer/fast
 
 #=============================================================================
 # Target rules for targets named test_scene
@@ -277,6 +264,33 @@ aa_controller.s: aa_controller.cpp.s
 aa_controller.cpp.s:
 	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_controller.cpp.s
 .PHONY : aa_controller.cpp.s
+
+aa_renderer.o: aa_renderer.cpp.o
+
+.PHONY : aa_renderer.o
+
+# target to build an object file
+aa_renderer.cpp.o:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_renderer.cpp.o
+.PHONY : aa_renderer.cpp.o
+
+aa_renderer.i: aa_renderer.cpp.i
+
+.PHONY : aa_renderer.i
+
+# target to preprocess a source file
+aa_renderer.cpp.i:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_renderer.cpp.i
+.PHONY : aa_renderer.cpp.i
+
+aa_renderer.s: aa_renderer.cpp.s
+
+.PHONY : aa_renderer.s
+
+# target to generate assembly for a file
+aa_renderer.cpp.s:
+	$(MAKE) -f CMakeFiles/animated_algebra.dir/build.make CMakeFiles/animated_algebra.dir/aa_renderer.cpp.s
+.PHONY : aa_renderer.cpp.s
 
 algebra.o: algebra.cpp.o
 
@@ -398,8 +412,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... animated_algebra"
 	@echo "... liven"
-	@echo "... test_rect_node"
-	@echo "... test_renderer"
+	@echo "... test_ascii_renderer"
 	@echo "... test_scene"
 	@echo "... test_graphics"
 	@echo "... test_grid_node"
@@ -408,6 +421,9 @@ help:
 	@echo "... aa_controller.o"
 	@echo "... aa_controller.i"
 	@echo "... aa_controller.s"
+	@echo "... aa_renderer.o"
+	@echo "... aa_renderer.i"
+	@echo "... aa_renderer.s"
 	@echo "... algebra.o"
 	@echo "... algebra.i"
 	@echo "... algebra.s"

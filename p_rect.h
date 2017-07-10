@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "renderer.h"
-#include "action.h"
-#include "grid_node.h"
+#include "liven/ascii_renderer.h"
+#include "liven/action.h"
+#include "liven/grid_node.h"
 
 struct length {
 public:
@@ -25,7 +25,7 @@ public:
 	enum display_style_type : int {empty = 0, labels_and_lines = 1, center_factored = 2, center_expanded = 3};
 
 	p_rect(std::vector<length> x_lengths_, std::vector<length> y_lengths_) :
-			x_lengths(x_lengths_), y_lengths(y_lengths_), display_style(labels_and_lines) {}
+			node(this), x_lengths(x_lengths_), y_lengths(y_lengths_), display_style(labels_and_lines) {}
 	virtual liven::located<liven::rect,2> own_bounding_rect() const override;
 
 	// split along specified dimension, x or y
@@ -73,53 +73,13 @@ public:
 	std::map<length,int> get_length_frequency_map(liven::dimension dim) const;
 	std::map<std::string,int> get_var_coeff_map(liven::dimension dim) const;
 
-	virtual std::shared_ptr<liven::ascii_image> render(liven::renderer<liven::ascii_image> &r) const override {return r.render(*this);};
-	virtual std::shared_ptr<liven::ascii_image> render(liven::ascii_renderer &r) const override {return r.render(*this);}
+	liven::grid_node get_grid() const;
 
 #ifndef PRIVACY_OFF
 private:
 #endif
 	display_style_type display_style;
 	std::set<int> get_split_points(liven::dimension dim, unsigned int sub_rect_count) const;
-	std::shared_ptr<liven::grid_node> grid;
 };
 
-/*******            p_rect actions            *********/
-/*
-// does nothing for pause_before frames
-// changes the display style, then does nothing for pause_during frames
-// reverts to the original display style, then does nothing for pause_after frames
-class flash_display_style : public action {
-	flash_display_style(std::shared_ptr<p_rect> pr_, p_rect::display_style_type ds_,
-						size_t pause_before_ = 1, size_t pause_during_ = 1, size_t pause_after_ = 1) : 
-							pr(pr_), ds(ds_), pause_during(pause_during_), pause_after(pause_after_),
-							change_frame(pause_before_), revert_frame(pause_before_ + pause_during_), 
-							end_frame(pause_before_ + pause_during_ + pause_after_)
-						{
-							if (pr) {original_ds = pr->get_display_style();}
-							else {throw std::runtime_error("flash_display_style called with null_ptr argument");}
-						}
-	virtual bool own_act() override;
-
-#ifndef PRIVACY_OFF
-private:
-#endif
-	std::shared_ptr<p_rect> pr;
-	p_rect::display_style_type ds, original_ds;
-	size_t pause_during, pause_after;
-	size_t change_frame, revert_frame, end_frame;
-};
-
-// renders the children of parent with
-// a different display style, then reverts
-// to the original display styles
-// pause_before == length (seconds) of pause before changing display style
-// pause_during == length (seconds) of time for which children are displayed with the new style
-// pause_after == length (seconds) of pause after reverting to original display styles
-class flash_children_display_style : public action {
-public:
-	flash_children_display_style(std::shared_ptr<node> parent, double pause_before, double pause_during, double pause_after);
-	virtual bool own_act() override;
-};
-*/
 #endif

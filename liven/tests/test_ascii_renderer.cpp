@@ -1,4 +1,5 @@
-#include "renderer.h"
+#include "ascii_renderer.h"
+#include "grid_node.h"
 #include <cassert>
 #include <iostream> // debug
 #include "viewer.h"
@@ -62,19 +63,19 @@ int main() {
 	*/
 
 	grid_node gn0a{0,0,{},{}};
-	/* no partitions --> should render as an empty image */
-	auto img0a = gn0a.render(r);
-	assert(img0a->pixel_height() == 0);
-	assert(img0a->pixel_width() == 0);
+	/* no partitions -. should render as an empty image */
+	auto img0a = gn0a.render();
+	assert(img0a.pixel_height() == 0);
+	assert(img0a.pixel_width() == 0);
 
 	grid_node gn0b{0,0,{0},{0}};
 	/* should render as a point
 		.
 	*/
-	auto img0b = gn0b.render(r);
-	assert(img0b->pixel_height() == 1);
-	assert(img0b->pixel_width() == 1);
-	assert(img0b->pixel_at(0,0) == bdc::p);
+	auto img0b = gn0b.render();
+	assert(img0b.pixel_height() == 1);
+	assert(img0b.pixel_width() == 1);
+	assert(img0b.pixel_at(0,0) == bdc::p);
 
 	grid_node gn0c = grid_node_from_image_units(0,1,{0},{0,1});
 	/* the two horizontal partitions each have 0 width
@@ -86,11 +87,11 @@ int main() {
 	   ╷
 	   ╵
 	*/
-	auto img0c = gn0c.render(r);
-	assert(img0c->pixel_width() == 1);
-	assert(img0c->pixel_height() == 2);
-	assert(img0c->pixel_at(0,0) == bdc::u);
-	assert(img0c->pixel_at(0,1) == bdc::d);
+	auto img0c = gn0c.render();
+	assert(img0c.pixel_width() == 1);
+	assert(img0c.pixel_height() == 2);
+	assert(img0c.pixel_at(0,0) == bdc::u);
+	assert(img0c.pixel_at(0,1) == bdc::d);
 
 	grid_node gn1 = grid_node_from_image_units(1,1,{0,1},{0,1});
 	/* should render as
@@ -101,13 +102,13 @@ int main() {
 	┌┐
 	└┘
 	*/
-	auto img1 = gn1.render(r);
-	assert(img1->pixel_height() == 2);
-	assert(img1->pixel_width() == 2);
-	assert(img1->pixel_at(0,0) == bdc::ur);
-	assert(img1->pixel_at(0,1) == bdc::dr);
-	assert(img1->pixel_at(1,0) == bdc::ul);
-	assert(img1->pixel_at(1,1) == bdc::dl);
+	auto img1 = gn1.render();
+	assert(img1.pixel_height() == 2);
+	assert(img1.pixel_width() == 2);
+	assert(img1.pixel_at(0,0) == bdc::ur);
+	assert(img1.pixel_at(0,1) == bdc::dr);
+	assert(img1.pixel_at(1,0) == bdc::ul);
+	assert(img1.pixel_at(1,1) == bdc::dl);
 
 
 	grid_node gn2 = grid_node_from_image_units(6,4,{0,2,5,6},{0,3});
@@ -127,48 +128,48 @@ int main() {
 	│ │  ││
 	└─┴──┴┘
 	*/
-	auto img2 = gn2.render(r);
+	auto img2 = gn2.render();
 
-	assert(img2->pixel_width() == 7);
-	assert(img2->pixel_height() == 5);
+	assert(img2.pixel_width() == 7);
+	assert(img2.pixel_height() == 5);
 	// row 0
-	assert(img2->pixel_at(0,0) == bdc::ur);
-	assert(img2->pixel_at(1,0) == bdc::h);
-	assert(img2->pixel_at(2,0) == bdc::uh);
-	assert(img2->pixel_at(3,0) == bdc::h);
-	assert(img2->pixel_at(4,0) == bdc::h);
-	assert(img2->pixel_at(5,0) == bdc::uh);
-	assert(img2->pixel_at(6,0) == bdc::uh);
+	assert(img2.pixel_at(0,0) == bdc::ur);
+	assert(img2.pixel_at(1,0) == bdc::h);
+	assert(img2.pixel_at(2,0) == bdc::uh);
+	assert(img2.pixel_at(3,0) == bdc::h);
+	assert(img2.pixel_at(4,0) == bdc::h);
+	assert(img2.pixel_at(5,0) == bdc::uh);
+	assert(img2.pixel_at(6,0) == bdc::uh);
 	
 	// row 1
-	assert(img2->pixel_at(0,1) == bdc::v);
-	assert(img2->pixel_at(1,1) == ascii_image::default_pixel);
-	assert(img2->pixel_at(2,1) == bdc::v);
-	assert(img2->pixel_at(3,1) == ascii_image::default_pixel);
-	assert(img2->pixel_at(4,1) == ascii_image::default_pixel);
-	assert(img2->pixel_at(5,1) == bdc::v);
-	assert(img2->pixel_at(6,1) == bdc::v);
+	assert(img2.pixel_at(0,1) == bdc::v);
+	assert(img2.pixel_at(1,1) == ascii_image::default_pixel);
+	assert(img2.pixel_at(2,1) == bdc::v);
+	assert(img2.pixel_at(3,1) == ascii_image::default_pixel);
+	assert(img2.pixel_at(4,1) == ascii_image::default_pixel);
+	assert(img2.pixel_at(5,1) == bdc::v);
+	assert(img2.pixel_at(6,1) == bdc::v);
 
 	// row 2 should be identical to row 1
 	for (int x = 0; x < 7; ++x) {
-		assert(img2->pixel_at(x,2) == img2->pixel_at(x,1));
+		assert(img2.pixel_at(x,2) == img2.pixel_at(x,1));
 	}
 
 	// row 3
-	assert(img2->pixel_at(0,3) == bdc::vr);
-	assert(img2->pixel_at(1,3) == bdc::h);
-	assert(img2->pixel_at(2,3) == bdc::vh);
-	assert(img2->pixel_at(3,3) == bdc::h);
-	assert(img2->pixel_at(4,3) == bdc::h);
-	assert(img2->pixel_at(5,3) == bdc::vh);
-	assert(img2->pixel_at(6,3) == bdc::vh);
+	assert(img2.pixel_at(0,3) == bdc::vr);
+	assert(img2.pixel_at(1,3) == bdc::h);
+	assert(img2.pixel_at(2,3) == bdc::vh);
+	assert(img2.pixel_at(3,3) == bdc::h);
+	assert(img2.pixel_at(4,3) == bdc::h);
+	assert(img2.pixel_at(5,3) == bdc::vh);
+	assert(img2.pixel_at(6,3) == bdc::vh);
 
 	// row 4
-	assert(img2->pixel_at(0,4) == bdc::d);
-	assert(img2->pixel_at(1,4) == ascii_image::default_pixel);
-	assert(img2->pixel_at(2,4) == bdc::d);
-	assert(img2->pixel_at(3,4) == ascii_image::default_pixel);
-	assert(img2->pixel_at(4,4) == ascii_image::default_pixel);
-	assert(img2->pixel_at(5,4) == bdc::d);
-	assert(img2->pixel_at(6,4) == bdc::d);
+	assert(img2.pixel_at(0,4) == bdc::d);
+	assert(img2.pixel_at(1,4) == ascii_image::default_pixel);
+	assert(img2.pixel_at(2,4) == bdc::d);
+	assert(img2.pixel_at(3,4) == ascii_image::default_pixel);
+	assert(img2.pixel_at(4,4) == ascii_image::default_pixel);
+	assert(img2.pixel_at(5,4) == bdc::d);
+	assert(img2.pixel_at(6,4) == bdc::d);
 }

@@ -1,8 +1,8 @@
 #include "aa_controller.h"
-#include "animation.h"
 #include "p_rect.h"
 #include "quad_factor_animator.h"
-#include "viewer.h"
+#include "liven/animation.h"
+#include "liven/viewer.h"
 #include <iostream>
 #include <string>
 
@@ -14,7 +14,6 @@ using liven::located;
 using liven::dimension;
 using liven::ascii_image;
 using liven::ascii_viewer;
-using liven::renderer;
 
 void aa_controller::launch() {
 	display_welcome_message();
@@ -83,5 +82,5 @@ void aa_controller::animate_quadratic_factorization(std::array<int,3> coeffs) {
 void aa_controller::animate_quadratic_factorization(int a, int b, int c) {
 	auto qfa = quad_factor_animator(a,b,c);
 	ascii_viewer vwr{};
-	vwr.present(*qfa.animate());
+	vwr.present(qfa.animate());
 }

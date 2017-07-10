@@ -1,20 +1,67 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "image.h"
+// trick for quotes, see https://stackoverflow.com/a/6671729/4425924
+#define Q(x) #x
+#define QUOTE(x) Q(x)
+
+#define LIVEN_DEFAULT_RENDER_TYPE liven::ascii_renderer
+#define LIVEN_DEFAULT_RENDER_TYPE_HEADER_PATH ascii_renderer.h
+
+// if the user compiling liven has specified a renderer
+// and a path to the header containing the declaration
+// of the renderer, use it.  otherwise use the default
+// renderer.
+
+#ifdef LIVEN_RENDER_TYPE
+	#ifndef LIVEN_RENDER_TYPE_HEADER_PATH
+		#error Render class specified, but path to render class header not specified.
+	#else
+	#include QUOTE(LIVEN_RENDER_TYPE_HEADER_PATH)
+	#endif
+#else
+#define LIVEN_RENDER_TYPE LIVEN_DEFAULT_RENDER_TYPE
+#include QUOTE(LIVEN_DEFAULT_RENDER_TYPE_HEADER_PATH)
+#endif
 
 namespace liven {
 
-template <class PIXEL_TYPE>
-class renderer;
-class ascii_renderer;
+using render_type = LIVEN_RENDER_TYPE;
+using image_type = render_type::image_type;
+
+struct renderable_concept {
+	virtual image_type render() const = 0;
+};
+
+template<class WRAPPED>
+struct renderable_model : renderable_concept {
+	WRAPPED *w;
+	renderable_model(WRAPPED *w_):
+		w{w_}
+	{}
+	image_type render() const final override {
+		return render_type::render(*w);
+	}
+};
+
 class scene;
 
 class node : public std::enable_shared_from_this<node> {
 	friend class scene;
 
 public:
+	template<class WRAPPED>
+	node(WRAPPED *w) :
+		p_renderable(std::make_shared<renderable_model<WRAPPED>>(w))
+	{}
+
 	node();
+
+	image_type render() {
+		if (!p_renderable) {throw std::runtime_error("cannot render node. p_renderable is null.");}
+		return p_renderable->render();
+	}
+
 	// location of lower left corner of node in parent's coordinate system
 	// more positive z-locations are closer to foreground
 	point<3> get_location() const {return location;}
@@ -39,11 +86,10 @@ public:
 	virtual located<rect,2> own_bounding_rect() const;  // bounding rectangle of this node, not including children
 	located<rect,2> bounding_rect() const ; // bounding rect of this node and its children.
 
-	virtual bool is_renderable() const;
-	virtual std::shared_ptr<ascii_image> render(renderer<ascii_image> &r) const;
-	virtual std::shared_ptr<ascii_image> render(ascii_renderer &r) const;
+	bool is_renderable() const {return (bool)p_renderable;}
 
 private:
+	std::shared_ptr<renderable_concept> p_renderable;
 	point<3> location = point<3>(0,0,0);
 	
 	point<3> scene_location;

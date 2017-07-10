@@ -28,14 +28,14 @@ int main() {
 	layered_img.insert(std::make_shared<located<ascii_image,3>>(located_img_2));
 	rect boundary = layered_img.bounding_rect();
 	assert(boundary.width == 9 && boundary.height == 7);
-	std::shared_ptr<image<wchar_t>> snapshot = layered_img.flatten();
-	assert(snapshot->pixel_width() == 9 && snapshot->pixel_height() == 7);
-	assert(snapshot->pixel_at(0,0) == L'e');
-	assert(snapshot->pixel_at(1,2) == L'h');
-	assert(snapshot->pixel_at(2,4) == L'w');
-	assert(snapshot->pixel_at(3,4) == ascii_image::default_pixel);
-	assert(snapshot->pixel_at(6,2) == L'n');
-	assert(snapshot->pixel_at(8,6) == L'n');
+	ascii_image snapshot = layered_img.flatten();
+	assert(snapshot.pixel_width() == 9 && snapshot.pixel_height() == 7);
+	assert(snapshot.pixel_at(0,0) == L'e');
+	assert(snapshot.pixel_at(1,2) == L'h');
+	assert(snapshot.pixel_at(2,4) == L'w');
+	assert(snapshot.pixel_at(3,4) == ascii_image::default_pixel);
+	assert(snapshot.pixel_at(6,2) == L'n');
+	assert(snapshot.pixel_at(8,6) == L'n');
 	//ascii_viewer v{};
 	//snapshot->show(v);
 }

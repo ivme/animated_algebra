@@ -2,31 +2,34 @@
 #define VIEWER_H
 
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 namespace liven {
 
-template <class PIXEL_TYPE>
+template <class IMAGE_TYPE>
 class animation;
-template <class PIXEL_TYPE>
-class image;
 class ascii_image;
 
+template<class IMAGE_TYPE>
 class viewer {
-	friend class image<wchar_t>;
-	friend class ascii_image;
+	friend IMAGE_TYPE;
 public:
-	template <class PIXEL_TYPE>
-	void present(const animation<PIXEL_TYPE> &a);
+	void present(const animation<IMAGE_TYPE> &a) {
+		for (auto frame : a.frames) {
+			show(frame);
+			std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1000 / a.fps)));
+		}
+	}
 	virtual void clear_display() = 0;
 
 private:
 	// clears the current image from the display
 	// and replaces it with img
-	virtual void show(const image<wchar_t> &img)  = 0;
-	virtual void show(const ascii_image &img)  = 0;
+	virtual void show(const IMAGE_TYPE &img)  = 0;
 };
 
-class ascii_viewer : public viewer {
+class ascii_viewer : public viewer<ascii_image> {
 public:
 	void clear_display() override;
 private:
@@ -34,10 +37,6 @@ private:
 	unsigned int image_width = 0;
 	unsigned int image_height = 0;
 
-	void show(const image<wchar_t> &img)  override {
-		/* debug */
-		std::cout << "ascii_viewer::_show(const image<wchar_t> &img)" << std::endl;
-	}
 	void show(const ascii_image &img) override;
 };
 

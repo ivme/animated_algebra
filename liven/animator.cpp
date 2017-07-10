@@ -7,8 +7,8 @@
 
 using namespace liven;
 
-animator::animator() : v(), r(), root_action(std::make_shared<action>()),
-						animation_(std::make_shared<animation<wchar_t>>()) {}
+animator::animator() : v(), root_action(std::make_shared<action>()),
+						animation_(animation<image_type>()) {}
 animator::~animator() = default;
 
 void animator::render_action() {
@@ -24,7 +24,7 @@ void animator::render_action(std::shared_ptr<action> action_) {
 			if (action_->act(frame_number)) {remaining_action = true;}
 		}
 		will_render_frame();
-		animation_->append_frame(v.render(r));
+		animation_.append_frame(v.render());
 		did_render_frame();
 		++frame_number;
 	}
@@ -35,16 +35,14 @@ void animator::pause(int frame_count) {
 }
 
 void animator::pause(double seconds) {
-	if (animation_) {
-		pause((int) (animation_->get_animation_speed() * seconds));
-	}
+	pause((int) (animation_.get_animation_speed() * seconds));
 }
 
 void animator::snapshot() {
-	animation_->append_frame(v.render(r));
+	animation_.append_frame(v.render());
 }
 
-std::shared_ptr<animation<wchar_t>> animator::animate() {
+animation<image_type> animator::animate() {
 	return animation_;
 }
 
