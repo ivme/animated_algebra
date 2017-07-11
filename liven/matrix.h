@@ -33,8 +33,8 @@ public:
 	unsigned int cols() const {return col_count;}
 
 private:
-	const unsigned int row_count;
-	const unsigned int col_count;
+	unsigned int row_count;
+	unsigned int col_count;
 	std::vector<T> data;
 };
 

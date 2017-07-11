@@ -291,7 +291,7 @@ std::shared_ptr<node> p_rect::split(dimension dim, int sub_rect_count) {
 	return split(dim,get_split_points(dim,sub_rect_count));
 }
 
-grid_node p_rect::get_grid() const {
+grid_node p_rect::get_grid_node() const {
 	std::vector<std::vector<int>> partition_vectors{{0},{0}};
 	std::vector<std::vector<length>> length_vectors{x_lengths,y_lengths};
 

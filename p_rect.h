@@ -41,6 +41,7 @@ public:
 	// dim == x => merge along horizontal edges
 	static std::shared_ptr<p_rect> merge(std::shared_ptr<liven::node> parent, liven::dimension dim); 
 
+	// unit_size measures the size of a unit length in scene coordinates
 	// unit_size must be an integer multiple of both of the following
 	// ascii_renderer::scene_x_coordinates_per_pixel
 	// ascii_renderer::scene_y_coordinates_per_pixel
@@ -73,7 +74,7 @@ public:
 	std::map<length,int> get_length_frequency_map(liven::dimension dim) const;
 	std::map<std::string,int> get_var_coeff_map(liven::dimension dim) const;
 
-	liven::grid_node get_grid() const;
+	liven::grid_node get_grid_node() const;
 
 #ifndef PRIVACY_OFF
 private:
