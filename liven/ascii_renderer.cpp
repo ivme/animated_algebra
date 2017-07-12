@@ -2,6 +2,7 @@
 #include "image.h"
 #include "text_node.h"
 #include "grid_node.h"
+#include "arrow_node.h"
 #include "graphics.h"
 #include <numeric>
 #include <cmath>
@@ -46,6 +47,14 @@ namespace bdc {
 	wchar_t l = u'╴'; // left
 
 	wchar_t p = u'·'; // point
+
+	wchar_t lah = u'<'; // left arrow head
+
+	wchar_t rah = u'>'; // right arrow head
+
+	wchar_t uah = u'^'; // up arrow head
+
+	wchar_t dah = u'v'; // down arrow head
 #else
 	wchar_t ur = '+';
 
@@ -78,10 +87,20 @@ namespace bdc {
 	wchar_t l = u'-';
 
 	wchar_t p = '.';
-#endif
-}
 
-}
+	wchar_t lah = u'<'; // left arrow head
+
+	wchar_t rah = u'>'; // right arrow head
+
+	wchar_t uah = u'^'; // up arrow head
+
+	wchar_t dah = u'v'; // down arrow head
+#endif
+} // bdc
+
+} // liven
+
+// render text_node
 
 ascii_image ascii_renderer::render(const text_node& n) {
 	std::string text = n.get_text();
@@ -90,6 +109,42 @@ ascii_image ascii_renderer::render(const text_node& n) {
 	pixel_range<wchar_t> pixels{output,0,0,text_size,1};
 	std::copy(text.begin(),text.end(),pixels.begin());
 	return *output;
+}
+
+// render arrow_node
+
+ascii_image ascii_renderer::render(const arrow_node &an) {
+	// only one of h_pixels or v_pixels will be used
+	arrow_node::direction drct = an.get_direction();
+	std::shared_ptr<ascii_image> out;
+	if (drct == arrow_node::direction::right || drct == arrow_node::direction::left) {
+		int h_pixels = scene_x_coordinate_to_pixels(an.get_length());
+		out = std::make_shared<ascii_image>(rect(h_pixels,1));
+		pixel_range<wchar_t> rng = pixel_range<wchar_t>(out,0,0,h_pixels,1);
+		auto it = rng.begin();
+		if (drct == arrow_node::direction::right) {
+			for (;it != --rng.end(); ++it) {*it = bdc::h;}
+			*it = bdc::rah;
+		} else {
+			*it = bdc::lah;
+			++it;
+			for (;it != rng.end(); ++it) {*it = bdc::h;}
+		}
+	} else {
+		int v_pixels = scene_y_coordinate_to_pixels(an.get_length());
+		out = std::make_shared<ascii_image>(rect(1,v_pixels));
+		pixel_range<wchar_t> rng = pixel_range<wchar_t>(out,0,0,1,v_pixels);
+		auto it = rng.begin();
+		if (drct == arrow_node::direction::up) {
+			for (;it != --rng.end(); ++it) {*it = bdc::v;}
+			*it = bdc::uah;
+		} else {
+			*it = bdc::dah;
+			++it;
+			for (;it != rng.end(); ++it) {*it = bdc::v;}
+		}
+	}
+	return *out;
 }
 
 // grid_node rendering

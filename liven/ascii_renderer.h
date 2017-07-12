@@ -8,6 +8,7 @@ namespace liven {
 class ascii_image;
 class grid_node;
 class text_node;
+class arrow_node;
 class view;
 
 class ascii_renderer {
@@ -18,6 +19,7 @@ public:
 
 	static image_type render(const grid_node&);
 	static image_type render(const text_node&);
+	static image_type render(const arrow_node&);
 
 	static constexpr int scene_x_coordinates_per_pixel = 1;
 	static constexpr int scene_y_coordinates_per_pixel = 2;
@@ -61,6 +63,14 @@ namespace bdc {
 	extern wchar_t l;
 
 	extern wchar_t p;
+
+	extern wchar_t lah;
+
+	extern wchar_t rah;
+
+	extern wchar_t uah;
+
+	extern wchar_t dah;
 }
 
 }

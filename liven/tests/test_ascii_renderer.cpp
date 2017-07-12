@@ -1,5 +1,6 @@
 #include "ascii_renderer.h"
 #include "grid_node.h"
+#include "arrow_node.h"
 #include <cassert>
 #include <iostream> // debug
 #include "viewer.h"
@@ -29,6 +30,8 @@ grid_node grid_node_from_image_units(
 
 int main() {
 	ascii_renderer r{};
+	/* ***************         test grid_node       ******************/
+
 	/* In our ascii renderings, + represents the lower-left corner of a rect.
 	   Say the rect's lower left corner is located at (0,0) in scene coordinates.
 	   Also suppose this lower-left corner is drawn using pixel_at(0,0) in an image.
@@ -172,4 +175,12 @@ int main() {
 	assert(img2.pixel_at(4,4) == ascii_image::default_pixel);
 	assert(img2.pixel_at(5,4) == bdc::d);
 	assert(img2.pixel_at(6,4) == bdc::d);
+
+
+	/****************         test arrow_node       ******************/
+	
+	arrow_node an{arrow_node::direction::up,4};
+	ascii_image arrow_img1 = an.render();
+	assert(arrow_img1.pixel_at(0,0) == bdc::v);
+	assert(arrow_img1.pixel_at(0,1) == bdc::uah);
 }
