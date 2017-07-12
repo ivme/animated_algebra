@@ -28,4 +28,5 @@ add_executable(main main.cpp)
 target_link_libraries(main animated_algebra liven)
 
 add_subdirectory(liven)
+add_subdirectory(tests)
 

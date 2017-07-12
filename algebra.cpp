@@ -107,10 +107,9 @@ std::string algebra::line_to_string(int coeff, std::string var, int constant) {
 	}
 }
 
-std::string algebra::sum_to_string(std::map<std::string,int> var_coeff_map) {
-	if (var_coeff_map.empty()) {return "0";}
-	auto it = var_coeff_map.begin();
-	auto end = var_coeff_map.end();
+template <class ITERATOR> // forward or reverse iterator to std::map<std::string,int>
+std::string sum_to_string_(ITERATOR begin, ITERATOR end) {
+	ITERATOR it = begin;
 	std::string out{};
 	if (it->second != 0) {
 		out += algebra::term_to_string(it->second,it->first);
@@ -131,6 +130,20 @@ std::string algebra::sum_to_string(std::map<std::string,int> var_coeff_map) {
 	if (out.empty()) {return "0";}
 	else {return out;}
 }
+
+// explicitly instantiate sum_to_string for forward and reverse iterators
+using map_str_int = std::map<std::string,int>;
+template std::string sum_to_string_<map_str_int::const_iterator>(map_str_int::const_iterator, map_str_int::const_iterator);
+template std::string sum_to_string_<map_str_int::const_reverse_iterator>(map_str_int::const_reverse_iterator, map_str_int::const_reverse_iterator);
+
+std::string algebra::sum_to_string(map_str_int var_coeff_map, bool descending_exponents) {
+	if (descending_exponents) {
+		return sum_to_string_(var_coeff_map.crbegin(),var_coeff_map.crend());
+	} else {
+		return sum_to_string_(var_coeff_map.cbegin(),var_coeff_map.cend());
+	}
+}
+
 
 std::string algebra::enclose(std::string expr) {
 	expr.insert(expr.begin(),'(');

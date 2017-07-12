@@ -1,7 +1,7 @@
 #include "algebra.h"
 #include <cassert>
 
-void main() {
+int main() {
 	assert(algebra::is_square_number(49));
 	assert(!algebra::is_square_number(-1));
 	assert(!algebra::is_square_number(5));
@@ -81,6 +81,7 @@ void main() {
 	std::map<std::string,int> x_p_2{{"",2},{"x",1}};
 	std::map<std::string,int> x_m_4{{"",-4},{"x",1}};
 	assert(algebra::sum_to_string(algebra::expand(x_p_2,x_m_4)) == "-8 - 2x + x^2");
+	assert(algebra::sum_to_string(algebra::expand(x_p_2,x_m_4),true) == "x^2 - 2x - 8");
 	/* user input required
 	int a,b,c;
 	std::cout << "a = " << std::endl;
