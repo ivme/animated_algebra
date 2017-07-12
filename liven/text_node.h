@@ -8,6 +8,10 @@ namespace liven {
 
 class text_node : public node {
 public:
+	text_node() : node(this) {
+		align_center();
+		set_anchor(point<2>(0,0));
+	}
 	enum horizontal_align_type : int {left = -1, center = 0, right = 1};
 	// anchor differs from location.
 	// location is always the lower left corner of a node
