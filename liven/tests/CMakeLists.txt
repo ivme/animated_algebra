@@ -25,3 +25,11 @@ add_test(test_grid_node ${PROJECT_BINARY_DIR}/test_grid_node)
 add_executable(test_ascii_renderer test_ascii_renderer.cpp)
 target_link_libraries(test_ascii_renderer liven)
 add_test(test_ascii_renderer ${PROJECT_BINARY_DIR}/test_ascii_renderer)
+
+add_executable(test_text_node test_text_node.cpp)
+target_link_libraries(test_text_node liven)
+add_test(test_text_node ${PROJECT_BINARY_DIR}/test_text_node)
+
+add_executable(test_arrow_node test_arrow_node.cpp)
+target_link_libraries(test_arrow_node liven)
+add_test(test_arrow_node ${PROJECT_BINARY_DIR}/test_arrow_node)
