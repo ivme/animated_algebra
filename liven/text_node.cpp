@@ -38,6 +38,7 @@ void text_node::align_right() {
 void text_node::set_h_align(horizontal_align_type align) {
 	auto loc = get_location();
 	set_location(get_anchor().x - get_offset(align), loc.y, loc.z);
+	h_align = align;
 }
 
 std::string text_node::get_text() const {
@@ -45,6 +46,9 @@ std::string text_node::get_text() const {
 }
 
 void text_node::set_text(std::string text_) {
+	auto loc = get_location();
+	auto current_anchor = get_anchor();
 	text = text_;
+	set_location(current_anchor.x - get_offset(h_align), loc.y, loc.z);
 }
 
