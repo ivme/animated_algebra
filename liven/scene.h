@@ -17,8 +17,6 @@ public:
 	void refresh_scene_locations(); // recomputes scene locations
 	std::vector<std::shared_ptr<node>> nodes();
 	located<rect,2> bounding_rect() const; 
-	
-	static located<rect,2> scene_rect_to_pixel_rect(located<rect,2> scene_rect);
 private:
 	std::shared_ptr<node> root;
 	bool scene_locations_are_dirty;

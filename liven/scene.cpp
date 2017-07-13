@@ -37,12 +37,6 @@ located<rect,2> scene::bounding_rect() const {
 	return root->bounding_rect();
 }
 
-located<rect,2> scene::scene_rect_to_pixel_rect(located<rect,2> scene_rect) {
-	return located<rect,2>(
-		rect(render_type::scene_x_coordinate_to_pixels(scene_rect.width) + 1, render_type::scene_y_coordinate_to_pixels(scene_rect.height) + 1),
-		scene_rect.location);
-}
-
 // view
 void view::view_whole_scene() {
 	rectangle = scn->bounding_rect();
@@ -66,5 +60,5 @@ ascii_renderer::image_type view::render() {
 			layered_img.insert(p_located_img);
 		}
 	}
-	return layered_img.flatten_and_crop(scene::scene_rect_to_pixel_rect(rectangle));
+	return layered_img.flatten_and_crop(rectangle);
 }
