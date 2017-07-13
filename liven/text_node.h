@@ -9,8 +9,11 @@ namespace liven {
 class text_node : public node {
 public:
 	text_node() : node(this) {
-		align_center();
+		align_left();
 		set_anchor(point<2>(0,0));
+	}
+	text_node(std::string text_) : text_node() {
+		set_text(text_);
 	}
 	enum horizontal_align_type : int {left = -1, center = 0, right = 1};
 	// anchor differs from location.
