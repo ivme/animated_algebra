@@ -52,7 +52,12 @@ class node : public std::enable_shared_from_this<node> {
 public:
 	template<class WRAPPED>
 	node(WRAPPED *w) :
-		p_renderable(std::make_shared<renderable_model<WRAPPED>>(w))
+		p_renderable(std::make_shared<renderable_model<WRAPPED>>(w)),
+		location(point<3>(0,0,0)),
+		scene_location(0,0,0),
+		children(),
+		parent(),
+		scn()
 	{}
 
 	node();
