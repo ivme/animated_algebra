@@ -21,4 +21,14 @@ int main() {
 
 	assert(point<3>(1,2,3) + point<3>(4,5,6) == point<3>(5,7,9));
 	assert(point<3>(1,2,-1) - point<3>(3,5,-7) == point<3>(-2,-3,6));
+
+	point<2> p2{4,5};
+	point<3> p3{6,7,8};
+	p2.set_coordinate(dimension::x, 1);
+	assert(p2.x == 1);
+	assert(p2.y == 5);
+	assert(p2 == point<2>(1,5));
+	p3.set_coordinate(dimension::y, 1);
+	assert(p3 == point<3>(6,1,8));
+
 }
