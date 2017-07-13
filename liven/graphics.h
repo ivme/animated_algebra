@@ -55,6 +55,9 @@ struct point<2> {
 
 	bool operator==(const point<2> &other) {return x == other.x && y == other.y;}
 
+	int get_coordinate(dimension dim) const;
+	void set_coordinate(dimension dim, int value);
+
 	int x;
 	int y;
 };
@@ -77,7 +80,11 @@ struct point<3> {
 		z -= other.z;
 		return *this;
 	}
+
 	bool operator==(const point<3> &other) {return x == other.x && y == other.y && z == other.z;}
+
+	int get_coordinate(dimension dim) const;
+	void set_coordinate(dimension dim, int value);
 
 	int x;
 	int y;
@@ -108,6 +115,7 @@ struct rect {
 	int height = 0;
 	bool operator==(const rect &other) const {return width == other.width && height == other.height;}
 	bool has_no_area() const {return width == 0 || height == 0;}
+	int get_size(dimension dim);
 };
 
 template <int DIM>
