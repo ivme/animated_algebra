@@ -9,6 +9,7 @@ set(SRC
 	text_node.cpp
 	viewer.cpp
 	node.cpp
+	lineup_node.cpp
 )
 
 add_library(liven ${SRC})

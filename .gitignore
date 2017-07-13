@@ -22,5 +22,7 @@ main
 /liven/tests/test_ascii_renderer
 /liven/tests/test_arrow_node
 /liven/tests/test_text_node
+/liven/tests/test_lineup_node
+/liven/tests/test_unique_sequence
 
 /tests/test_algebra

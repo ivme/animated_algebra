@@ -33,3 +33,11 @@ add_test(test_text_node ${PROJECT_BINARY_DIR}/test_text_node)
 add_executable(test_arrow_node test_arrow_node.cpp)
 target_link_libraries(test_arrow_node liven)
 add_test(test_arrow_node ${PROJECT_BINARY_DIR}/test_arrow_node)
+
+add_executable(test_unique_sequence test_unique_sequence.cpp)
+target_link_libraries(test_unique_sequence liven)
+add_test(test_unique_sequence ${PROJECT_BINARY_DIR}/test_unique_sequence)
+
+add_executable(test_lineup_node test_lineup_node.cpp)
+target_link_libraries(test_lineup_node liven)
+add_test(test_lineup_node ${PROJECT_BINARY_DIR}/test_lineup_node)
