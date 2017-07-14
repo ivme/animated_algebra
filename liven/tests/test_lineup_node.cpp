@@ -17,7 +17,7 @@ int main() {
 	assert(there->get_location() == point<3>(x,0,0));
 
 	auto ln2 = std::make_shared<lineup_node>(dimension::y);
-	ln2->set_lineup(ln->get_lineup());
+	ln2->splice(ln2->end(),ln);
 	auto y = hi->own_bounding_rect().height;
 	assert(hi->get_parent().lock() == ln2);
 	assert(there->get_parent().lock() == ln2);
@@ -27,4 +27,6 @@ int main() {
 	ln2->remove(hi);
 	assert(ln2->get_children().size() == 1);
 	assert(there->get_location() == point<3>(0,0,0));
+
+
 }

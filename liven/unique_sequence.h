@@ -46,6 +46,10 @@ public:
 		l.erase(pos);
 	}
 
+	void splice(iterator pos, unique_sequence &other) {
+		l.splice(pos, other.l);
+	}
+
 	void push_back(const T &value) {insert(l.end(),value);}
 	void pop_back() {erase(--l.end());}
 

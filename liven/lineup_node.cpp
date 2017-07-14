@@ -48,3 +48,11 @@ void lineup_node::update_locations() {
 		++it;
 	}
 }
+
+void lineup_node::splice(iterator pos, std::shared_ptr<lineup_node> other) {
+	for (auto item : other->get_lineup()) {
+		this->add_child(item);
+	}
+	lineup.splice(pos, other->lineup);
+	update_locations();
+}

@@ -32,6 +32,7 @@ public:
 	void remove(std::shared_ptr<node> n);
 	void erase(iterator pos);
 	void insert(unique_sequence<std::shared_ptr<node>>::iterator pos, std::shared_ptr<node> n);
+	void splice(iterator pos, std::shared_ptr<lineup_node> other);
 
 	void push_back(std::shared_ptr<node> n);
 	void pop_back();
