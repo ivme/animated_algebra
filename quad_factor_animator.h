@@ -4,6 +4,7 @@
 #include "p_rect.h"
 #include "liven/animator.h"
 #include "liven/text_node.h"
+#include "liven/lineup_node.h"
 #include <string>
 #include <queue>
 
@@ -24,10 +25,14 @@ private:
 #endif
 	int a, b, c; // quadratic coeffs, ax^2 + bx + c
 	std::shared_ptr<p_rect> col1, col2, col2a, col2b, col3;
-	std::shared_ptr<liven::node> p_rects, group1, group2, group2a, group2b, group3;
+	std::shared_ptr<liven::text_node> ax2_p_bx_p_c; // ax^2 + bx + c, one node
+	std::shared_ptr<liven::text_node> ax2, p1, bx1, p2, cx0; // ax^2 + bx + c, 5 nodes
+	std::shared_ptr<liven::text_node> a0b1x, a1b0x, p3; // ax^2 + a0b1x + a1b0x + c
+	std::shared_ptr<liven::text_node> a0x_a1x_p_b1, b0_a1x_p_b1; // a0x(a1x + b1) + b0(a1x + b1)
+	std::shared_ptr<liven::node> text_line, p_rects, group1, group2, group2a, group2b, group3;
 	std::string var_name;
 	int var_val;
-	std::shared_ptr<liven::text_node> quad_expr;
+	std::shared_ptr<liven::lineup_node> quad_expr;
 
 	// move settings
 	liven::move::frame_count_method_type fcm = liven::move::frame_count_method_type::fixed;

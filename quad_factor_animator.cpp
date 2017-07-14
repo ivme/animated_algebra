@@ -1,7 +1,9 @@
 #include "quad_factor_animator.h"
+#include "aa_renderer.h"
 #include "p_rect.h"
 #include "liven/action.h"
 #include "liven/stack_action.h"
+#include "liven/arrow_node.h"
 #include "algebra.h"
 #include <typeinfo> //debug
 #include <cassert> //debug
@@ -22,6 +24,19 @@ using liven::shift;
 using liven::animation;
 using liven::move;
 using liven::text_node;
+using liven::lineup_node;
+using liven::arrow_node;
+using liven::unique_sequence;
+
+double brief_pause = .2;
+
+int v_scene_coord(int pixels) {
+	return pixels / aa_renderer::scene_y_coordinate_to_pixels(1);
+}
+
+int h_scene_coord(int pixels) {
+	return pixels / aa_renderer::scene_x_coordinate_to_pixels(1);
+}
 
 quad_factor_animator::quad_factor_animator(int a_, int b_, int c_) : animator(),
 	a(a_),
@@ -29,12 +44,12 @@ quad_factor_animator::quad_factor_animator(int a_, int b_, int c_) : animator(),
 	c(c_), 
 	var_name(default_var_name),
 	var_val(default_var_val)
-{
-	// set_up_scene();
-	// set_up_actions();
-}
+{}
 
 void quad_factor_animator::set_up_scene() {
+	animation_ = animation<ascii_image>();
+	animation_.set_animation_speed(10);
+
 	// set up scene
 	// 3 p_rects to start
 	// 1st column: 1x by a x's
@@ -52,20 +67,46 @@ void quad_factor_animator::set_up_scene() {
 	col3 = std::make_shared<p_rect>(std::vector<length>(1,unit_length),std::vector<length>(c,unit_length));
 	col2->set_location(col1->width() + p_rect::unit_size,0,0);
 	col3->set_location(col1->width() + col2->width() + 2 * p_rect::unit_size,0,0);
+	for (auto col : {col1, col2, col3}) {col->set_display_style(p_rect::display_style_type::center_expanded);}
 	p_rects = std::make_shared<node>();
-	p_rects->add_child(col1);
-	p_rects->add_child(col2);
-	p_rects->add_child(col3);
-	p_rect::set_children_display_style(p_rects,p_rect::display_style_type::center_expanded);
 	v.scn->get_root()->add_child(p_rects);
-	p_rects->shift(p_rect::unit_size, p_rect::unit_size);
+	p_rects->shift(p_rect::unit_size, v_scene_coord(5)); // 4 lines from bottom
 
 	// text_node for the quadratic expression
-	quad_expr = std::make_shared<text_node>();
-	quad_expr->set_text(algebra::sum_to_string({{"x^2",a},{"x",b},{"1",c}}));
+	quad_expr = std::make_shared<lineup_node>(dimension::x);
+	ax2 = std::make_shared<text_node>(algebra::term_to_string(a,var_name + "^2"));
+	p1 = std::make_shared<text_node>(" + ");
+	bx1 = std::make_shared<text_node>(algebra::term_to_string(b,var_name));
+	p2 = std::make_shared<text_node>(" + ");
+	cx0 = std::make_shared<text_node>(algebra::term_to_string(c,""));
 	v.scn->get_root()->add_child(quad_expr);
-	quad_expr->align_left();
-	quad_expr->set_anchor(point<2>(0,0));
+	quad_expr->set_location(point<2>(p_rect::unit_size,v_scene_coord(3)));
+
+	quad_expr->push_back(ax2);
+	pause(brief_pause);
+
+	p_rects->add_child(col1);
+	pause(brief_pause);
+	col1->set_display_style(p_rect::display_style_type::labels_and_lines);
+	if (a > 1) {pause(brief_pause);}
+
+	quad_expr->push_back(p1);
+	quad_expr->push_back(bx1);
+	pause(brief_pause);
+
+	p_rects->add_child(col2);
+	pause(brief_pause);
+	col2->set_display_style(p_rect::display_style_type::labels_and_lines);
+	if (b > 1) {pause(brief_pause);}
+
+	quad_expr->push_back(p2);
+	quad_expr->push_back(cx0);
+	pause(brief_pause);
+
+	p_rects->add_child(col3);
+	pause(brief_pause);
+	col3->set_display_style(p_rect::display_style_type::labels_and_lines);
+	if (c > 1) {pause(brief_pause);}
 }
 
 void quad_factor_animator::apply_move_settings(std::shared_ptr<move> n) {
@@ -77,15 +118,7 @@ void quad_factor_animator::apply_move_settings(std::shared_ptr<move> n) {
 }
 
 animation<ascii_image> quad_factor_animator::animate() {
-	animation_ = animation<ascii_image>();
-	int unit_size = p_rect::unit_size;
-	
-	set_up_scene();
-	pause(2.5);
-	p_rect::set_children_display_style(p_rects,p_rect::display_style_type::labels_and_lines);
-	pause(1.0);
-
-	// factors ax^2 + bx + c into (a0x + b0)(a1x + b1)
+	// factor ax^2 + bx + c into (a0x + b0)(a1x + b1)
 	std::tuple<bool,int,int,int,int> f = algebra::quad_factor(a,b,c);
 
 	bool is_factorable = std::get<0>(f);
@@ -94,6 +127,23 @@ animation<ascii_image> quad_factor_animator::animate() {
 	int b0 = std::get<2>(f);
 	int a1 = std::get<3>(f);
 	int b1 = std::get<4>(f);
+
+	int unit_size = p_rect::unit_size;
+	
+	set_up_scene();
+
+	auto arrow_to_bx1 = std::make_shared<arrow_node>(arrow_node::direction::up, v_scene_coord(1));
+	bx1->add_child(arrow_to_bx1);
+	arrow_to_bx1->set_anchor(point<2>(0,0));
+	arrow_to_bx1->set_anchor_style(arrow_node::anchor_style_type::tip);
+	a0b1x = std::make_shared<text_node>(algebra::term_to_string(a0 * b1, var_name));
+	a1b0x = std::make_shared<text_node>(algebra::term_to_string(a1 * b0, var_name));
+	p3 = std::make_shared<text_node>(" + ");
+
+	auto a0b1x_p3_a1b0x = std::make_shared<lineup_node>(dimension::x);
+	quad_expr->add_child(a0b1x_p3_a1b0x);
+	a0b1x_p3_a1b0x->set_lineup({a0b1x, p3, a1b0x});
+	a0b1x_p3_a1b0x->set_location(point<3>(bx1->get_location().x,v_scene_coord(-2),0));
 
 	// split first column into a0 columns, each of which is 1x wide and a1 x's high (group 1)
 	group1 = col1->split(dimension::y,a0);
@@ -106,16 +156,45 @@ animation<ascii_image> quad_factor_animator::animate() {
 	group2 = col2->split(dimension::y,split_points);
 	col2a = std::dynamic_pointer_cast<p_rect>(group2->get_children()[0]);
 	col2b = std::dynamic_pointer_cast<p_rect>(group2->get_children()[1]);
+	p_rect::set_children_display_style(group2,p_rect::display_style_type::center_expanded);
+	pause(brief_pause);
 
-	// split 3rd column into b0 p_rects, each of which is 1 wide and b1 1's high (group 3)
-	// set parent of resulting collection of p_rects to group3
-	group3 = col3->split(dimension::y,b0);
+	// remove bx
+	quad_expr->remove(cx0);
+	quad_expr->remove(p2);
+	quad_expr->remove(bx1);
+	auto p2_cx0 = std::make_shared<lineup_node>(dimension::x);
+	quad_expr->add_child(p2_cx0);
+	p2_cx0->set_location(p2->get_location());
+	p2_cx0->push_back(p2); // p2 is no longer in lineup, but retains its position
+	p2_cx0->push_back(cx0); // cx0 is no longer in the lineup, but retains its old position
+	pause(brief_pause);
 
-	// shift group 3 to allow space for 
+	// shift cx0 to make room for a0b1x_p3_a1b0x in the middle
+	render_action(make_move_action<shift>(
+		p2_cx0,
+		0,
+		a0b1x_p3_a1b0x->bounding_rect().width - bx1->own_bounding_rect().width,
+		0));
+
+	// move a0b1x_p3_a1b0x into line with rest of quad_expr
+	render_action(make_move_action<shift>(
+		a0b1x_p3_a1b0x,
+		0,
+		0,
+		-a0b1x_p3_a1b0x->get_location().y));
+
+	// make it all one lineup
+	quad_expr->splice(quad_expr->end(), a0b1x_p3_a1b0x);
+	quad_expr->splice(quad_expr->end(), p2_cx0);
+	quad_expr->remove(a0b1x_p3_a1b0x);
+	quad_expr->remove(p2_cx0);
+	// quad_expr : ax2,p1,a0b1x,p3,a1b0x,p2,cx0,
+	// i.e. ax2 + a0b1x + a1b0x + cx0
+
+	// shift col3 to allow space for 
 	// stacking group 2.
-	// auto shift_3 = std::make_shared<shift>(group3,1,unit_size + var_val * unit_size,0);
-	// shift_3->use_frame_count_method(fcm);
-	render_action(make_move_action<shift>(group3,1,unit_size + var_val * unit_size,0));
+	render_action(make_move_action<shift>(col3,1,unit_size + var_val * unit_size,0));
 
 	//	stack_horizontal group2 (since its children are group2a and group2b,
 	//	only those groups will separate and stack)
@@ -125,19 +204,32 @@ animation<ascii_image> quad_factor_animator::animate() {
 	auto stack_2 = make_move_action<stack_action>(group2,0,dimension::x,unit_size / 2,unit_size);
 	render_action(stack_2);
 
-	// bfriefly show the expanded display of
-	// col2a and col2b
-	pause(.5);
-	p_rect::set_children_display_style(group2,p_rect::display_style_type::center_expanded);
-	pause(2.0);
 	p_rect::set_children_display_style(group2,p_rect::display_style_type::labels_and_lines);
 	pause(.5);
 
-	// split subcolumns 2a and 2b into two groups of columns:
-	// group 2a: a0 columns, each of which is 1x wide and b1 1's high
-	// group 2b: a1 columns, each of which is 1x wide and b0 1's high
-	group2a = col2a->split(dimension::y,a0);
-	group2b = col2b->split(dimension::y,a1);
+	// show b0b1 below cx0 w/arrow
+	auto arrow_to_cx0 = std::make_shared<arrow_node>(arrow_node::direction::up, v_scene_coord(1));
+	cx0->add_child(arrow_to_cx0);
+	arrow_to_cx0->set_anchor(point<2>(0,0));
+	arrow_to_cx0->set_anchor_style(arrow_node::anchor_style_type::tip);
+
+	auto b0b1 = std::make_shared<text_node>(
+		algebra::product_to_string(std::to_string(b0),std::to_string(b1))
+		);
+	quad_expr->add_child(b0b1);
+	b0b1->set_location(cx0->get_location().x,v_scene_coord(-2),0);
+	pause(brief_pause);
+
+	// split 3rd column into b0 p_rects, each of which is 1 wide and b1 1's high (group 3)
+	// set parent of resulting collection of p_rects to group3
+	group3 = col3->split(dimension::y,b0);
+	p_rect::set_children_display_style(group3,p_rect::display_style_type::center_expanded);
+	pause(brief_pause);
+
+	// remove cx0 and move b0b1 into line with the rest of quad_expr
+	quad_expr->remove(cx0);
+	render_action(make_move_action<shift>(b0b1,0,0,-b0b1->get_location().y));
+	quad_expr->insert(quad_expr->end(),b0b1);
 
 	if (b0 > 1) {
 		// stack_horizontal group3
@@ -149,6 +241,29 @@ animation<ascii_image> quad_factor_animator::animate() {
 	}
 	// merge group3 into a single p_rect
 	auto rect3 = p_rect::merge(group3, dimension::y);
+
+	// rewrite a0b1x in long factored form, below a0b1x, with arrow
+	auto f_a0b1x = std::make_shared<lineup_node>(dimension::x);
+	auto a0_term_2 = std::make_shared<text_node>(std::to_string(a0));
+	auto times_term_2 = std::make_shared<text_node>("*");
+	auto b1_term_2 = std::make_shared<text_node>(std::to_string(b1));
+	auto x_term_2 = std::make_shared<text_node>(var_name);
+	f_a0b1x->set_lineup(unique_sequence<std::shared_ptr<node>>({a0_term_2,times_term_2,b1_term_2,x_term_2}));
+	quad_expr->add_child(f_a0b1x);
+	f_a0b1x->set_location(a0b1x->get_location().x,v_scene_coord(-2),0);
+
+	auto arrow_to_a0b1x = std::make_shared<arrow_node>(arrow_node::direction::up, v_scene_coord(1));
+	a0b1x->add_child(arrow_to_a0b1x);
+	arrow_to_a0b1x->set_anchor(point<2>(0,0));
+	arrow_to_a0b1x->set_anchor_style(arrow_node::anchor_style_type::tip);
+
+	// split column 2a into a group of subcolumns
+	// group 2a: a0 columns, each of which is 1x wide and b1 1's high
+	group2a = col2a->split(dimension::y,a0);
+
+	// split column 2b into a group of subcolumns
+	// group 2b: a1 columns, each of which is 1x wide and b0 1's high
+	group2b = col2b->split(dimension::y,a1);
 
 	if (a1 > 1) {
 		// shift rect3 right to make space for stacking of group2b
