@@ -41,3 +41,7 @@ add_test(test_unique_sequence ${PROJECT_BINARY_DIR}/test_unique_sequence)
 add_executable(test_lineup_node test_lineup_node.cpp)
 target_link_libraries(test_lineup_node liven)
 add_test(test_lineup_node ${PROJECT_BINARY_DIR}/test_lineup_node)
+
+add_executable(test_viewer test_viewer.cpp)
+target_link_libraries(test_viewer liven)
+add_test(test_viewer ${PROJECT_BINARY_DIR}/test_viewer)

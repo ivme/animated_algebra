@@ -24,5 +24,6 @@ main
 /liven/tests/test_text_node
 /liven/tests/test_lineup_node
 /liven/tests/test_unique_sequence
+/liven/tests/test_viewer
 
 /tests/test_algebra
