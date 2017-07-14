@@ -19,6 +19,9 @@ public:
 	using const_iterator = typename std::list<T>::const_iterator;
 	using size_type = typename std::list<T>::size_type;
 
+	unique_sequence() = default;
+	unique_sequence(std::initializer_list<T> list) : l(list) {}
+
 	iterator begin() {return l.begin();}
 	iterator end() {return l.end();}
 	const_iterator cbegin() {return l.cbegin();}
