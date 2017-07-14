@@ -25,6 +25,7 @@ void lineup_node::remove(std::shared_ptr<node> n) {
 	auto it = std::find(lineup.begin(),lineup.end(),n);
 	if (it != lineup.end()) {
 		erase(it);
+		remove_child(*it);
 	}
 }
 
