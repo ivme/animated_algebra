@@ -14,6 +14,6 @@ int main() {
 	ascii_image img2(m2);
 	ascii_viewer vwr{};
 	animation<ascii_image> a{{m1,m2}};
-	a.set_animation_speed(2);
+	a.set_animation_speed(100.0);
 	vwr.present(a);
 }
