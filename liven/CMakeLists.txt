@@ -10,6 +10,7 @@ set(SRC
 	viewer.cpp
 	node.cpp
 	lineup_node.cpp
+	arrow_node.cpp
 )
 
 add_library(liven ${SRC})
