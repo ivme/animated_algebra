@@ -75,6 +75,7 @@ void node::add_child(std::shared_ptr<node> child, bool preserve_scene_location) 
 
 void node::remove_child(std::shared_ptr<node> child) {
 	children.erase(std::remove(children.begin(),children.end(),child),children.end());
+	child->parent.reset();
 }
 
 std::weak_ptr<scene> node::get_scene() {
