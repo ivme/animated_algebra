@@ -43,7 +43,7 @@ void lineup_node::update_locations() {
 	point<3> current_location = point<3>(0,0,0);
 	while (it != end) {
 		(*it)->set_location(current_location);
-		int new_coord = current_location.get_coordinate(dim) + (*it)->bounding_rect().get_size(dim);
+		int new_coord = current_location.get_coordinate(dim) + (*it)->own_bounding_rect().get_size(dim);
 		current_location.set_coordinate(dim, new_coord);
 		++it;
 	}
