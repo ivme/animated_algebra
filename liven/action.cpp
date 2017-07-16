@@ -70,10 +70,7 @@ void shift::compute_f_count() {
 // floored division
 // returns (quotient, remainder)
 std::tuple<int,int> fdiv_qr(int a, int b) {
-	int q = a / b;
-	if ((q < 0) && (q * b != a)) {
-		q -= 1;
-	}
+	int q = std::floor((float) a / (float) b);
 	int r = a - q * b;
 	return std::tuple<int,int>(q, r);
 }

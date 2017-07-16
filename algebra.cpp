@@ -191,10 +191,7 @@ std::tuple<int,int,int> algebra::gcd_ext(int a, int b) {
 // floored division
 // returns (quotient, remainder)
 std::tuple<int,int> algebra::fdiv_qr(int a, int b) {
-	int q = a / b;
-	if ((q < 0) && (q * b != a)) {
-		q -= 1;
-	}
+	int q = std::floor((float) a / (float) b);
 	int r = a - q * b;
 	return std::tuple<int,int>(q, r);
 }

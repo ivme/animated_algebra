@@ -16,6 +16,10 @@ int main() {
 	assert(std::get<1>(algebra::fdiv_qr(-5,3)) == 1);
 	assert(std::get<0>(algebra::fdiv_qr(5,-3)) == -2);
 	assert(std::get<1>(algebra::fdiv_qr(5,-3)) == -1);
+	assert(std::get<0>(algebra::fdiv_qr(3,5)) == 0);
+	assert(std::get<1>(algebra::fdiv_qr(3,5)) == 3);
+	assert(std::get<0>(algebra::fdiv_qr(-3,5)) == -1);
+	assert(std::get<1>(algebra::fdiv_qr(-3,5)) == 2);
 
 	assert(std::get<0>(algebra::tdiv_qr(5,3)) == 1);
 	assert(std::get<1>(algebra::tdiv_qr(5,3)) == 2);
