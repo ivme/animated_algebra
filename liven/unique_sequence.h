@@ -18,6 +18,7 @@ public:
 	using iterator = typename std::list<T>::iterator;
 	using const_iterator = typename std::list<T>::const_iterator;
 	using size_type = typename std::list<T>::size_type;
+	using value_type = T;
 
 	unique_sequence() = default;
 	unique_sequence(std::initializer_list<T> list) : l(list) {}
@@ -44,6 +45,10 @@ public:
 
 	void erase(iterator pos) {
 		l.erase(pos);
+	}
+
+	void erase(iterator first, iterator last) {
+		l.erase(first,last);
 	}
 
 	void splice(iterator pos, unique_sequence &other) {
