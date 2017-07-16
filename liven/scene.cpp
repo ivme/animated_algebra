@@ -55,7 +55,7 @@ ascii_renderer::image_type view::render() {
 	layered_image<image_type> layered_img{};
 	
 	for (auto node_ptr : nodes) {
-		if (node_ptr->is_renderable()) {
+		if (node_ptr->is_renderable() && node_ptr->is_visible) {
 			auto img(node_ptr->render());
 			auto scene_location = node_ptr->get_scene_location();
 			int x = std::floor(render_type::scene_x_coordinate_to_pixels(scene_location.x));

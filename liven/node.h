@@ -92,6 +92,7 @@ public:
 	located<rect,2> bounding_rect() const ; // bounding rect of this node and its children.
 
 	bool is_renderable() const {return (bool)p_renderable;}
+	bool is_visible = true;
 
 private:
 	std::shared_ptr<renderable_concept> p_renderable;
