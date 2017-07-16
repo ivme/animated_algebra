@@ -21,6 +21,14 @@ void lineup_node::erase(lineup_node::iterator pos) {
 	update_locations();
 }
 
+void lineup_node::erase(iterator first, iterator last) {
+	for (auto it = first; it != last; ++it) {
+		remove_child(*it);
+		lineup.erase(it);
+	}
+	update_locations();
+}
+
 void lineup_node::remove(std::shared_ptr<node> n) {
 	auto it = std::find(lineup.begin(),lineup.end(),n);
 	if (it != lineup.end()) {
