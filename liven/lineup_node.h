@@ -34,6 +34,16 @@ public:
 	void erase(iterator first, iterator last);
 	void insert(unique_sequence<std::shared_ptr<node>>::iterator pos, std::shared_ptr<node> n);
 	void splice(iterator pos, std::shared_ptr<lineup_node> other);
+	// split lineup node
+	// every item in the lineup after pos is placed in a 
+	// new lineup_node, a shared_ptr to which is returned.
+	// the parent of the returned lineup_node is set
+	// to the original node's parent (i.e. this and the return
+	// value are siblings, assuming this has a non-null parent).
+	// the returned node's location in the parent coordinate
+	// system is preserved.
+	std::shared_ptr<lineup_node> split(iterator pos);
+	std::shared_ptr<lineup_node> split(std::shared_ptr<node> n);
 
 	void push_back(std::shared_ptr<node> n);
 	void pop_back();

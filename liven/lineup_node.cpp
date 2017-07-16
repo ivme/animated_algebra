@@ -64,3 +64,20 @@ void lineup_node::splice(iterator pos, std::shared_ptr<lineup_node> other) {
 	lineup.splice(pos, other->lineup);
 	update_locations();
 }
+
+std::shared_ptr<lineup_node> lineup_node::split(iterator pos) {
+	update_locations();
+	point<3> loc = (*pos)->get_location();
+	auto out = std::make_shared<lineup_node>(dim);
+	auto out_seq = unique_sequence<std::shared_ptr<node>>{};
+	std::copy(pos,lineup.end(),std::back_inserter(out_seq));
+	lineup.erase(pos,lineup.end());
+	out->set_parent(this->get_parent());
+	out->set_location(this->get_location()+loc);
+	out->set_lineup(out_seq);
+	return out;
+}
+
+std::shared_ptr<lineup_node> lineup_node::split(std::shared_ptr<node> n) {
+	return this->split(std::find(begin(),end(),n));
+}
