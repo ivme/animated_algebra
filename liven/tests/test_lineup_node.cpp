@@ -28,5 +28,16 @@ int main() {
 	assert(ln2->get_children().size() == 1);
 	assert(there->get_location() == point<3>(0,0,0));
 
-
+	auto root = std::make_shared<node>();
+	ln2->set_parent(root);
+	assert(ln2->get_parent().lock() == root);
+	ln2->push_back(hi);
+	auto ln3 = ln2->split(--ln2->end());
+	assert(ln3->get_parent().lock() == ln2->get_parent().lock());
+	assert(ln3->dim == ln2->dim);
+	assert(ln3->get_location().get_coordinate(ln3->dim) == ln2->own_bounding_rect().get_size(ln2->dim));
+	assert(*ln3->begin() == hi);
+	assert(ln3->get_lineup().size() == 1);
+	assert(*ln2->begin() == there);
+	assert(ln2->get_lineup().size() == 1);
 }
