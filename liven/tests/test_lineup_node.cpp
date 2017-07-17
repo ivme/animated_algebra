@@ -35,7 +35,7 @@ int main() {
 	auto ln3 = ln2->split(--ln2->end());
 	assert(ln3->get_parent().lock() == ln2->get_parent().lock());
 	assert(ln3->dim == ln2->dim);
-	assert(ln3->get_location().get_coordinate(ln3->dim) == ln2->own_bounding_rect().get_size(ln2->dim));
+	assert(ln3->get_location().get_coordinate(ln3->dim) == ln2->bounding_rect().get_size(ln2->dim));
 	assert(*ln3->begin() == hi);
 	assert(ln3->get_lineup().size() == 1);
 	assert(*ln2->begin() == there);
