@@ -85,10 +85,13 @@ public:
 	void remove_child(std::shared_ptr<node> child);
 	const std::vector<std::shared_ptr<node>> &get_children() const;
 
-	std::weak_ptr<scene> get_scene();
-	point<3> get_scene_location(); // return location of lower left corner in the enclosing scene's coordinate system
+	std::weak_ptr<scene> get_scene() const;
+	// return location of lower left corner in the enclosing scene's coordinate system
+	// if the node is not associated with a scene, calls get_location()
+	point<3> get_scene_location() const; 
 
-	virtual located<rect,2> own_bounding_rect() const;  // bounding rectangle of this node, not including children
+	// bounding rectangle of this node, not including children, in scene coordinates
+	virtual located<rect,2> own_bounding_rect() const;  
 	located<rect,2> bounding_rect() const ; // bounding rect of this node and its children.
 
 	bool is_renderable() const {return (bool)p_renderable;}

@@ -78,14 +78,14 @@ void node::remove_child(std::shared_ptr<node> child) {
 	child->parent.reset();
 }
 
-std::weak_ptr<scene> node::get_scene() {
+std::weak_ptr<scene> node::get_scene() const {
 	if (scn.lock()) {return scn;}
 	auto p = parent.lock();
 	if (p) {return p->get_scene();}
 	return std::weak_ptr<scene>();
 }
 
-point<3> node::get_scene_location() {
+point<3> node::get_scene_location() const {
 	auto scn_ = get_scene().lock();
 	if (scn_) {
 		if (scn_->scene_locations_are_dirty) {
