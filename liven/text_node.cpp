@@ -53,6 +53,6 @@ void text_node::set_text(std::string text_) {
 }
 
 located<rect,2> text_node::own_bounding_rect() const {
-	return located<rect,2>(rect(text.size() * char_width, char_height),get_location());
+	return located<rect,2>(rect(text.size() * char_width, char_height),get_scene_location());
 }
 
