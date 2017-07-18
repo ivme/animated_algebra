@@ -29,11 +29,11 @@ public:
 	const_iterator cbegin() {return lineup.cbegin();}
 	const_iterator cend() {return lineup.cend();}
 
-	void remove(std::shared_ptr<node> n);
-	void erase(iterator pos);
-	void erase(iterator first, iterator last);
-	void insert(unique_sequence<std::shared_ptr<node>>::iterator pos, std::shared_ptr<node> n);
-	void splice(iterator pos, std::shared_ptr<lineup_node> other);
+	void remove(std::shared_ptr<node> n, bool update = true);
+	void erase(iterator pos, bool update_locations = true);
+	void erase(iterator first, iterator last, bool update = true);
+	void insert(unique_sequence<std::shared_ptr<node>>::iterator pos, std::shared_ptr<node> n, bool update = true);
+	void splice(iterator pos, std::shared_ptr<lineup_node> other, bool update = true);
 	// split lineup node
 	// every item in the lineup after pos is placed in a 
 	// new lineup_node, a shared_ptr to which is returned.

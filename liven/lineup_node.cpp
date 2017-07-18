@@ -9,30 +9,30 @@ void lineup_node::set_lineup(unique_sequence<std::shared_ptr<node>> lineup_) {
 	update_locations();
 }
 
-void lineup_node::insert(lineup_node::iterator pos,std::shared_ptr<node> n) {
+void lineup_node::insert(lineup_node::iterator pos,std::shared_ptr<node> n, bool update) {
 	lineup.insert(pos,n);
 	add_child(n);
-	update_locations();
+	if (update) {update_locations();};
 }
 
-void lineup_node::erase(lineup_node::iterator pos) {
+void lineup_node::erase(lineup_node::iterator pos, bool update) {
 	remove_child(*pos);
 	lineup.erase(pos);
-	update_locations();
+	if (update) {update_locations();};
 }
 
-void lineup_node::erase(iterator first, iterator last) {
+void lineup_node::erase(iterator first, iterator last, bool update) {
 	for (auto it = first; it != last; ++it) {
 		remove_child(*it);
 		lineup.erase(it);
 	}
-	update_locations();
+	if (update) {update_locations();};
 }
 
-void lineup_node::remove(std::shared_ptr<node> n) {
+void lineup_node::remove(std::shared_ptr<node> n, bool update) {
 	auto it = std::find(lineup.begin(),lineup.end(),n);
 	if (it != lineup.end()) {
-		erase(it);
+		erase(it,update);
 		remove_child(*it);
 	}
 }
@@ -51,21 +51,22 @@ void lineup_node::update_locations() {
 	point<3> current_location = point<3>(0,0,0);
 	while (it != end) {
 		(*it)->set_location(current_location);
-		int new_coord = current_location.get_coordinate(dim) + (*it)->own_bounding_rect().get_size(dim);
+		int new_coord = current_location.get_coordinate(dim) + (*it)->bounding_rect().get_size(dim);
 		current_location.set_coordinate(dim, new_coord);
 		++it;
 	}
 }
 
-void lineup_node::splice(iterator pos, std::shared_ptr<lineup_node> other) {
+void lineup_node::splice(iterator pos, std::shared_ptr<lineup_node> other, bool update) {
 	for (auto item : other->get_lineup()) {
 		this->add_child(item);
 	}
 	lineup.splice(pos, other->lineup);
-	update_locations();
+	if (update) {update_locations();}
 }
 
 std::shared_ptr<lineup_node> lineup_node::split(iterator pos) {
+	if (pos == end()) {return std::make_shared<lineup_node>(dim);}
 	update_locations();
 	point<3> loc = (*pos)->get_location();
 	auto out = std::make_shared<lineup_node>(dim);
