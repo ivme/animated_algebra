@@ -40,4 +40,17 @@ int main() {
 	assert(ln3->get_lineup().size() == 1);
 	assert(*ln2->begin() == there);
 	assert(ln2->get_lineup().size() == 1);
+
+	auto jolly = std::make_shared<text_node>("jolly");
+	auto bear = std::make_shared<text_node>("bear");
+	auto hi_there = std::make_shared<lineup_node>(dimension::x);
+	hi_there->set_lineup({hi,there});
+
+	assert(hi_there->bounding_rect().width == 7);
+	auto jolly_bear = std::make_shared<lineup_node>(dimension::x);
+	jolly_bear->set_lineup({jolly,bear});
+	assert(jolly_bear->bounding_rect().width == 9);
+	auto hi_there_jolly_bear = std::make_shared<lineup_node>(dimension::x);
+	hi_there_jolly_bear->set_lineup({hi_there,jolly_bear});
+
 }
