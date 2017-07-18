@@ -60,7 +60,7 @@ located<rect,2> arrow_node::own_bounding_rect() const {
 	} else {
 		rect_ = rect(v_thick,length);
 	}
-	return located<rect,2>(rect_,get_location());
+	return located<rect,2>(rect_,get_scene_location());
 }
 
 bool arrow_node::anchor_is_at_positive(anchor_style_type anchor_style_) const {
