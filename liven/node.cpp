@@ -93,7 +93,7 @@ point<3> node::get_scene_location() const {
 		}
 		return scene_location;
 	} else {
-		return point<3>();
+		return get_location();
 	}
 }
 
