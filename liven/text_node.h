@@ -45,7 +45,7 @@ public:
 	std::string get_text() const;
 	void set_text(std::string text_);
 
-	virtual located<rect,2> own_bounding_rect() const override;
+	virtual rect own_bounding_rect() const override;
 
 private:
 	int get_offset(horizontal_align_type align); // return anchor's offset relative to location

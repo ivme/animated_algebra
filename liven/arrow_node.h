@@ -34,7 +34,7 @@ public:
 	static constexpr int h_thick = 2;
 	static constexpr int v_thick = 1;
 
-	virtual liven::located<rect,2> own_bounding_rect() const override;
+	virtual liven::rect own_bounding_rect() const override;
 
 private:
 	direction d;

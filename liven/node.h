@@ -90,9 +90,25 @@ public:
 	// if the node is not associated with a scene, calls get_location()
 	point<3> get_scene_location() const; 
 
-	// bounding rectangle of this node, not including children, in scene coordinates
-	virtual located<rect,2> own_bounding_rect() const;  
-	located<rect,2> bounding_rect() const ; // bounding rect of this node and its children.
+	// unlocated bounding rectangle of this node, not including children
+	// note that the lower left corner of any node is the origin of that node's coordinate system.
+	virtual rect own_bounding_rect() const;
+
+	// bounding rectangle of this node, not including children
+	// in parent's coordinate systems
+	located<rect,2> p_own_bounding_rect() const;
+	
+	// bounding rect of this node and its children, in
+	// the coordinate system of `this`
+	located<rect,2> bounding_rect() const;
+
+	// bounding rect of this node and its children, in
+	// parent's coordinate system
+	located<rect,2> p_bounding_rect() const;
+	
+	// bounding rect of this node and its children.
+	// location of bounding rect == this->get_scene_location()
+	located<rect,2> scene_bounding_rect() const;
 
 	bool is_renderable() const {return (bool)p_renderable;}
 	bool is_visible = true;
@@ -111,6 +127,10 @@ private:
 	void set_scene(std::weak_ptr<scene> s); // set this and a children's scn values to s
 	void compute_scene_locations_(point<3> parent_location);
 	void make_scene_locations_dirty_();
+
+	// bounding rect of this node and its children
+	// in this node's own coordinate system.
+	located<rect,2> recursive_bounding_rect_() const;
 };
 
 } // liven

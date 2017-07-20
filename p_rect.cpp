@@ -27,8 +27,8 @@ bool operator< (const length &lhs, const length &rhs) {
 	}
 }
 
-located<rect,2> p_rect::own_bounding_rect() const {
-	return located<rect,2>(rect(width()+1,height()+1),get_location());
+rect p_rect::own_bounding_rect() const {
+	return rect(rect(width()+1,height()+1));
 }
 
 int p_rect::width_in_units() const {

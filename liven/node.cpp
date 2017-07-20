@@ -108,15 +108,39 @@ void node::change_child_spacing(int delta, dimension dim) const {
 	}
 }
 
-located<rect,2> node::own_bounding_rect() const {
-	return located<rect,2>();
+rect node::own_bounding_rect() const {
+	return rect();
+}
+
+located<rect,2> node::p_own_bounding_rect() const {
+	return located<rect,2>(bounding_rect(),get_location());
 }
 
 located<rect,2> node::bounding_rect() const {
-	located<rect,2> out = own_bounding_rect();
+	located<rect,2> out{own_bounding_rect(),point<2>(0,0)};
 	for (auto child : children) {
-		out = union_bounding_rect(out,child->bounding_rect());
+		out = union_bounding_rect(out,child->p_bounding_rect());
 	}
+	return out;
+}
+
+located<rect,2> node::p_bounding_rect() const {
+	auto out = bounding_rect();
+	// at this point, out's location is relative to the coordinate
+	// system of `this` node.
+	// translate its location to its parent's coordinate system
+	// before returning.
+	auto loc = get_location();
+	out.location.x += loc.x;
+	out.location.y += loc.y;
+	return out;
+}
+
+located<rect,2> node::scene_bounding_rect() const {
+	located<rect,2> out = bounding_rect();
+	auto loc = get_scene_location();
+	out.location.x += loc.x;
+	out.location.y += loc.y;
 	return out;
 }
 

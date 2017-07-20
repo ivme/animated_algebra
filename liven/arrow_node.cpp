@@ -53,14 +53,14 @@ void arrow_node::set_anchor_style(anchor_style_type style) {
 	anchor_style = style;
 }
 
-located<rect,2> arrow_node::own_bounding_rect() const {
+rect arrow_node::own_bounding_rect() const {
 	rect rect_;
 	if (direction_is_horizontal()) {
 		rect_ = rect(length,h_thick);
 	} else {
 		rect_ = rect(v_thick,length);
 	}
-	return located<rect,2>(rect_,get_scene_location());
+	return rect_;
 }
 
 bool arrow_node::anchor_is_at_positive(anchor_style_type anchor_style_) const {

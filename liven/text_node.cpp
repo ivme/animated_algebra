@@ -52,7 +52,7 @@ void text_node::set_text(std::string text_) {
 	set_location(current_anchor.x - get_offset(h_align), loc.y, loc.z);
 }
 
-located<rect,2> text_node::own_bounding_rect() const {
+rect text_node::own_bounding_rect() const {
 	return located<rect,2>(rect(text.size() * char_width, char_height),get_scene_location());
 }
 
