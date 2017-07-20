@@ -145,6 +145,8 @@ private:
 		std::shared_ptr<liven::node> ecf1,
 		std::shared_ptr<liven::lineup_node> eof1
 	);
+
+	void stack_swap(std::shared_ptr<liven::node> sub_rects);
 };
 
 #endif

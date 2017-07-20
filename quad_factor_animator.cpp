@@ -1,6 +1,7 @@
 #include "quad_factor_animator.h"
 #include "aa_renderer.h"
 #include "p_rect.h"
+#include "swap.h"
 #include "liven/action.h"
 #include "liven/stack_action.h"
 #include "liven/arrow_node.h"
@@ -29,6 +30,8 @@ using liven::text_node;
 using liven::lineup_node;
 using liven::arrow_node;
 using liven::unique_sequence;
+using liven::space_children;
+using liven::settle;
 
 double brief_pause = 0.20;
 double label_pause = 0.50;
@@ -254,7 +257,7 @@ animation<ascii_image> quad_factor_animator::animate() {
 		rect3->set_display_style(p_rect::display_style_type::labels_and_lines);
 	#endif
 
-	// (3) ax^2 + sx + (a1x)(b0) + (b0)(b1)
+	// (3) ax^2 + sx + (b0)(a1x) + (b0)(b1)
 	//                 +-------+
 	//                   term 3
 	auto term_3 = std::make_shared<lineup_node>(dimension::x);
@@ -272,28 +275,33 @@ animation<ascii_image> quad_factor_animator::animate() {
 	closed_b0_term_3->set_lineup({lp_b0_term_3,b0_term_3,rp_b0_term_3});
 
 	term_3->set_lineup(unique_sequence<std::shared_ptr<node>>(
-		{closed_a1x_term_3,closed_b0_term_3}));
+		{closed_b0_term_3,closed_a1x_term_3}));
 	label(tx,term_3);
 	pause(label_pause);
 
 	#ifdef SHOW_RECTANGLES
 		// split column 2b into a group of subcolumns
-		// group 2b: a1 columns, each of which is 1x wide and b0 1's high
-		group2b = col2b->split(dimension::y,a1);
-		p_rect::set_children_display_style(group2b,p_rect::display_style_type::center_factored);
+		// group 2b: b0 columns, each of which is 1x wide and a1 1's high
+		group2b = col2b->split(dimension::y,b0);
+
+		p_rect::set_children_display_style(group2b,p_rect::display_style_type::center_expanded);
 		pause(brief_pause);
 	#endif
 	
 	substitute(tx,term_3);
 
 	#ifdef SHOW_RECTANGLES
-		if (a1 > 1) {
-			// shift rect3 right to make space for stacking of group2b
-			render_action(make_move_action<shift>(rect3,0, (a1 - 1) * var_val * unit_size,0));
+		// widest it will be, in scene coordinates, is
+		// width of a horizontally stacked subrect + unit_size * (# subrects - 1)
+		int width_hs_subrect = a1 * var_val * unit_size;
+		int widest = width_hs_subrect + unit_size * (b0 - 1);
+		// extra width beyond original width
+		int extra_width = widest - var_val*unit_size;
 
-			// stack group2b horizontally
-			render_action(make_move_action<stack_action>(group2b,0,dimension::x,unit_size / 2,0));
-		}
+		// shift rect3 right to make space for stacking of group2b
+		render_action(make_move_action<shift>(rect3,0,extra_width,0));
+
+		stack_swap(group2b);
 
 		// merge group2b into a single p_rect
 		auto rect2b = p_rect::merge(group2b, dimension::y);
@@ -309,6 +317,7 @@ animation<ascii_image> quad_factor_animator::animate() {
 		}
 	#endif
 
+	/*
 	// (4) ax^2 + sx + (b0)(a1x) + (b0)(b1)
 	//                 +-------+
 	// swap a1x and b0 in term 3
@@ -317,6 +326,7 @@ animation<ascii_image> quad_factor_animator::animate() {
 	rect2b->swap_x_y();
 	#endif
 	pause(.5);
+	*/
 
 	// (5) ax^2 + sx + b0(a1x + b1)
 	auto factored_terms_3_4 = factor_out(
@@ -367,7 +377,7 @@ animation<ascii_image> quad_factor_animator::animate() {
 		// split column 2a into a group of subcolumns
 		// group 2a: a0 columns, each of which is 1x wide and b1 1's high
 		group2a = col2a->split(dimension::y,a0);
-		p_rect::set_children_display_style(group2b,p_rect::display_style_type::center_factored);
+		p_rect::set_children_display_style(group2a,p_rect::display_style_type::center_expanded);
 	#endif
 	
 	substitute(sx,term_2);
@@ -461,6 +471,14 @@ animation<ascii_image> quad_factor_animator::animate() {
 
 		auto rect1 = p_rect::merge(group1,dimension::y);
 		auto rect2a = p_rect::merge(group2a,dimension::y);
+
+		flash_display_style(group_1_2a->get_children(),p_rect::display_style_type::center_expanded,.5,2.0,.5);
+
+		// stack group_1_2a vertically
+		render_action(make_move_action<stack_action>(group_1_2a,0,dimension::y));
+
+		auto rect_1_2a = p_rect::merge(group_1_2a, dimension::x);
+		//flash_display_style({rect_1_2a},p_rect::display_style_type::center_factored,.5,2.0,.5);
 	#endif
 
 	// (9) (a0x + b0)(a1x + b1)
@@ -475,13 +493,6 @@ animation<ascii_image> quad_factor_animator::animate() {
 	quad_expr->splice(quad_expr->begin(),full_factored_form);
 
 	#ifdef SHOW_RECTANGLES
-		flash_display_style(group_1_2a->get_children(),p_rect::display_style_type::center_expanded,.5,2.0,.5);
-
-		// stack group_1_2a vertically
-		render_action(make_move_action<stack_action>(group_1_2a,0,dimension::y));
-
-		auto rect_1_2a = p_rect::merge(group_1_2a, dimension::x);
-		//flash_display_style({rect_1_2a},p_rect::display_style_type::center_factored,.5,2.0,.5);
 		
 		// join left and right
 		render_action(make_move_action<shift>(rect_2b_3,0,-(group_2b_3->get_location().x - group_1_2a->bounding_rect().width + 1),0));
@@ -770,10 +781,64 @@ std::shared_ptr<liven::lineup_node> quad_factor_animator::factor_out_right(
 	auto out = std::make_shared<lineup_node>(dimension::x);
 	out->set_lineup({left_enclosed_of0,pm,right_enclosed_of1,ecf0});
 
-	// debug
-	std::cout << "ecf1->is_visible == " << ecf1->is_visible << std::endl;
-	std::cout << "ecf0->is_visible == " << ecf0->is_visible << std::endl;
-
 	return out;
 }
 
+void quad_factor_animator::stack_swap(std::shared_ptr<node> sub_rects) {
+	int n = sub_rects->get_children().size();
+	int grand_initial_spacing = 8;
+	int frames_for_grand_spacing = 1;
+	int sub_initial_spacing = 0;
+	int node_speed = 1;
+	int spacing_before_swap = 2*node_speed;
+	int frames_to_settle = 5;
+	
+	// space the children of sub_rects
+	auto grand_space_children = make_move_action<space_children>(sub_rects,0,0,grand_initial_spacing);
+	//grand_space_children->set_fixed_frame_count(frames_for_grand_spacing);
+	render_action(grand_space_children);
+	pause(0.5);
+	p_rect::set_children_display_style(sub_rects,p_rect::display_style_type::labels_and_lines);
+
+	// stack each sub_rect horizontally
+	auto stack_sub_rects = std::make_shared<action>();
+	auto sub_rects_children = sub_rects->get_children();
+	for (auto child_node : sub_rects_children) {
+		auto sub_rect = std::dynamic_pointer_cast<p_rect>(child_node);
+		auto sub_rect_node = sub_rect->split(dimension::y,sub_rect->get_lengths(dimension::y).size());
+		auto stack_ = make_move_action<stack_action>(sub_rect_node,0,dimension::x,sub_initial_spacing,0);
+		stack_sub_rects->add_child(stack_);
+	}
+	pause(.5);
+	render_action(stack_sub_rects);
+	pause(0.5);
+	// merge the stacked p_rect groups into single p_rects
+	sub_rects_children = sub_rects->get_children();
+	for (auto sub_rect_node : sub_rects_children) {
+		auto merged_rect = p_rect::merge(sub_rect_node,dimension::y);
+	}
+
+	// all remaining actions
+	auto remaining_actions = std::make_shared<action>();
+	for (int i = 0; i < n; ++i) {
+		auto sub_rect = std::dynamic_pointer_cast<p_rect>(sub_rects->get_children()[i]);
+		int delta = p_rect::unit_size * i;
+		int frames_before_swap = (delta + p_rect::unit_size) / node_speed;
+		
+		auto shift_swap_settle = std::make_shared<action>();
+		
+		auto shift_ = std::make_shared<shift>(sub_rect,0,delta,0,move::frame_count_method_type::speed);
+		shift_->set_node_speed(node_speed);
+		if (i != 0) {shift_swap_settle->add_child(shift_);}
+
+		auto swap_ = std::make_shared<swap>(sub_rect,frames_before_swap);
+		shift_swap_settle->add_child(swap_);
+
+		auto settle_ = std::make_shared<shift>(sub_rect,frames_before_swap + 1,0,-sub_rect->get_location().y);
+		settle_->set_fixed_frame_count(frames_to_settle);
+		shift_swap_settle->add_child(settle_);
+
+		remaining_actions->add_child(shift_swap_settle);
+	}
+	render_action(remaining_actions);
+}
