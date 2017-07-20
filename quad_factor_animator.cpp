@@ -495,7 +495,7 @@ animation<ascii_image> quad_factor_animator::animate() {
 	#ifdef SHOW_RECTANGLES
 		
 		// join left and right
-		render_action(make_move_action<shift>(rect_2b_3,0,-(group_2b_3->get_location().x - group_1_2a->bounding_rect().width + 1),0));
+		render_action(make_move_action<shift>(rect_2b_3,0,-(rect_2b_3->get_location().x - rect_1_2a->bounding_rect().width + 1),0));
 
 		auto rect_all = p_rect::merge(p_rects, dimension::y);
 		flash_display_style({rect_all},p_rect::display_style_type::center_factored,.5,2.0,.5);
