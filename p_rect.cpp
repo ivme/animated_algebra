@@ -226,9 +226,9 @@ std::shared_ptr<p_rect> p_rect::merge(std::shared_ptr<node> parent, dimension di
 		[dim](std::shared_ptr<node> a, std::shared_ptr<node> b) {
 			switch (dim) {
 				case dimension::x:
-				return a->get_location().x < b->get_location().x;
-				case dimension::y:
 				return a->get_location().y < b->get_location().y;
+				case dimension::y:
+				return a->get_location().x < b->get_location().x;
 			}
 		}
 	);
