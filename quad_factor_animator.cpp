@@ -33,8 +33,8 @@ using liven::unique_sequence;
 using liven::space_children;
 using liven::settle;
 
-double brief_pause = 0.20;
-double label_pause = 0.50;
+double brief_pause = 1.0;
+double label_pause = 1.5;
 
 int v_scene_coord(int pixels) {
 	return pixels / aa_renderer::scene_y_coordinate_to_pixels(1);
@@ -54,7 +54,7 @@ quad_factor_animator::quad_factor_animator(int a_, int b_, int c_) : animator(),
 
 void quad_factor_animator::set_up_scene() {
 	animation_ = animation<ascii_image>();
-	animation_.set_animation_speed(8);
+	animation_.set_animation_speed(5);
 
 	// set up scene
 	// 3 p_rects to start
@@ -251,10 +251,12 @@ animation<ascii_image> quad_factor_animator::animate() {
 		if (b0 > 1) {
 			// stack_horizontal group3
 			render_action(make_move_action<stack_action>(group3,0,dimension::x,unit_size / 2,0));
+			pause(brief_pause);
 		}
 		// merge group3 into a single p_rect
 		auto rect3 = p_rect::merge(group3, dimension::y);
 		rect3->set_display_style(p_rect::display_style_type::labels_and_lines);
+		pause(brief_pause);
 	#endif
 
 	// (3) ax^2 + sx + (b0)(a1x) + (b0)(b1)
@@ -351,6 +353,7 @@ animation<ascii_image> quad_factor_animator::animate() {
 		// stack group_2b_3 vertically
 		render_action(make_move_action<stack_action>(group_2b_3,0,dimension::y));
 		auto rect_2b_3 = p_rect::merge(group_2b_3, dimension::x);
+		flash_display_style({rect_2b_3},p_rect::display_style_type::center_factored,0.5,1.5,.5);
 	#endif
 
 	// (6) ax^2 + (a0x)(b1) + b0(a1x + b1)
@@ -390,6 +393,7 @@ animation<ascii_image> quad_factor_animator::animate() {
 			// stack group2a horizontally
 			render_action(make_move_action<stack_action>(group2a,0,dimension::x,unit_size));
 		}
+		p_rect::set_children_display_style(group2a,p_rect::display_style_type::labels_and_lines);
 	#endif
 
 	// (7) (a0x)(a1x) + (a0x)(b1) + b0(a1x + b1)
@@ -471,8 +475,6 @@ animation<ascii_image> quad_factor_animator::animate() {
 
 		auto rect1 = p_rect::merge(group1,dimension::y);
 		auto rect2a = p_rect::merge(group2a,dimension::y);
-
-		flash_display_style(group_1_2a->get_children(),p_rect::display_style_type::center_expanded,.5,2.0,.5);
 
 		// stack group_1_2a vertically
 		render_action(make_move_action<stack_action>(group_1_2a,0,dimension::y));
@@ -799,6 +801,7 @@ void quad_factor_animator::stack_swap(std::shared_ptr<node> sub_rects) {
 	render_action(grand_space_children);
 	pause(0.5);
 	p_rect::set_children_display_style(sub_rects,p_rect::display_style_type::labels_and_lines);
+	pause(.5);
 
 	// stack each sub_rect horizontally
 	auto stack_sub_rects = std::make_shared<action>();
@@ -809,14 +812,16 @@ void quad_factor_animator::stack_swap(std::shared_ptr<node> sub_rects) {
 		auto stack_ = make_move_action<stack_action>(sub_rect_node,0,dimension::x,sub_initial_spacing,0);
 		stack_sub_rects->add_child(stack_);
 	}
-	pause(.5);
 	render_action(stack_sub_rects);
-	pause(0.5);
+	pause(.5);
+	
 	// merge the stacked p_rect groups into single p_rects
 	sub_rects_children = sub_rects->get_children();
 	for (auto sub_rect_node : sub_rects_children) {
 		auto merged_rect = p_rect::merge(sub_rect_node,dimension::y);
 	}
+	p_rect::set_children_display_style(sub_rects,p_rect::display_style_type::center_expanded);
+	pause(.5);
 
 	// all remaining actions
 	auto remaining_actions = std::make_shared<action>();

@@ -6,6 +6,9 @@
 #include <list>
 #include <memory>
 
+#define LIVEN_SCENE_WIDTH 150
+#define LIVEN_SCENE_HEIGHT 100
+
 namespace liven {
 
 class scene : public std::enable_shared_from_this<scene> {
@@ -27,7 +30,7 @@ private:
 
 class view {
 public:
-	view() : rectangle(rect(170,100),point<2>(0,0)), scn(nullptr) {}
+	view() : rectangle(rect(LIVEN_SCENE_WIDTH,LIVEN_SCENE_HEIGHT),point<2>(0,0)), scn(nullptr) {}
 	located<rect,2> rectangle;
 	std::shared_ptr<scene> scn;
 

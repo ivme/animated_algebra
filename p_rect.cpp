@@ -99,7 +99,7 @@ std::string p_rect::get_expanded_string() const {
 }
 
 std::string p_rect::label_text(dimension dim) const {
-	return algebra::sum_to_string(get_var_coeff_map(dim));
+	return algebra::sum_to_string(get_var_coeff_map(dim),true);
 }
 
 void p_rect::set_display_style(display_style_type ds) {
