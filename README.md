@@ -21,11 +21,11 @@ make
 
 You will be prompted for coefficients.  To keep things in frame, it's best to keep them quite small, say a < 10, b < 20, c < 25.  The set of coefficients must represent a factorable quadratic expression.  If you're not sure what this means, just try entering the following:
 ```
-a
+a = 
 6
-b
+b = 
 17
-c
+c = 
 12
 ```
 
