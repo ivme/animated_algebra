@@ -3,7 +3,8 @@ Animated algebra is a command-line tool for animating standard algorithms from h
 Animations are generated in ascii format and displayed in the terminal.
 
 ## Build
-Both [cmake](https://cmake.org/) and [gnu make](https://www.gnu.org/software/make/) are prerequisites for building the project.  Clone to a local repo.  Then, from the root project directory,
+Both [cmake](https://cmake.org/) and [gnu make](https://www.gnu.org/software/make/) are prerequisites for building the project.  
+Clone to a local repo.  Then, from the root project directory,
 
 ```
 cmake .
