@@ -19,7 +19,7 @@ make
 ./main
 ```
 
-You will be prompted for coefficients.  To keep things in frame, it's best to keep them quite small, say a < 10, b < 20, c < 25.  The set of coefficients must represent a factorable quadratic expression.  If you're not sure what this means, just try entering the following:
+You will be prompted for coefficients.  To keep things in frame, it's best to keep them quite small, say a < 10, b < 20, c < 25.  The set of coefficients must represent a factorable quadratic expression.  One working example is the following:
 ```
 a = 
 6
