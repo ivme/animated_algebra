@@ -17,3 +17,5 @@ make
 ./main
 ```
 
+You will be prompted for coefficients.  To keep things in frame, it's best to keep them quite small, say a < 10, b < 20, c < 25.
+
